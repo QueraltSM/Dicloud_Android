@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Disoft</string>
+
+    <!-- Strings related to login with password -->
+    <string name="prompt_alias">Alias</string>
+    <string name="prompt_user">Usuario</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="action_sign_in_short">Entrar</string>
+    <string name="error_invalid_alias">Este alias es incorrecto</string>
+    <string name="error_invalid_user">Este usuario es incorrecto</string>
+    <string name="error_inactive_user">Este usuario se encuentra desactivado</string>
+    <string name="error_invalid_password">Esta contraseña parece demasiado corta</string>
+    <string name="error_incorrect_password">Esta contraseña es incorrecta</string>
+    <string name="error_field_required">Este campo es obligatorio</string>
+    <string name="error_internet_connection">No hay conexión a internet</string>
+    <string name="error_json_response">Ha habido algún problema en la comunicación</string>
+    <string name="error_unknown">Error desconocido</string>
+
+    <!-- Strings related to login with token -->
+    <string name="error_pass_changed">Se ha cambiado su contraseña, vuelva a iniciar sesión</string>
+    <string name="error_user_disabled">Se ha deshabilitado su usuario</string>
+    <string name="error_unexpected">Ha habido algún problema inesperado, vuelva a iniciar sesión</string>
+
+    <!-- Strings related to logout -->
+    <string name="logout_title">¿Cerrar sesión?</string>
+    <string name="logout_message">Dejarás de recibir notificaciones</string>
+
+    <!-- URL's -->
+    <string name="URL_SERVER_LOGIN">http://app.disoft.es/login.asp</string>
+
+    <!-- PRUEBAS -->
+    <!-- URL's ADRI -->
+    <string name="URL_LOGIN_ADRI">https:/172.26.0.23/login.asp</string>
+    <string name="URL_INDEX_ADRI">https:/172.26.0.23/</string>
+
+    <!-- URL's SERVER -->
+    <string name="URL_LOGIN_ADMIN_LOCAL">http://admin.local/app/login.asp</string>
+    <string name="URL_INDEX_ADMIN_LOCAL">http://admin.local/index.asp</string>
+
+    <!-- URL's LOCALHOST -->
+    <string name="URL_LOGIN_LOCALHOST">http://10.0.2.2/pruebas/app.admin/login.asp</string>
+    <string name="URL_INDEX_LOCALHOST">http://10.0.2.2/index.asp</string>
+
+    <!-- Strings related to databases -->
+    <string name="DB_main">disoft.db</string>
+
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Disoft</string>
+    <string name="nav_header_subtitle">Dani</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_manage">Ajustes</string>
+    <string name="menu_home">Página principal</string>
+
+</resources>
