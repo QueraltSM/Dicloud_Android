@@ -7,9 +7,6 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,16 +29,15 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import es.disoft.disoft.ConnectionAvailable;
-import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.MainActivity;
 import es.disoft.disoft.R;
+import es.disoft.disoft.db.DbHelper;
 
 /**
  * A login screen that offers login via email/password.
@@ -60,15 +56,16 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-
     private Context context = this;
+    private DbHelper myDb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myDb = new DbHelper(this);
         setContentView(R.layout.activity_login);
         setUpLoginForm();
-        preloadData();
         enableSuggestions();
     }
 
@@ -123,41 +120,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    // If a user tries to log in with a token and fails, their data is preloaded
-    private void preloadData() {
-        DbHelper dbHelper = new DbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT user,dbAlias FROM users WHERE loggedIn=?", new String[]{"1"});
-
-        if(c.moveToFirst()) {
-            mAliasView.setText(c.getString(c.getColumnIndex("dbAlias")).toLowerCase());
-            mUserView .setText(c.getString(c.getColumnIndex("user"))   .toLowerCase());
-        }
-        c.close();
-    }
-
-
     private void enableSuggestions() {
-        enableSuggestions(mAliasView, getSuggestions("dbAlias"));
-        enableSuggestions(mUserView,  getSuggestions("user"));
+        enableSuggestions(mAliasView, myDb.getSuggestions(this, "dbAlias"));
+        enableSuggestions(mUserView,  myDb.getSuggestions(this, "user"));
     }
+
 
     private void enableSuggestions(AutoCompleteTextView textView, ArrayAdapter<String> adapter) {
         textView.setThreshold(1);
         textView.setAdapter(adapter);
-    }
-
-    private ArrayAdapter<String> getSuggestions(String suggestionsType) {
-        DbHelper dbHelper = new DbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT DISTINCT " + suggestionsType + " FROM users", null);
-
-        ArrayList<String> suggestionsAL = new ArrayList<>();
-        while(c.moveToNext()) suggestionsAL.add(c.getString(c.getColumnIndex(suggestionsType)).toLowerCase());
-        c.close();
-
-        String[] suggestions = suggestionsAL.toArray(new String[0]);
-        return new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, suggestions);
     }
 
 
@@ -167,9 +138,7 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+        if (mAuthTask != null) return;
 
         // Hide keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -192,8 +161,8 @@ public class LoginActivity extends AppCompatActivity {
         ((TextInputLayout) mPasswordView.getParent().getParent()).setError(null);
 
         // Store values at the time of the login attempt.
-        String alias =    mAliasView.getText().toString().trim().toUpperCase();
-        String user =     mUserView.getText().toString().trim().toUpperCase();
+        String alias    = mAliasView.getText().toString().trim().toUpperCase();
+        String user     = mUserView.getText().toString().trim().toUpperCase();
         String password = mPasswordView.getText().toString().trim();
 
         boolean cancel = false;
@@ -249,20 +218,24 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
     private boolean isAliasValid(String alias) {
         //TODO: Replace this with your own logic
         return !alias.contains(" ");
     }
+
 
     private boolean isUserValid(String user) {
         //TODO: Replace this with your own logic
         return !user.contains(" ");
     }
 
+
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 0;
     }
+
 
     /**
      * Shows the progress UI and hides the login form.
@@ -300,6 +273,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -324,7 +298,6 @@ public class LoginActivity extends AppCompatActivity {
         private boolean error = true;
         private JSONObject loginResponse = null;
 
-
         UserLoginTask(String alias, String user, String password) {
             mAlias = alias;
             mUser = user;
@@ -332,12 +305,12 @@ public class LoginActivity extends AppCompatActivity {
             mPkcode = mUser + mAlias;
         }
 
+
         @Override
         protected Integer doInBackground(Void... params) {
 
             try {
                 login();
-
                 if (error) {
                     exitCode = loginResponse == null ? 5 : Integer.parseInt(loginResponse.getString("error_code"));
                 } else {
@@ -346,17 +319,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 } catch (JSONException | RuntimeException e) { exitCode = 4; }
 
-
-//            try {
-//                // Simulate network access.
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                return 9;
-//            }
-
             Log.i("login_", "doInBackground: " + exitCode);
             return exitCode;
         }
+
 
         @Override
         protected void onPostExecute(final Integer exitCode) {
@@ -371,11 +337,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+
         @Override
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
         }
+
 
         private void login() throws JSONException {
 
@@ -394,48 +362,28 @@ public class LoginActivity extends AppCompatActivity {
                     getString(R.string.URL_LOGIN),
                     userToAuthenticateJson.toString());
 
-
             Log.wtf("login_response", loginResponse.toString());
 
             Log.i("token_", "login: " + loginResponse);
 
-            if (loginResponse != null)
-                error = loginResponse.getBoolean("error");
+            if (loginResponse != null) error = loginResponse.getBoolean("error");
         }
 
 
         private void updateDDBB() throws JSONException {
-            DbHelper dbHelper = new DbHelper(LoginActivity.this);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            String mName      = loginResponse.getString("name");
-            String mLastName  = loginResponse.getString("lastName");
+            String mfullName  = loginResponse.getString("fullName");
             String mToken     = loginResponse.getString("token");
             int mId           = loginResponse.getInt("id");
 
-            if (db != null) {
-                ContentValues values = new ContentValues();
-                values.put("pkCode",   mPkcode);
-                values.put("user_id",  mId);
-                values.put("user",     mUser);
-                values.put("name",     mName);
-                values.put("lastName", mLastName);
-                values.put("dbAlias",  mAlias);
-                values.put("token",    mToken);
+            ContentValues values = new ContentValues();
+            values.put("pkCode",   mPkcode);
+            values.put("user_id",  mId);
+            values.put("user",     mUser);
+            values.put("fullName", mfullName);
+            values.put("dbAlias",  mAlias);
+            values.put("token",    mToken);
 
-                try {
-                    db.insertOrThrow("users", null, values);
-                } catch (SQLiteConstraintException e) {
-                    db.execSQL("UPDATE users SET token='" + mToken + "' WHERE Pkcode='" + mPkcode + "'");
-                    db.execSQL("UPDATE users SET name='" + mName + "' WHERE Pkcode='" + mPkcode + "'");
-                    db.execSQL("UPDATE users SET lastName='" + mLastName + "' WHERE Pkcode='" + mPkcode + "'");
-                }
-
-
-                db.execSQL("UPDATE users SET loggedIn=1 WHERE Pkcode='"  + mPkcode + "'");
-                db.execSQL("UPDATE users SET loggedIn=0 WHERE Pkcode!='" + mPkcode + "'");
-                db.close();
-            }
+            myDb.upsertUser(values);
         }
     }
 

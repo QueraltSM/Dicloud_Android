@@ -2,11 +2,10 @@ package es.disoft.disoft;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +18,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -26,29 +26,30 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
 import es.disoft.disoft.service.StartService;
 import es.disoft.disoft.user.LoginActivity;
+import es.disoft.disoft.user.User;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String dbAlias, name, lastName, token;
+    private String mDbAlias, mToken, mFullName;
+    private DbHelper myDb;
 
     private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myDb = new DbHelper(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,15 +81,33 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setTextActionBar() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View header = navigationView.getHeaderView(0);
+        setTextActionBar(null, null);
+    }
 
-        TextView navCompany = header.findViewById(R.id.nav_company);
-        TextView navName    = header.findViewById(R.id.nav_name);
+    private void setTextActionBar(String dbAlias, String fullName) {
 
-        navCompany.setText(WordUtils.capitalizeFully(dbAlias));
-        String fullName = name + " " + lastName;
-        navName.setText(WordUtils.capitalizeFully(fullName));
+        dbAlias  = ObjectUtils.firstNonNull(dbAlias, mDbAlias);
+        fullName = ObjectUtils.firstNonNull(fullName, mFullName);
+
+        final String finalDbAlias = dbAlias;
+        final String finalFullName = fullName;
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        NavigationView navigationView = findViewById(R.id.nav_view);
+                        View header = navigationView.getHeaderView(0);
+                        TextView navCompany  = header.findViewById(R.id.nav_company);
+                        TextView navFullName = header.findViewById(R.id.nav_full_name);
+
+                        navCompany.setText(WordUtils.capitalizeFully(finalDbAlias));
+                        navFullName.setText(WordUtils.capitalizeFully(finalFullName));
+                    }
+                });
+            }
+        }.start();
     }
 
     @Override
@@ -141,17 +160,30 @@ public class MainActivity extends AppCompatActivity
 
 
     private void getUserData() {
-        DbHelper checkUser = new DbHelper(this);
-        SQLiteDatabase db = checkUser.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT dbAlias,name,lastname,token FROM users WHERE loggedIn=?", new String[]{"1"});
+        ContentValues userData = User.getData(this);
 
-        if (c.moveToFirst()) {
-            dbAlias  = c.getString(c.getColumnIndex("dbAlias"));
-            name     = c.getString(c.getColumnIndex("name"));
-            lastName = c.getString(c.getColumnIndex("lastName"));
-            token    = c.getString(c.getColumnIndex("token"));
-            db.close();
+        mDbAlias  = userData.getAsString("dbAlias");
+        mFullName = userData.getAsString("fullName");
+        mToken    = userData.getAsString("token");
+    }
+
+
+    class WebAppInterface {
+        @JavascriptInterface
+        public void sendData(String data) {
+            if (!data.equalsIgnoreCase(mFullName)) {
+                mFullName = data;
+                setTextActionBar(null, mFullName);
+                ContentValues values = new ContentValues();
+                values.put("fullName", mFullName);
+                User.updateData(activity, values);
+            Log.i("NAME", "distintoooo: " + mFullName);
+            }
+            Log.i("NAME", "sendData: " + mFullName);
         }
+
+//        This in html -> Allow send data to android through webview
+//        Android.sendData("<%=session("name")%>");
     }
 
 
@@ -161,12 +193,16 @@ public class MainActivity extends AppCompatActivity
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
+        // TODO para poder rellenar forumularios (servirá para el focus en los mensajes)
+//        webSettings.setDomStorageEnabled(true);
         myWebView.setWebViewClient(new WebViewClient());
 
         final String url = getString(R.string.URL_INDEX);
 
-        String postData  = "token=" + URLEncoder.encode(token,"UTF-8");
+        String postData  = "token=" + URLEncoder.encode(mToken,"UTF-8");
 
+        // Allow send data to android through webview
+        myWebView.addJavascriptInterface(new WebAppInterface(), "Android");
         myWebView.postUrl(url, postData.getBytes());
 
         // This is to show alerts
@@ -185,6 +221,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (url.endsWith("/index.asp")) myWebView.clearHistory();
+                /* TODO esto es para rellenar forumularios a través del webview -> tiene que estar esto activado
+                   TODO webSettings.setDomStorageEnabled(true);
+                   TODO (servirá para el focus en los mensajes) */
+//                myWebView.loadUrl("javascript:var x = document.getElementById('advanced').value = 'aaa';");
                 super.onPageFinished(view, url);
             }
 
@@ -212,22 +252,22 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), R.string.error_user_disabled, Toast.LENGTH_LONG).show();
                     logout();
                     return true;
+//                } else if (url.contains("hibernar.asp")) {
+//                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
+//                    logout();
+//                    return true;
 //                } else if (url.contains("agententer.asp")) {
 //                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
 //                    logout();
 //                    return true;
-                }
+            }
                 return false;
             }
         });
     }
 
-
     private void logout() {
-        DbHelper dbHelper = new DbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("UPDATE USERS SET loggedIn=0, token='' WHERE loggedIn=1");
-
+        User.logout(this);
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
