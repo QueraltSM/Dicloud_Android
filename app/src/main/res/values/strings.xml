@@ -27,20 +27,23 @@
     <string name="logout_message">Dejarás de recibir notificaciones</string>
 
     <!-- URL's -->
-    <string name="URL_SERVER_LOGIN">http://app.disoft.es/login.asp</string>
+    <!--<string name="URL_LOGIN">http://app.disoft.es/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://app.disoft.es/index.asp</string>-->
 
-    <!-- PRUEBAS -->
+    <!-- *** TODO PRUEBAS *** -->
     <!-- URL's ADRI -->
-    <string name="URL_LOGIN_ADRI">https:/172.26.0.23/login.asp</string>
-    <string name="URL_INDEX_ADRI">https:/172.26.0.23/</string>
+    <!--<string name="URL_LOGIN">https:/172.26.0.23/login.asp</string>-->
+    <!--<string name="URL_INDEX">https:/172.26.0.23/index.asp</string>-->
 
-    <!-- URL's SERVER -->
-    <string name="URL_LOGIN_ADMIN_LOCAL">http://admin.local/app/login.asp</string>
-    <string name="URL_INDEX_ADMIN_LOCAL">http://admin.local/index.asp</string>
+    <!-- URL's SERVER ADMIN.LOCAL -->
+    <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
 
     <!-- URL's LOCALHOST -->
-    <string name="URL_LOGIN_LOCALHOST">http://10.0.2.2/pruebas/app.admin/login.asp</string>
-    <string name="URL_INDEX_LOCALHOST">http://10.0.2.2/index.asp</string>
+    <string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>
+    <string name="URL_INDEX">http://10.0.2.2/index.asp</string>
+    <string name="URL_SYNC_NAME">http://10.0.2.2/app/sync_user_name.asp</string>
+    <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->
     <string name="DB_main">disoft.db</string>

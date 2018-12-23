@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,18 +27,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
-import es.disoft.disoft.user.LoginActivity;
+import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
 import es.disoft.disoft.service.StartService;
+import es.disoft.disoft.user.LoginActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String dbAlias, name, token;
+    private String dbAlias, name, lastName, token;
 
     private Activity activity;
 
@@ -82,7 +87,8 @@ public class MainActivity extends AppCompatActivity
         TextView navName    = header.findViewById(R.id.nav_name);
 
         navCompany.setText(WordUtils.capitalizeFully(dbAlias));
-        navName.setText(WordUtils.capitalizeFully(name));
+        String fullName = name + " " + lastName;
+        navName.setText(WordUtils.capitalizeFully(fullName));
     }
 
     @Override
@@ -122,7 +128,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_manage:
                 break;
             case R.id.nav_home:
-                String home = getString(R.string.URL_INDEX_ADMIN_LOCAL);
+                String home = getString(R.string.URL_INDEX);
                 ((WebView) findViewById(R.id.webView)).loadUrl(home);
                 break;
             default:
@@ -137,12 +143,13 @@ public class MainActivity extends AppCompatActivity
     private void getUserData() {
         DbHelper checkUser = new DbHelper(this);
         SQLiteDatabase db = checkUser.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT dbAlias,name,token FROM users WHERE loggedIn=?", new String[]{"1"});
+        Cursor c = db.rawQuery("SELECT dbAlias,name,lastname,token FROM users WHERE loggedIn=?", new String[]{"1"});
 
         if (c.moveToFirst()) {
-            dbAlias = c.getString(c.getColumnIndex("dbAlias"));
-            name    = c.getString(c.getColumnIndex("name"));
-            token   = c.getString(c.getColumnIndex("token"));
+            dbAlias  = c.getString(c.getColumnIndex("dbAlias"));
+            name     = c.getString(c.getColumnIndex("name"));
+            lastName = c.getString(c.getColumnIndex("lastName"));
+            token    = c.getString(c.getColumnIndex("token"));
             db.close();
         }
     }
@@ -156,9 +163,7 @@ public class MainActivity extends AppCompatActivity
         webSettings.setAppCacheEnabled(true);
         myWebView.setWebViewClient(new WebViewClient());
 
-//        final String url = getString(R.string.URL_INDEX_LOCALHOST);
-        final String url = getString(R.string.URL_INDEX_ADMIN_LOCAL);
-//        final String url = getString(R.string.URL_INDEX_ADRI);
+        final String url = getString(R.string.URL_INDEX);
 
         String postData  = "token=" + URLEncoder.encode(token,"UTF-8");
 

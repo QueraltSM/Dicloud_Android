@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import es.disoft.disoft.ConnectionAvailable;
-import es.disoft.disoft.DbHelper;
+import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.MainActivity;
 import es.disoft.disoft.R;
@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check Internet connection
         try {
-            if (!(new ConnectionAvailable(getString(R.string.URL_SERVER_LOGIN)).execute().get())) {
+            if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
                 somethingWrong(5);
                 return;
             }
@@ -390,13 +390,10 @@ public class LoginActivity extends AppCompatActivity {
 
             Log.wtf("login_request: ", userToAuthenticateJson.toString());
 
-            loginResponse = new HttpConnections().execute(
-//                    getString(R.string.URL_LOGIN_LOCALHOST),
-//                    getString(R.string.URL_INDEX_LOCALHOST),
-                    getString(R.string.URL_LOGIN_ADMIN_LOCAL),
-//                    getString(R.string.URL_SERVER_LOGIN),
-
+            loginResponse = HttpConnections.execute(
+                    getString(R.string.URL_LOGIN),
                     userToAuthenticateJson.toString());
+
 
             Log.wtf("login_response", loginResponse.toString());
 
@@ -411,23 +408,27 @@ public class LoginActivity extends AppCompatActivity {
             DbHelper dbHelper = new DbHelper(LoginActivity.this);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            String mName  = loginResponse.getString("name");
-            String mToken = loginResponse.getString("token");
-            int mId       = loginResponse.getInt("id");
+            String mName      = loginResponse.getString("name");
+            String mLastName  = loginResponse.getString("lastName");
+            String mToken     = loginResponse.getString("token");
+            int mId           = loginResponse.getInt("id");
 
             if (db != null) {
                 ContentValues values = new ContentValues();
-                values.put("pkCode",  mPkcode);
-                values.put("user_id", mId);
-                values.put("user",    mUser);
-                values.put("name",    mName);
-                values.put("dbAlias", mAlias);
-                values.put("token",   mToken);
+                values.put("pkCode",   mPkcode);
+                values.put("user_id",  mId);
+                values.put("user",     mUser);
+                values.put("name",     mName);
+                values.put("lastName", mLastName);
+                values.put("dbAlias",  mAlias);
+                values.put("token",    mToken);
 
                 try {
                     db.insertOrThrow("users", null, values);
                 } catch (SQLiteConstraintException e) {
                     db.execSQL("UPDATE users SET token='" + mToken + "' WHERE Pkcode='" + mPkcode + "'");
+                    db.execSQL("UPDATE users SET name='" + mName + "' WHERE Pkcode='" + mPkcode + "'");
+                    db.execSQL("UPDATE users SET lastName='" + mLastName + "' WHERE Pkcode='" + mPkcode + "'");
                 }
 
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
-import es.disoft.disoft.DbHelper;
+import es.disoft.disoft.db.DbHelper;
 
 public class User {
 

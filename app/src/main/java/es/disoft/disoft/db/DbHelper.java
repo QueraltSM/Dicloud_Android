@@ -1,4 +1,4 @@
-package es.disoft.disoft;
+package es.disoft.disoft.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
             "user_id INTEGER,"            +
             "user TEXT,"                  +
             "name TEXT,"                  +
+            "lastName TEXT,"              +
             "dbAlias TEXT,"               +
             "loggedIn INTEGER DEFAULT 0," +
             "token TEXT"                  +
@@ -33,5 +34,9 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Cuando vas a actualizar la bd con nuevos campos o algo cuando actualizas en google play
+    }
+
+    public static void addUser() {
+
     }
 }
