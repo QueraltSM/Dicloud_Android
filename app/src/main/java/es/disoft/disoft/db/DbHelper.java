@@ -7,7 +7,12 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -16,17 +21,28 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final int    VERSION                = 1;
     private static final String DATABASE_NAME          = "disoft.db";
     private static final String USERS_TABLE            = "users";
+    private static final String MENUS_TABLE            = "menus";
     private static final String SQL_CREATE_USERS_TABLE =
-            "CREATE TABLE " + USERS_TABLE +
-            "(" +
-            "pkCode TEXT PRIMARY KEY,"    +
-            "user_id INTEGER,"            +
-            "user TEXT,"                  +
-            "fullName TEXT,"              +
-            "dbAlias TEXT,"               +
-            "loggedIn INTEGER DEFAULT 0," +
-            "token TEXT"                  +
+            "CREATE TABLE " + USERS_TABLE     +
+            "("                               +
+                "pkCode TEXT PRIMARY KEY,"    +
+                "user_id INTEGER,"            +
+                "user TEXT,"                  +
+                "fullName TEXT,"              +
+                "dbAlias TEXT,"               +
+                "loggedIn INTEGER DEFAULT 0," +
+                "token TEXT"                  +
             ")";
+    private static final String SQL_CREATE_MENUS_TABLE =
+            "CREATE TABLE " + MENUS_TABLE     +
+            "("                               +
+                "id TEXT PRIMARY KEY,"        +
+                "user_id INTEGER,"            +
+                "menu TEXT,"                  +
+                "submenu TEXT,"               +
+                "shortname TEXT"              +
+            ")";
+    private static final String TAG = "MENU";
 
 
     public DbHelper(Context context) {
@@ -36,8 +52,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {      // la primera vez, cuando no existe ese ficherodb
-        db.execSQL("DROP TABLE IF EXISTS users");
-        db.execSQL(SQL_CREATE_USERS_TABLE);        // si no existe la bd la crea
+        db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MENUS_TABLE);
+        db.execSQL(SQL_CREATE_USERS_TABLE);
+        db.execSQL(SQL_CREATE_MENUS_TABLE);
     }
 
 
@@ -118,5 +136,46 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put("loggedIn", 0);
         db.update(USERS_TABLE, values, "loggedIn=?", new String[]{"1"});
         db.close();
+    }
+
+    public void getCurrentUserMenu() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String query = "" +
+                "SELECT " + MENUS_TABLE + ".* " +
+                "FROM   " + MENUS_TABLE + " INNER JOIN " + USERS_TABLE + " " +
+                "ON "     + MENUS_TABLE + ".agent_id = " + USERS_TABLE + ".agent_id " +
+                "WHERE "  + USERS_TABLE + ".loggedIn=1 ";
+    }
+
+    JSONArray jArray = null;
+
+    public void setCurrentUserMenu(String menuAsJsonString) throws JSONException {
+        SQLiteDatabase db = getWritableDatabase();
+
+        if (db != null) {
+
+            jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
+
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject json_data = jArray.getJSONObject(i);
+
+                ContentValues values = new ContentValues();
+                values.put("id",        json_data.getString("id"));
+                values.put("user_id",   json_data.getString("agent_id"));
+                values.put("menu",      json_data.getString("menu"));
+                values.put("submenu",   json_data.getString("submenu"));
+                values.put("shortname", json_data.getString("shortname"));
+
+                try {
+//                    db.insert(MENUS_TABLE, null, values);
+                    Log.i(TAG, "Introducido el id '" + json_data.getString("submenu") + "'");
+                } catch (SQLiteConstraintException e) {
+                    Log.wtf(TAG, "El id '" + json_data.getString("id") + "' ya existe");
+                }
+
+            }
+            db.close();
+        }
     }
 }

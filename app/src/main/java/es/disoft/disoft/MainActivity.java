@@ -36,6 +36,7 @@ import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
 import es.disoft.disoft.service.StartService;
 import es.disoft.disoft.user.LoginActivity;
+import es.disoft.disoft.user.Menu;
 import es.disoft.disoft.user.User;
 
 public class MainActivity extends AppCompatActivity
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        new Menu(this).setMenu();
+
         super.onCreate(savedInstanceState);
         myDb = new DbHelper(this);
         setContentView(R.layout.activity_main);

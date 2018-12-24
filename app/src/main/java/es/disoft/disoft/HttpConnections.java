@@ -59,4 +59,25 @@ public class HttpConnections {
         Log.i("JSON", "execute: " + jsonObject.toString());
         return jsonObject;
     }
+
+    public static String getUserMenu(URL url) throws IOException {
+        HttpURLConnection connection = null;
+        BufferedReader reader        = null;
+
+        connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+
+        InputStream stream = connection.getInputStream();
+        reader             = new BufferedReader(new InputStreamReader(stream));
+
+        StringBuilder buffer = new StringBuilder();
+        String line          = "";
+
+        while ((line = reader.readLine()) != null) buffer.append(line).append("\n");
+
+        connection.disconnect();
+        reader.close();
+
+        return buffer.toString();
+    }
 }

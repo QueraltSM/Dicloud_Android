@@ -42,7 +42,7 @@
     <!-- URL's LOCALHOST -->
     <string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>
     <string name="URL_INDEX">http://10.0.2.2/index.asp</string>
-    <string name="URL_SYNC_NAME">http://10.0.2.2/app/sync_user_name.asp</string>
+    <string name="URL_SYNC_MENU">http://10.0.2.2/app/getMenu.asp</string>
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->
