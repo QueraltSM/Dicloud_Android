@@ -89,7 +89,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     public ArrayAdapter<String> getSuggestions(Context context, String suggestionsType) {
-        String query      = "SELECT DISTINCT " + suggestionsType + " FROM users";
+        String query      = "SELECT DISTINCT " + suggestionsType + " FROM " + USERS_TABLE;
         SQLiteDatabase db = getReadableDatabase();
         Cursor c          = db.rawQuery(query, null);
 
@@ -104,7 +104,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public boolean userIsLogged() {
         SQLiteDatabase db = getReadableDatabase();
-        return 1 == DatabaseUtils.queryNumEntries(db, "users", "loggedIn=1");
+        return 1 == DatabaseUtils.queryNumEntries(db, USERS_TABLE, "loggedIn=1");
     }
 
 
@@ -116,7 +116,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public ContentValues getCurrentUserData() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM users WHERE loggedIn=?", new String[]{"1"});
+        Cursor c = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE loggedIn=?", new String[]{"1"});
 
         ContentValues values = new ContentValues();
         if (c.moveToFirst()) {
@@ -124,8 +124,8 @@ public class DbHelper extends SQLiteOpenHelper {
             values.put("dbAlias",  c.getString(c.getColumnIndex("dbAlias")));
             values.put("fullName", c.getString(c.getColumnIndex("fullName")));
             values.put("token",    c.getString(c.getColumnIndex("token")));
-            db.close();
         }
+        db.close();
 
         return values;
     }
@@ -138,6 +138,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+//    TODO esto que es?
     public void getCurrentUserMenu() {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -157,6 +158,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
             jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
 
+
+            Cursor c = db.rawQuery("SELECT user_id FROM " + USERS_TABLE + " WHERE loggedIn=?", new String[]{"1"});
+            if (c.moveToFirst()) {
+                String uid = c.getString(c.getColumnIndex("user_id"));
+                db.delete(MENUS_TABLE, "user_id=?", new String[]{uid});
+            }
+
+
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject json_data = jArray.getJSONObject(i);
 
@@ -167,12 +176,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 values.put("submenu",   json_data.getString("submenu"));
                 values.put("shortname", json_data.getString("shortname"));
 
-                try {
-//                    db.insert(MENUS_TABLE, null, values);
-                    Log.i(TAG, "Introducido el id '" + json_data.getString("submenu") + "'");
-                } catch (SQLiteConstraintException e) {
-                    Log.wtf(TAG, "El id '" + json_data.getString("id") + "' ya existe");
-                }
+                db.insert(MENUS_TABLE, null, values);
+                Log.i(TAG, "Introducido el id '" + json_data.getString("submenu") + "'");
 
             }
             db.close();
