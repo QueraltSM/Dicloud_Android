@@ -26,7 +26,7 @@ public class Menu {
     }
 
     private String jsonRequest(URL url) throws IOException {
-        return HttpConnections.getUserMenu(url);
+        return HttpConnections.getUserMenu(context, url);
     }
 
     private void jsonResponse(String menuAsJsonString) throws JSONException {

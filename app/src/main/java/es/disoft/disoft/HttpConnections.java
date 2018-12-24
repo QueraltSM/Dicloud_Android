@@ -1,5 +1,7 @@
 package es.disoft.disoft;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -12,6 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import es.disoft.disoft.user.User;
 
 public class HttpConnections {
 
@@ -37,7 +43,6 @@ public class HttpConnections {
             outputStream.close();
             connection.connect();
 
-            Log.i("LOGIN_", "execute: ");
             InputStream inputStream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuffer buffer = new StringBuffer();
@@ -60,24 +65,14 @@ public class HttpConnections {
         return jsonObject;
     }
 
-    public static String getUserMenu(URL url) throws IOException {
-        HttpURLConnection connection = null;
-        BufferedReader reader        = null;
+    public static String getUserMenu(Context context, URL url) throws IOException {
 
-        connection = (HttpURLConnection) url.openConnection();
-        connection.connect();
+        ContentValues values = User.getData(context);
+        String uid           = values.getAsString("user_id");
 
-        InputStream stream = connection.getInputStream();
-        reader             = new BufferedReader(new InputStreamReader(stream));
+        Map<String, String> userUID = new HashMap<>();
+        userUID.put("uid",  uid);
 
-        StringBuilder buffer = new StringBuilder();
-        String line          = "";
-
-        while ((line = reader.readLine()) != null) buffer.append(line).append("\n");
-
-        connection.disconnect();
-        reader.close();
-
-        return buffer.toString();
+        return execute(url.toString(), new JSONObject(userUID).toString()).toString();
     }
 }

@@ -116,19 +116,19 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public ContentValues getCurrentUserData() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT dbAlias,fullName,token FROM users WHERE loggedIn=?", new String[]{"1"});
+        Cursor c = db.rawQuery("SELECT * FROM users WHERE loggedIn=?", new String[]{"1"});
 
         ContentValues values = new ContentValues();
         if (c.moveToFirst()) {
-            values.put("dbAlias", c.getString(c.getColumnIndex("dbAlias")));
+            values.put("user_id",  c.getString(c.getColumnIndex("user_id")));
+            values.put("dbAlias",  c.getString(c.getColumnIndex("dbAlias")));
             values.put("fullName", c.getString(c.getColumnIndex("fullName")));
-            values.put("token", c.getString(c.getColumnIndex("token")));
+            values.put("token",    c.getString(c.getColumnIndex("token")));
             db.close();
         }
 
         return values;
     }
-
 
     public void userLogout() {
         SQLiteDatabase db = getWritableDatabase();
