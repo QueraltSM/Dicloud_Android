@@ -1,6 +1,5 @@
 package es.disoft.disoft.user;
 
-
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -8,6 +7,10 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.R;
@@ -15,14 +18,26 @@ import es.disoft.disoft.db.DbHelper;
 
 public class Menu {
 
-    private final Context context;
+    private Context context;
+    private String mUID;
+    private Map<String, TreeMap<String, String>> menu;
 
-    public Menu(Context context) {
+    public Menu(Context context, String mUID) {
         this.context = context;
+        this.mUID    = mUID;
+        menu         = new LinkedHashMap<>();
     }
 
-    public void setMenu() {
+    public void loadMenu() {
         new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
+    }
+
+    private void generateSkeleton() {
+        ArrayList<String> menuItems = User.getMenuItems(context, mUID);
+
+        for (String menuItem : menuItems) {
+            menu.put(menuItem, User.getSubmenuItems(context, mUID, menuItem));
+        }
     }
 
     private String jsonRequest(URL url) throws IOException {
@@ -46,6 +61,11 @@ public class Menu {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            generateSkeleton();
         }
     }
 }

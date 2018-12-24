@@ -2,8 +2,9 @@ package es.disoft.disoft.user;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import es.disoft.disoft.db.DbHelper;
 
@@ -27,5 +28,15 @@ public class User {
     public static void logout(Context context) {
         DbHelper myDb = new DbHelper(context);
         myDb.userLogout();
+    }
+
+    public static ArrayList<String> getMenuItems(Context context, String uid) {
+        DbHelper myDb = new DbHelper(context);
+        return myDb.getCurrentUserMenuItems(uid);
+    }
+
+    public static TreeMap<String, String> getSubmenuItems(Context context, String uid, String menu) {
+        DbHelper myDb = new DbHelper(context);
+        return myDb.getCurrentUserSubmenuItems(uid, menu);
     }
 }

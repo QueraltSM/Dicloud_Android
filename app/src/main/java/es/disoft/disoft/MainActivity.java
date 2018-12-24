@@ -31,6 +31,9 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
@@ -42,15 +45,13 @@ import es.disoft.disoft.user.User;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String mDbAlias, mToken, mFullName;
+    private String mDbAlias, mToken, mFullName, mUID;
     private DbHelper myDb;
 
     private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        new Menu(this).setMenu();
 
         super.onCreate(savedInstanceState);
         myDb = new DbHelper(this);
@@ -72,12 +73,19 @@ public class MainActivity extends AppCompatActivity
 
         try {
             getUserData();
+            mTest();
             runAlarmManager();
             setTextActionBar();
             setPage();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    private void mTest() {
+
+        Menu myMenu = new Menu(this, mUID);
+        myMenu.loadMenu();
     }
 
     private void runAlarmManager() {
@@ -169,6 +177,7 @@ public class MainActivity extends AppCompatActivity
         mDbAlias  = userData.getAsString("dbAlias");
         mFullName = userData.getAsString("fullName");
         mToken    = userData.getAsString("token");
+        mUID      = userData.getAsString("user_id");
     }
 
 

@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -138,15 +139,43 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-//    TODO esto que es?
-    public void getCurrentUserMenu() {
-        SQLiteDatabase db = getWritableDatabase();
+    public ArrayList<String> getCurrentUserMenuItems(String uid) {
+        SQLiteDatabase db = getReadableDatabase();
 
-        String query = "" +
-                "SELECT " + MENUS_TABLE + ".* " +
-                "FROM   " + MENUS_TABLE + " INNER JOIN " + USERS_TABLE + " " +
-                "ON "     + MENUS_TABLE + ".agent_id = " + USERS_TABLE + ".agent_id " +
-                "WHERE "  + USERS_TABLE + ".loggedIn=1 ";
+        String sql = "" +
+                "SELECT DISTINCT menu " +
+                "FROM " + MENUS_TABLE + " " +
+                "WHERE user_id = ?" +
+                "ORDER BY id ASC";
+
+        Cursor c = db.rawQuery(sql, new String[]{uid});
+
+        ArrayList<String> menu = new ArrayList<>();
+        while (c.moveToNext()) {
+            menu.add(c.getString(c.getColumnIndex("menu")));
+        }
+        db.close();
+        return menu;
+    }
+
+    public TreeMap<String, String> getCurrentUserSubmenuItems(String uid, String menu) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "" +
+                "SELECT DISTINCT submenu,shortname " +
+                "FROM " + MENUS_TABLE + " " +
+                "WHERE user_id = ? AND menu = ? " +
+                "ORDER BY id ASC";
+
+        Cursor c = db.rawQuery(sql, new String[]{uid, menu});
+        TreeMap<String,String> submenuItems = new TreeMap<>();
+        while (c.moveToNext()) {
+            String submenuItem = c.getString(c.getColumnIndex("submenu"));
+            String shortname   = c.getString(c.getColumnIndex("shortname"));
+            submenuItems.put(submenuItem, shortname);
+        }
+        db.close();
+        return submenuItems;
     }
 
     JSONArray jArray = null;
