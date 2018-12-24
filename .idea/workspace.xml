@@ -26,9 +26,7 @@
     <list default="true" id="54bed8dc-9c70-4ffb-a8d0-ddc3d3184497" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -91,23 +89,23 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="nav_header_main.xml" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml">
-              <provider editor-type-id="android-designer2">
+          <file leaf-file-name="activity_main_drawer.xml" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml">
+              <provider selected="true" editor-type-id="android-designer2">
                 <state />
               </provider>
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="527">
-                  <caret line="31" column="38" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="38" />
+              <provider editor-type-id="text-editor">
+                <state relative-caret-position="238">
+                  <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="363">
-                  <caret line="88" selection-start-line="88" selection-end-line="88" />
+                <state relative-caret-position="238">
+                  <caret line="80" column="26" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
                   <folding>
                     <element signature="e#2151#2182#0" expanded="true" />
                     <element signature="e#2184#2216#0" expanded="true" />
@@ -128,15 +126,6 @@
                     <element signature="e#9525#9552#0" expanded="true" />
                     <element signature="e#9760#9788#0" expanded="true" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/build.gradle">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="595">
-                  <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
                 </state>
               </provider>
             </entry>
@@ -166,12 +155,12 @@
           <file leaf-file-name="Menu.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="22">
-                  <caret line="39" column="9" lean-forward="true" selection-start-line="39" selection-start-column="9" selection-end-line="39" selection-end-column="9" />
+                <state relative-caret-position="476">
+                  <caret line="52" selection-start-line="52" selection-end-line="52" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#710#711#0" expanded="true" />
-                    <element signature="e#996#1037#0" expanded="true" />
+                    <element signature="e#841#882#0" expanded="true" />
                     <element signature="e#791#792#0" expanded="true" />
                     <element signature="e#1827#1828#0" expanded="true" />
                     <element signature="e#1869#1870#0" expanded="true" />
@@ -2603,7 +2592,7 @@
               <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="menu" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
           </expand>
           <select />
@@ -2774,15 +2763,16 @@
       <window_info id="Build Variants" order="4" sideWeight="0.50212765" side_tool="true" weight="0.16343042" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5021322" side_tool="true" weight="0.32317737" />
+      <window_info anchor="right" id="Preview" order="6" weight="0.32928804" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49919093" weight="0.44940153" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.14363438" />
       <window_info anchor="bottom" x="20" y="422" width="1876" height="268" id="Terminal" order="11" sideWeight="0.4978678" weight="0.34167573" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="10" sideWeight="0.4978678" visible="true" weight="0.20130576" />
+      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.4978678" weight="0.20130576" />
       <window_info id="Captures" order="3" weight="0.25" />
       <window_info id="Capture Tool" order="6" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49787235" weight="0.1380597" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49838188" weight="0.26115343" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49787235" visible="true" weight="0.1380597" />
+      <window_info active="true" anchor="bottom" id="Build" order="7" sideWeight="0.49838188" visible="true" weight="0.26115343" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.41022852" />
       <window_info anchor="right" id="Gradle" order="5" sideWeight="0.4993234" weight="0.1977612" />
       <window_info id="Structure" order="1" sideWeight="0.5008183" side_tool="true" weight="0.14712153" />
@@ -2793,7 +2783,6 @@
       <window_info anchor="right" id="Assistant" order="9" sideWeight="0.49791232" weight="0.32995737" />
       <window_info anchor="right" id="StringPreview" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Preview" order="6" weight="0.32928804" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2857,11 +2846,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -3049,38 +3033,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/main.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="37" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/build/generated/not_namespaced_r_class_sources/debug/processDebugResources/r/es/disoft/disoft/R.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="181">
           <caret line="5055" column="28" selection-start-line="5055" selection-start-column="28" selection-end-line="5055" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="38" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="38" />
         </state>
       </provider>
     </entry>
@@ -3111,13 +3067,6 @@
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-121" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
-        </state>
       </provider>
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.6/4765e418c9084c4e01233cb5f09bdd6b5f311ccc/commons-lang3-3.6-sources.jar!/org/apache/commons/lang3/text/WordUtils.java">
@@ -3159,13 +3108,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="44" column="57" selection-start-line="44" selection-start-column="57" selection-end-line="44" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/org/json/JSONObject.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="166">
@@ -3204,10 +3146,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="566">
+          <caret line="42" selection-start-line="42" selection-end-line="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/6f4e9a8726a892bb7464cce33f1d4f94/jars/classes.jar!/android/support/v7/app/AppCompatActivity.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="125" column="30" selection-start-line="125" selection-start-column="30" selection-end-line="125" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="417">
+          <caret line="31" column="38" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="44" column="57" selection-start-line="44" selection-start-column="57" selection-end-line="44" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/main.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="35" column="18" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
+        <state relative-caret-position="238">
+          <caret line="80" column="26" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
           <folding>
             <element signature="e#2151#2182#0" expanded="true" />
             <element signature="e#2184#2216#0" expanded="true" />
@@ -3231,21 +3219,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="42" selection-start-line="42" selection-end-line="42" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="39" column="9" lean-forward="true" selection-start-line="39" selection-start-column="9" selection-end-line="39" selection-end-column="9" />
+        <state relative-caret-position="476">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#710#711#0" expanded="true" />
-            <element signature="e#996#1037#0" expanded="true" />
+            <element signature="e#841#882#0" expanded="true" />
             <element signature="e#791#792#0" expanded="true" />
             <element signature="e#1827#1828#0" expanded="true" />
             <element signature="e#1869#1870#0" expanded="true" />

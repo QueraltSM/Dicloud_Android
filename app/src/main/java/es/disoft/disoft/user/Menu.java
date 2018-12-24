@@ -21,11 +21,13 @@ public class Menu {
     private Context context;
     private String mUID;
     private Map<String, TreeMap<String, String>> menu;
+    private android.view.Menu nv_menu;
 
-    public Menu(Context context, String mUID) {
-        this.context = context;
+    public Menu(Context context, String mUID, android.view.Menu nv_menu) {
+        this.menu    = new LinkedHashMap<>();
         this.mUID    = mUID;
-        menu         = new LinkedHashMap<>();
+        this.context = context;
+        this.nv_menu = nv_menu;
     }
 
     public void loadMenu() {
@@ -37,6 +39,16 @@ public class Menu {
 
         for (String menuItem : menuItems) {
             menu.put(menuItem, User.getSubmenuItems(context, mUID, menuItem));
+        }
+
+        setMenu();
+    }
+
+    private void setMenu() {
+        int NONE = android.view.Menu.NONE;
+        for (Map.Entry<?, ?> entry : menu.entrySet()) {
+            nv_menu.add(0, NONE, NONE, (CharSequence) entry.getKey());
+//            System.out.println(entry.getKey() + "/" + entry.getValue());
         }
     }
 

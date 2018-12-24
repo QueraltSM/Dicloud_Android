@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,9 +30,6 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
@@ -83,8 +79,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mTest() {
-
-        Menu myMenu = new Menu(this, mUID);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        android.view.Menu nv_menu = navigationView.getMenu();
+        Menu myMenu = new Menu(this, mUID, nv_menu);
         myMenu.loadMenu();
     }
 
