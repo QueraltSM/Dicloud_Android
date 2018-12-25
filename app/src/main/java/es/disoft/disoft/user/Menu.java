@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -20,35 +21,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import es.disoft.disoft.ExpandableListDataPump;
 import es.disoft.disoft.HttpConnections;
+import es.disoft.disoft.MainActivity;
 import es.disoft.disoft.R;
 import es.disoft.disoft.db.DbHelper;
 
 public class Menu {
 
+    private MainActivity mainActivity;
     private Context context;
     private String mUID;
     private Map<String, TreeMap<String, String>> menu;
-    private android.view.Menu nv_menu;
 
     ExpandableListView            expandableListView;
     ExpandableListAdapter         expandableListAdapter;
-    List<String>                  expandableListTitle;
-    HashMap<String, List<String>> expandableListDetail;
+    List<MenuModel>                  headerList;
+    HashMap<MenuModel, List<MenuModel>> childList;
+    WebView webView;
 
-    public Menu(Context context, String mUID, android.view.Menu nv_menu) {
-        this.menu    = new LinkedHashMap<>();
-        this.mUID    = mUID;
-        this.context = context;
-        this.nv_menu = nv_menu;
-    }
-
-    public Menu(Context context, String mUID, ExpandableListView expandableListView) {
+    public Menu(MainActivity mainActivity, String mUID, ExpandableListView expandableListView) {
         this.menu               = new LinkedHashMap<>();
         this.mUID               = mUID;
-        this.context            = context;
+        this.context            = mainActivity;
         this.expandableListView = expandableListView;
+        this.webView = mainActivity.findViewById(R.id.webView);
+        this.mainActivity = mainActivity;
     }
 
     public void loadMenu() {
@@ -66,9 +63,54 @@ public class Menu {
     }
 
     private void setMenu() {
-        expandableListDetail  = ExpandableListDataPump.getData();
-        expandableListTitle   = new ArrayList<>(expandableListDetail.keySet());
-        expandableListAdapter = new CustomExpandableListAdapter(context, expandableListTitle, expandableListDetail);
+        childList = new HashMap<>();
+        headerList = new ArrayList<>();
+
+        MenuModel menuModel = new MenuModel("Android WebView Tutorial", true, false, "https://www.journaldev.com/9333/android-webview-example-tutorial"); //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel);
+
+        if (!menuModel.hasChildren) {
+            childList.put(menuModel, null);
+        }
+
+        menuModel = new MenuModel("Java Tutorials", true, true, ""); //Menu of Java Tutorials
+        headerList.add(menuModel);
+        List<MenuModel> childModelsList = new ArrayList<>();
+        MenuModel childModel = new MenuModel("Core Java Tutorial", false, false, "https://www.journaldev.com/7153/core-java-tutorial");
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Java FileInputStream", false, false, "https://www.journaldev.com/19187/java-fileinputstream");
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Java FileReader", false, false, "https://www.journaldev.com/19115/java-filereader");
+        childModelsList.add(childModel);
+
+
+        if (menuModel.hasChildren) {
+            Log.d("API123","here");
+            childList.put(menuModel, childModelsList);
+        }
+
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Python Tutorials", true, true, ""); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        childModel = new MenuModel("Python AST – Abstract Syntax Tree", false, false, "https://www.journaldev.com/19243/python-ast-abstract-syntax-tree");
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Python Fractions", false, false, "https://www.journaldev.com/19226/python-fractions");
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
+
+
+
+
+
+
+
+        expandableListAdapter = new CustomExpandableListAdapter(context, headerList, childList);
 
         expandableListView.setAdapter(expandableListAdapter);
 
@@ -82,31 +124,36 @@ public class Menu {
             public void onGroupCollapse(int groupPosition) { }
         });
 
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent,
-                                        View v,
-                                        int groupPosition,
-                                        int childPosition,
-                                        long id) {
-                Log.i("MENU", expandableListTitle.get(groupPosition) + " -> " + expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition));
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
+                if (headerList.get(groupPosition).isGroup) {
+                    if (!headerList.get(groupPosition).hasChildren) {
+                        webView.loadUrl(headerList.get(groupPosition).url);
+                        mainActivity.onBackPressed();
+                    }
+                }
+
                 return false;
             }
         });
 
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
+                if (childList.get(headerList.get(groupPosition)) != null) {
+                    MenuModel model = childList.get(headerList.get(groupPosition)).get(childPosition);
+                    if (model.url.length() > 0) {
+                        webView.loadUrl(model.url);
+                        mainActivity.onBackPressed();
+                    }
+                }
 
-
-//        int NONE = android.view.Menu.NONE;
-//        for (Map.Entry<?, ?> entry : menu.entrySet()) {
-//            nv_menu.add(0, NONE, NONE, (CharSequence) entry.getKey());
-////            System.out.println(entry.getKey() + "/" + entry.getValue());
-//        }
-//            SubMenu sub = nv_menu.addSubMenu(0, NONE, NONE, "hola?");
-//
-//            sub.add(0, NONE, NONE, "1");
-//            sub.add(0, NONE, NONE, "2");
-//            sub.add(0, NONE, NONE, "3");
+                return false;
+            }
+        });
     }
 
     private String jsonRequest(URL url) throws IOException {

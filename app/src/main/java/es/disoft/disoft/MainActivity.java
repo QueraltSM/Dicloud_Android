@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
     private String mDbAlias, mToken, mFullName, mUID;
     private DbHelper myDb;
+    private WebView mWebView;
 
     private Activity activity;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
         myDb = new DbHelper(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        mWebView = findViewById(R.id.webView);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -80,9 +82,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mTest() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        android.view.Menu nv_menu = navigationView.getMenu();
-//        Menu myMenu = new Menu(this, mUID, nv_menu);
         ExpandableListView a = findViewById(R.id.expandableListView);
         Menu myMenu = new Menu(this, mUID, a);
         myMenu.loadMenu();
