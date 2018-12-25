@@ -190,6 +190,8 @@ public class MainActivity extends AppCompatActivity {
                    TODO webSettings.setDomStorageEnabled(true);
                    TODO (servirá para el focus en los mensajes) */
 //                myWebView.loadUrl("javascript:var x = document.getElementById('advanced').value = 'aaa';");
+                // TODO Esto no deberia estar aqui, deberia hacerlo la propia web
+                myWebView.loadUrl("javascript:(function() { $('.navbar-header button').remove(); })()");
                 super.onPageFinished(view, url);
             }
 

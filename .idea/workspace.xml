@@ -23,11 +23,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54bed8dc-9c70-4ffb-a8d0-ddc3d3184497" name="Default" comment="Back button ahora cierra la nav si está abierta">
+    <list default="true" id="54bed8dc-9c70-4ffb-a8d0-ddc3d3184497" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -90,8 +88,8 @@
           <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="141">
-                  <caret line="103" column="43" selection-start-line="103" selection-start-column="43" selection-end-line="103" selection-end-column="43" />
+                <state relative-caret-position="396">
+                  <caret line="192" column="81" selection-start-line="192" selection-start-column="81" selection-end-line="192" selection-end-column="81" />
                   <folding>
                     <element signature="e#1977#2008#0" expanded="true" />
                     <element signature="e#2010#2042#0" expanded="true" />
@@ -121,11 +119,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="User.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="User.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="141">
-                  <caret line="67" column="4" selection-start-line="67" selection-start-column="4" selection-end-line="67" selection-end-column="4" />
+                <state relative-caret-position="379">
+                  <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
                   <folding>
                     <element signature="e#1400#1421#0" expanded="true" />
                     <element signature="e#1451#1474#0" expanded="true" />
@@ -137,11 +135,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Menu.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="Menu.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="362">
-                  <caret line="174" column="13" lean-forward="true" selection-start-line="174" selection-start-column="13" selection-end-line="174" selection-end-column="13" />
+                <state relative-caret-position="1855">
+                  <caret line="164" column="21" selection-start-line="164" selection-start-column="21" selection-end-line="164" selection-end-column="21" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#1301#1302#0" expanded="true" />
@@ -2557,9 +2555,9 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_group_child.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -2794,6 +2792,14 @@
       <option name="presentableId" value="Default" />
       <updated>1542199218832</updated>
     </task>
+    <task id="LOCAL-00001" summary="Back button ahora cierra la nav si está abierta">
+      <created>1545761994271</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1545761994271</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -2820,13 +2826,13 @@
       <window_info anchor="right" id="Device File Explorer" order="4" sideWeight="0.50135136" side_tool="true" weight="0.1977612" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.56583244" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49838188" weight="0.2687704" />
-      <window_info active="true" anchor="bottom" id="Messages" visible="true" weight="0.46681175" />
+      <window_info anchor="bottom" id="Messages" weight="0.3677911" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info id="Image Layers" order="7" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="right" id="Preview" order="6" weight="0.32928804" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49919093" weight="0.16213275" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.14363438" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.13928182" />
       <window_info anchor="bottom" x="20" y="422" width="1876" height="268" id="Terminal" order="11" sideWeight="0.4978678" weight="0.34167573" />
       <window_info id="Captures" order="3" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49787235" weight="0.21748401" />
@@ -2852,6 +2858,32 @@
         <option value="3" />
         <option value="1" />
       </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
     </option>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -3230,43 +3262,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="103" column="43" selection-start-line="103" selection-start-column="43" selection-end-line="103" selection-end-column="43" />
-          <folding>
-            <element signature="e#1977#2008#0" expanded="true" />
-            <element signature="e#2010#2042#0" expanded="true" />
-            <element signature="e#3068#3801#0" expanded="true" />
-            <element signature="e#3145#3775#0" expanded="true" />
-            <element signature="e#3774#3775#0" expanded="true" />
-            <element signature="e#3800#3801#0" expanded="true" />
-            <element signature="e#6150#6179#0" expanded="true" />
-            <element signature="e#8055#8082#0" expanded="true" />
-            <element signature="e#8303#8331#0" expanded="true" />
-            <element signature="e#8679#8704#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="67" column="4" selection-start-line="67" selection-start-column="4" selection-end-line="67" selection-end-column="4" />
-          <folding>
-            <element signature="e#1400#1421#0" expanded="true" />
-            <element signature="e#1451#1474#0" expanded="true" />
-            <element signature="e#1533#1742#0" expanded="true" />
-            <element signature="e#1741#1742#0" expanded="true" />
-            <element signature="e#2368#2400#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="174" column="13" lean-forward="true" selection-start-line="174" selection-start-column="13" selection-end-line="174" selection-end-column="13" />
+        <state relative-caret-position="1855">
+          <caret line="164" column="21" selection-start-line="164" selection-start-column="21" selection-end-line="164" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1301#1302#0" expanded="true" />
@@ -3281,6 +3280,39 @@
             <element signature="e#5684#5685#0" expanded="true" />
             <element signature="e#6433#6434#0" expanded="true" />
             <element signature="e#6475#6476#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
+          <folding>
+            <element signature="e#1400#1421#0" expanded="true" />
+            <element signature="e#1451#1474#0" expanded="true" />
+            <element signature="e#1533#1742#0" expanded="true" />
+            <element signature="e#1741#1742#0" expanded="true" />
+            <element signature="e#2368#2400#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="192" column="81" selection-start-line="192" selection-start-column="81" selection-end-line="192" selection-end-column="81" />
+          <folding>
+            <element signature="e#1977#2008#0" expanded="true" />
+            <element signature="e#2010#2042#0" expanded="true" />
+            <element signature="e#3068#3801#0" expanded="true" />
+            <element signature="e#3145#3775#0" expanded="true" />
+            <element signature="e#3774#3775#0" expanded="true" />
+            <element signature="e#3800#3801#0" expanded="true" />
+            <element signature="e#6150#6179#0" expanded="true" />
+            <element signature="e#8055#8082#0" expanded="true" />
+            <element signature="e#8303#8331#0" expanded="true" />
+            <element signature="e#8679#8704#0" expanded="true" />
           </folding>
         </state>
       </provider>
