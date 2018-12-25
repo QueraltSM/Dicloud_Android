@@ -35,6 +35,12 @@ public class User {
         return myDb.getCurrentUserMenuItems(uid);
     }
 
+    /**
+     * @param context
+     * @param uid
+     * @param menu
+     * @return TreeMap<submenu name, submane url as string>
+     */
     public static TreeMap<String, String> getSubmenuItems(Context context, String uid, String menu) {
         DbHelper myDb = new DbHelper(context);
         return myDb.getCurrentUserSubmenuItems(uid, menu);

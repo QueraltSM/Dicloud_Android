@@ -43,6 +43,7 @@
     <string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>
     <string name="URL_INDEX">http://10.0.2.2/index.asp</string>
     <string name="URL_SYNC_MENU">http://10.0.2.2/app/getMenu.asp</string>
+    <string name="URL_ROOT">http://10.0.2.2/</string>
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->

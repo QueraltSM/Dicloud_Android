@@ -3,23 +3,19 @@ package es.disoft.disoft.user;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.SubMenu;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.MainActivity;
@@ -31,12 +27,12 @@ public class Menu {
     private MainActivity mainActivity;
     private Context context;
     private String mUID;
-    private Map<String, TreeMap<String, String>> menu;
+    private Map<String, Map<String, String>> menu;
 
-    ExpandableListView            expandableListView;
-    ExpandableListAdapter         expandableListAdapter;
-    List<MenuModel>                  headerList;
-    HashMap<MenuModel, List<MenuModel>> childList;
+    ExpandableListView                  expandableListView;
+    ExpandableListAdapter               expandableListAdapter;
+    List<MenuModel>                     headerList;
+    Map<MenuModel, List<MenuModel>>     childList;
     WebView webView;
 
     public Menu(MainActivity mainActivity, String mUID, ExpandableListView expandableListView) {
@@ -44,8 +40,8 @@ public class Menu {
         this.mUID               = mUID;
         this.context            = mainActivity;
         this.expandableListView = expandableListView;
-        this.webView = mainActivity.findViewById(R.id.webView);
-        this.mainActivity = mainActivity;
+        this.webView            = mainActivity.findViewById(R.id.webView);
+        this.mainActivity       = mainActivity;
     }
 
     public void loadMenu() {
@@ -62,52 +58,44 @@ public class Menu {
         setMenu();
     }
 
+        String TAG = "MENU_";
     private void setMenu() {
-        childList = new HashMap<>();
         headerList = new ArrayList<>();
+        childList  = new LinkedHashMap<>();
 
-        MenuModel menuModel = new MenuModel("Android WebView Tutorial", true, false, "https://www.journaldev.com/9333/android-webview-example-tutorial"); //Menu of Android Tutorial. No sub menus
+        MenuModel menuModel;
+        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
         headerList.add(menuModel);
+        childList.put(menuModel, null);
 
-        if (!menuModel.hasChildren) {
-            childList.put(menuModel, null);
+        for (Map.Entry<String, Map<String, String>> headerEntry : menu.entrySet()) {
+            String menuHeader                    = headerEntry.getKey();
+
+            if (menuHeader.equals("Desconectar")) {
+                menuModel = new MenuModel("Ajustes", true, false, "", R.drawable.ic_menu_manage);
+                headerList.add(menuModel);
+                childList.put(menuModel, null);
+                String urlLogoutString = context.getString(R.string.URL_ROOT) + headerEntry.getValue().get("Desconectar");
+                menuModel = new MenuModel(menuHeader, true, false, urlLogoutString, R.drawable.ic_power_settings);
+            } else {
+                menuModel = new MenuModel(menuHeader, true, true, "", null);
+            }
+            headerList.add(menuModel);
+
+            if (menuModel.hasChildren) {
+                List<MenuModel> childModelsList = new ArrayList<>();
+                MenuModel childModel;
+                for (Map.Entry<String, String> childEntry : headerEntry.getValue().entrySet()) {
+                    String menuChild = childEntry.getKey();
+                    String menulink  = childEntry.getValue();
+                    childModel       = new MenuModel(menuChild, false, false, context.getString(R.string.URL_ROOT) + menulink, null);
+                    childModelsList.add(childModel);
+                }
+                childList.put(menuModel, childModelsList);
+            } else {
+                childList.put(menuModel, null);
+            }
         }
-
-        menuModel = new MenuModel("Java Tutorials", true, true, ""); //Menu of Java Tutorials
-        headerList.add(menuModel);
-        List<MenuModel> childModelsList = new ArrayList<>();
-        MenuModel childModel = new MenuModel("Core Java Tutorial", false, false, "https://www.journaldev.com/7153/core-java-tutorial");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Java FileInputStream", false, false, "https://www.journaldev.com/19187/java-fileinputstream");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Java FileReader", false, false, "https://www.journaldev.com/19115/java-filereader");
-        childModelsList.add(childModel);
-
-
-        if (menuModel.hasChildren) {
-            Log.d("API123","here");
-            childList.put(menuModel, childModelsList);
-        }
-
-        childModelsList = new ArrayList<>();
-        menuModel = new MenuModel("Python Tutorials", true, true, ""); //Menu of Python Tutorials
-        headerList.add(menuModel);
-        childModel = new MenuModel("Python AST – Abstract Syntax Tree", false, false, "https://www.journaldev.com/19243/python-ast-abstract-syntax-tree");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Python Fractions", false, false, "https://www.journaldev.com/19226/python-fractions");
-        childModelsList.add(childModel);
-
-        if (menuModel.hasChildren) {
-            childList.put(menuModel, childModelsList);
-        }
-
-
-
-
-
 
 
         expandableListAdapter = new CustomExpandableListAdapter(context, headerList, childList);
@@ -128,11 +116,13 @@ public class Menu {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 
-                if (headerList.get(groupPosition).isGroup) {
-                    if (!headerList.get(groupPosition).hasChildren) {
+                if (headerList.get(groupPosition).isGroup && !headerList.get(groupPosition).hasChildren) {
+                    if (headerList.get(groupPosition).menuName.equals("Ajustes")) {
+                        Log.i(TAG, "onGroupClick: AJUSTES");
+                    } else {
                         webView.loadUrl(headerList.get(groupPosition).url);
-                        mainActivity.onBackPressed();
                     }
+                    mainActivity.onBackPressed();
                 }
 
                 return false;

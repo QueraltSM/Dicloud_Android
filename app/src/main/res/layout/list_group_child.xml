@@ -10,5 +10,5 @@
         android:id="@+id/lblListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
+        android:paddingStart="@dimen/expandableListPreferredChildPaddingLeft" />
 </LinearLayout>

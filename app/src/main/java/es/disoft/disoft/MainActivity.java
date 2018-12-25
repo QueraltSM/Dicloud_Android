@@ -39,8 +39,7 @@ import es.disoft.disoft.user.LoginActivity;
 import es.disoft.disoft.user.Menu;
 import es.disoft.disoft.user.User;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private String mDbAlias, mToken, mFullName, mUID;
     private DbHelper myDb;
@@ -64,11 +63,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         activity = this;
-
 
         try {
             getUserData();
@@ -145,28 +140,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.nav_manage:
-                break;
-            case R.id.nav_home:
-                String home = getString(R.string.URL_INDEX);
-                ((WebView) findViewById(R.id.webView)).loadUrl(home);
-                break;
-            default:
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
 
