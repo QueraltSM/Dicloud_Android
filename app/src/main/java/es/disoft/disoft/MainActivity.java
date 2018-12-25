@@ -3,19 +3,14 @@ package es.disoft.disoft;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -32,18 +27,14 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import es.disoft.disoft.db.DbHelper;
 import es.disoft.disoft.service.ChatService;
 import es.disoft.disoft.service.StartService;
-import es.disoft.disoft.user.LoginActivity;
 import es.disoft.disoft.user.Menu;
 import es.disoft.disoft.user.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private String mDbAlias, mToken, mFullName, mUID;
-    private DbHelper myDb;
-    private WebView mWebView;
 
     private Activity activity;
 
@@ -51,10 +42,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        myDb = new DbHelper(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        mWebView = findViewById(R.id.webView);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -67,28 +56,32 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             getUserData();
-            mTest();
-            runAlarmManager();
+            setMenu();
             setTextActionBar();
             setPage();
+            runAlarmManager();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
-    private void mTest() {
+
+    private void setMenu() {
         ExpandableListView a = findViewById(R.id.expandableListView);
         Menu myMenu = new Menu(this, mUID, a);
         myMenu.loadMenu();
     }
 
+
     private void runAlarmManager() {
         StartService.setAlarmManager(this, ChatService.class);
     }
 
+
     private void setTextActionBar() {
         setTextActionBar(null, null);
     }
+
 
     private void setTextActionBar(String dbAlias, String fullName) {
 
@@ -116,21 +109,6 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        WebView mWebView;
-        mWebView = findViewById(R.id.webView);
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_BACK:
-                    if (mWebView.canGoBack()) mWebView.goBack();
-                    else finish();
-                    return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -138,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            WebView mWebView = findViewById(R.id.webView);
+            if (mWebView.canGoBack()) mWebView.goBack();
+            else finish();
         }
     }
 
@@ -213,53 +193,36 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
             }
 
-            // Logout confirmation
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
 
                 Log.i("url_", "shouldOverrideUrlLoading: " + url);
                 if (url.endsWith("/disconect")) {
-                    new AlertDialog.Builder(activity)
-                            .setTitle(R.string.logout_title)
-                            .setMessage(R.string.logout_message)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    logout(myWebView, url);
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, null).show();
+                    User.logoutWithConfirmation(activity);
                     return true;
                 } else if (url.endsWith("/pass_changed")) {
                     Toast.makeText(getApplicationContext(), R.string.error_pass_changed, Toast.LENGTH_LONG).show();
-                    logout();
+                    User.logout(activity);
                     return true;
                 } else if (url.endsWith("/disabled")) {
                     Toast.makeText(getApplicationContext(), R.string.error_user_disabled, Toast.LENGTH_LONG).show();
-                    logout();
+                    User.logout(activity);
                     return true;
-//                } else if (url.contains("hibernar.asp")) {
-//                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
-//                    logout();
-//                    return true;
-//                } else if (url.contains("agententer.asp")) {
-//                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
-//                    logout();
-//                    return true;
-            }
+                } else if (url.contains("hibernar.asp")) {
+                    return true;
+                } else if (url.contains("agententer.asp")) {
+                    // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
+                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
+                    try {
+                        String postData = "token=" + URLEncoder.encode(mToken,"UTF-8");
+                        myWebView.postUrl(url, postData.getBytes());
+                    } catch (UnsupportedEncodingException e) {
+                        User.logout(activity);
+                    }
+                    return true;
+                }
                 return false;
             }
         });
-    }
-
-    private void logout() {
-        User.logout(this);
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }
-
-
-    private void logout(WebView myWebView, String url) {
-        myWebView.loadUrl(url);
-        logout();
     }
 }
