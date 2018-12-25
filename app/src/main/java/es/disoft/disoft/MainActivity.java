@@ -22,6 +22,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,7 +82,9 @@ public class MainActivity extends AppCompatActivity
     private void mTest() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         android.view.Menu nv_menu = navigationView.getMenu();
-        Menu myMenu = new Menu(this, mUID, nv_menu);
+//        Menu myMenu = new Menu(this, mUID, nv_menu);
+        ExpandableListView a = findViewById(R.id.expandableListView);
+        Menu myMenu = new Menu(this, mUID, a);
         myMenu.loadMenu();
     }
 
