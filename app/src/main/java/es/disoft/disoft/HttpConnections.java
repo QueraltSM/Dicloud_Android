@@ -65,7 +65,8 @@ public class HttpConnections {
         return jsonObject;
     }
 
-    public static String getUserMenu(Context context, URL url) throws IOException {
+
+    public static String getData(Context context, URL url) {
 
         ContentValues values = User.getData(context);
         String uid           = values.getAsString("user_id");

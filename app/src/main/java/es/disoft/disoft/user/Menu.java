@@ -148,7 +148,7 @@ public class Menu {
     }
 
     private String jsonRequest(URL url) throws IOException {
-        return HttpConnections.getUserMenu(activity, url);
+        return HttpConnections.getData(activity, url);
     }
 
     private void jsonResponse(String menuAsJsonString) throws JSONException {

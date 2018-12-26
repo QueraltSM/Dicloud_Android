@@ -13,7 +13,6 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="run:|url_" />
     <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
@@ -23,9 +22,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54bed8dc-9c70-4ffb-a8d0-ddc3d3184497" name="Default" comment="">
+    <list default="true" id="54bed8dc-9c70-4ffb-a8d0-ddc3d3184497" name="Default" comment="Los mensajes funcionan,">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/Messages.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/Messages.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -64,7 +66,7 @@
     <favorites_list name="Disoft" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.521855">
+    <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="LoginActivity.java" pinned="false" current-in-tab="false">
@@ -79,29 +81,60 @@
           <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="537">
-                  <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
+                <state relative-caret-position="765">
+                  <caret line="45" column="35" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="35" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="396">
-                  <caret line="192" column="81" selection-start-line="192" selection-start-column="81" selection-end-line="192" selection-end-column="81" />
+                <state relative-caret-position="210">
+                  <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ChatService.java" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="377">
+                  <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
                   <folding>
-                    <element signature="e#1977#2008#0" expanded="true" />
-                    <element signature="e#2010#2042#0" expanded="true" />
-                    <element signature="e#3068#3801#0" expanded="true" />
-                    <element signature="e#3145#3775#0" expanded="true" />
-                    <element signature="e#3774#3775#0" expanded="true" />
-                    <element signature="e#3800#3801#0" expanded="true" />
-                    <element signature="e#6150#6179#0" expanded="true" />
-                    <element signature="e#8055#8082#0" expanded="true" />
-                    <element signature="e#8303#8331#0" expanded="true" />
-                    <element signature="e#8679#8704#0" expanded="true" />
+                    <element signature="e#893#2113#0" expanded="true" />
+                    <element signature="e#2112#2113#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="375">
+                  <caret line="32" column="120" selection-start-line="32" selection-start-column="120" selection-end-line="32" selection-end-column="120" />
+                </state>
+              </provider>
+              <provider editor-type-id="android-manifest">
+                <state />
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="StartService.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartService.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="68">
+                  <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="StartServiceAtBootReceiver.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartServiceAtBootReceiver.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="153">
+                  <caret line="13" column="76" selection-start-line="13" selection-start-column="76" selection-end-line="13" selection-end-column="76" />
                 </state>
               </provider>
             </entry>
@@ -110,27 +143,20 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="DbHelper.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="DbHelper.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="184">
-                  <caret line="133" column="16" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="16" />
+                <state relative-caret-position="312">
+                  <caret line="321" column="11" selection-start-line="321" selection-start-column="11" selection-end-line="321" selection-end-column="11" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="User.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="User.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="379">
-                  <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
-                  <folding>
-                    <element signature="e#1400#1421#0" expanded="true" />
-                    <element signature="e#1451#1474#0" expanded="true" />
-                    <element signature="e#1533#1742#0" expanded="true" />
-                    <element signature="e#1741#1742#0" expanded="true" />
-                    <element signature="e#2368#2400#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="97">
+                  <caret line="64" column="39" selection-start-line="64" selection-start-column="39" selection-end-line="64" selection-end-column="39" />
                 </state>
               </provider>
             </entry>
@@ -138,32 +164,8 @@
           <file leaf-file-name="Menu.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1855">
-                  <caret line="164" column="21" selection-start-line="164" selection-start-column="21" selection-end-line="164" selection-end-column="21" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                    <element signature="e#1301#1302#0" expanded="true" />
-                    <element signature="e#1334#1376#0" expanded="true" />
-                    <element signature="e#1383#1384#0" expanded="true" />
-                    <element signature="e#1869#1906#0" expanded="true" />
-                    <element signature="e#2451#2488#0" expanded="true" />
-                    <element signature="e#3246#3283#0" expanded="true" />
-                    <element signature="e#4181#5010#0" expanded="true" />
-                    <element signature="e#5009#5010#0" expanded="true" />
-                    <element signature="e#5065#5685#0" expanded="true" />
-                    <element signature="e#5684#5685#0" expanded="true" />
-                    <element signature="e#6433#6434#0" expanded="true" />
-                    <element signature="e#6475#6476#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="CustomExpandableListAdapter.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/CustomExpandableListAdapter.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="243">
-                  <caret line="26" column="11" selection-start-line="26" selection-start-column="11" selection-end-line="26" selection-end-column="11" />
+                <state relative-caret-position="199">
+                  <caret line="34" column="13" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -171,20 +173,23 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="colors.xml" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+          <file leaf-file-name="Messages.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/Messages.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="153">
-                  <caret line="9" column="26" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+                <state relative-caret-position="443">
+                  <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MenuModel.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/MenuModel.java">
+          <file leaf-file-name="HttpConnections.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="102">
-                  <caret line="6" column="18" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
+                <state relative-caret-position="132">
+                  <caret line="37" selection-start-line="37" selection-end-line="37" />
                 </state>
               </provider>
             </entry>
@@ -198,30 +203,17 @@
       <list>
         <option value="Interface" />
         <option value="layoutResourceFile" />
-        <option value="Class" />
         <option value="resourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>nav_</find>
-      <find>nav_na</find>
-      <find>nav_name</find>
-      <find>fullName</find>
-      <find>name     = c.getString(c.getColumnIndex(&quot;name&quot;));</find>
-      <find>SET</find>
-      <find>DbHelper</find>
-      <find>User.</find>
-      <find>User</find>
-      <find>preloadData</find>
-      <find>update</find>
-      <find>set</find>
       <find>.update</find>
       <find>onpost</find>
       <find>onPos</find>
       <find>doIn</find>
-      <find>SELECT</find>
       <find>getStri</find>
       <find>json</find>
       <find>findViewById</find>
@@ -235,7 +227,23 @@
       <find>myDb</find>
       <find>o</find>
       <find>onback</find>
+      <find>log</find>
+      <find>execute:</find>
+      <find>\&quot;</find>
+      <find>\n</find>
+      <find>\t</find>
+      <find>delete</find>
+      <find>messagesAsJsonString</find>
+      <find>loggedIn</find>
+      <find>update</find>
+      <find>user_id</find>
+      <find>SELECT user_id</find>
+      <find>_id=?&quot;, new Strin</find>
+      <find>SELECT</find>
     </findStrings>
+    <replaceStrings>
+      <replace>&quot;</replace>
+    </replaceStrings>
     <dirStrings>
       <dir>D:\Users\Dani\Desktop\Disoft\Disoft_app\Disoft\app</dir>
     </dirStrings>
@@ -2507,7 +2515,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_launcher.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/anim/activity_close_exit.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/anim/activity_close_enter.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/anim/activity_open_exit.xml" />
@@ -2523,12 +2530,10 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/side_nav_bar.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/ServiceClass.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/DbHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/StartMyServiceAtBootReceiver.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartMyServiceAtBootReceiver.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartServiceWithAlarmManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/LoginActivity.java" />
@@ -2537,15 +2542,12 @@
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/LauncherActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_group.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/a.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/ExpandableListAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/ExpandableListDataPump.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_group_header.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/MenuModel.java" />
@@ -2555,8 +2557,14 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_group_child.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java" />
+        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/Messages.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java" />
       </list>
     </option>
@@ -2572,84 +2580,7 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Disoft" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Disoft" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Disoft" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="disoft" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="disoft" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="user" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="drawable" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="menu" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-            <path>
-              <item name="Disoft" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="ChangesTree.GroupingKeys" value="" />
@@ -2781,6 +2712,9 @@
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
     </configuration>
   </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -2799,7 +2733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1545761994271</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Parche para quitar el hamburuguer button de la web">
+      <created>1545764121388</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1545764121388</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView">
@@ -2816,37 +2757,37 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="Android Profiler" order="12" weight="0.6702938" />
-      <window_info id="Build Variants" order="4" sideWeight="0.50212765" side_tool="true" weight="0.16343042" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5021322" side_tool="true" weight="0.32317737" />
-      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.4978678" weight="0.18498367" />
-      <window_info id="Capture Tool" order="6" />
-      <window_info id="Designer" order="2" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49838188" weight="0.55168664" />
-      <window_info id="Structure" order="1" sideWeight="0.5008183" side_tool="true" weight="0.14712153" />
-      <window_info anchor="right" id="Device File Explorer" order="4" sideWeight="0.50135136" side_tool="true" weight="0.1977612" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.56583244" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49838188" weight="0.2687704" />
-      <window_info anchor="bottom" id="Messages" weight="0.3677911" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info id="Image Layers" order="7" />
+      <window_info id="Build Variants" order="4" sideWeight="0.50212765" side_tool="true" weight="0.16343042" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
-      <window_info anchor="right" id="Preview" order="6" weight="0.32928804" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49919093" weight="0.16213275" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.13928182" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5021322" side_tool="true" weight="0.32317737" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49919093" weight="0.38193688" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.31447226" />
       <window_info anchor="bottom" x="20" y="422" width="1876" height="268" id="Terminal" order="11" sideWeight="0.4978678" weight="0.34167573" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="10" sideWeight="0.4978678" visible="true" weight="0.15451577" />
       <window_info id="Captures" order="3" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49787235" weight="0.21748401" />
+      <window_info id="Capture Tool" order="6" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49787235" weight="0.19936034" />
+      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.49838188" weight="0.3373232" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.24156693" />
       <window_info anchor="right" id="Gradle" order="5" sideWeight="0.4993234" weight="0.1977612" />
+      <window_info id="Structure" order="1" sideWeight="0.5008183" side_tool="true" weight="0.2707889" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.56583244" />
+      <window_info anchor="right" id="Device File Explorer" order="4" sideWeight="0.50135136" side_tool="true" weight="0.23880596" />
       <window_info anchor="right" id="Theme Preview" order="7" />
       <window_info id="Favorites" order="5" sideWeight="0.50224215" side_tool="true" weight="0.081023455" />
       <window_info anchor="right" id="Assistant" order="9" sideWeight="0.49791232" weight="0.32995737" />
       <window_info anchor="right" id="StringPreview" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Preview" order="6" weight="0.32928804" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Messages" order="13" weight="0.3677911" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
@@ -2891,7 +2832,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Back button ahora cierra la nav si está abierta" />
-    <option name="LAST_COMMIT_MESSAGE" value="Back button ahora cierra la nav si está abierta" />
+    <MESSAGE value="Parche para quitar el hamburuguer button de la web" />
+    <option name="LAST_COMMIT_MESSAGE" value="Parche para quitar el hamburuguer button de la web" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2902,38 +2844,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-23/android/app/Instrumentation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="1104" column="72" selection-start-line="1104" selection-start-column="72" selection-end-line="1104" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-23/android/app/ActivityThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37894">
-          <caret line="2480" selection-start-line="2480" selection-end-line="2480" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/content/Intent.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="292">
           <caret line="6080" column="54" selection-start-line="6080" selection-start-column="42" selection-end-line="6080" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="52">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartServiceAtBootReceiver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="76" selection-start-line="13" selection-start-column="76" selection-end-line="13" selection-end-column="76" />
         </state>
       </provider>
     </entry>
@@ -2962,16 +2876,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="146">
           <caret line="777" column="13" selection-start-line="777" selection-start-column="13" selection-end-line="777" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-32">
-          <caret line="6" column="33" selection-start-line="6" selection-end-line="7" />
         </state>
       </provider>
     </entry>
@@ -3060,48 +2964,41 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="272">
           <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
       <provider selected="true" editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_main.xml">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="819">
-          <caret line="74" selection-start-line="74" selection-end-line="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/main.xml">
       <provider selected="true" editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/main.xml">
       <provider editor-type-id="text-editor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2">
         <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_main.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="527">
           <caret line="31" column="38" selection-start-line="31" selection-start-column="25" selection-end-line="31" selection-end-column="38" />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="android-dummy://D:/Users/Dani/Desktop/Disoft/Disoft_app/Disoft/app/Translations Editor">
@@ -3110,20 +3007,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" selection-start-line="5" selection-end-line="5" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="537">
-          <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
-        </state>
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/plugins/android/lib/layoutlib/data/res/drawable-ldpi/btn_star_big_on.png">
@@ -3131,14 +3021,7 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_menu_logout.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_menu_logout.xml" />
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/content/Context.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
@@ -3172,23 +3055,23 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/list_group_header.xml">
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="21" column="53" selection-start-line="21" selection-start-column="53" selection-end-line="21" selection-end-column="53" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/list_group_child.xml">
-      <provider editor-type-id="android-designer2">
+      <provider selected="true" editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/list_group_child.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="12" column="30" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
@@ -3199,9 +3082,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="436">
           <caret line="33" column="29" selection-start-line="33" selection-start-column="29" selection-end-line="33" selection-end-column="29" />
@@ -3209,6 +3089,9 @@
             <element signature="e#1140#1166#0" expanded="true" />
           </folding>
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/app/Activity.java">
@@ -3224,10 +3107,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/MenuModel.java">
+    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/java/util/Map.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="18" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
+        <state relative-caret-position="200">
+          <caret line="239" column="6" selection-start-line="239" selection-start-column="6" selection-end-line="239" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartServiceAtBootReceiver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="13" column="76" selection-start-line="13" selection-start-column="76" selection-end-line="13" selection-end-column="76" />
         </state>
       </provider>
     </entry>
@@ -3241,6 +3131,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/MenuModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="18" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="45" column="35" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="64" column="39" selection-start-line="64" selection-start-column="39" selection-end-line="64" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/content/ContentValues.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="37" selection-start-line="37" selection-end-line="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/StartService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -3248,71 +3173,57 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="133" column="16" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/java/util/Map.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="239" column="6" selection-start-line="239" selection-start-column="6" selection-end-line="239" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Menu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1855">
-          <caret line="164" column="21" selection-start-line="164" selection-start-column="21" selection-end-line="164" selection-end-column="21" />
+        <state relative-caret-position="199">
+          <caret line="34" column="13" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1301#1302#0" expanded="true" />
-            <element signature="e#1334#1376#0" expanded="true" />
-            <element signature="e#1383#1384#0" expanded="true" />
-            <element signature="e#1869#1906#0" expanded="true" />
-            <element signature="e#2451#2488#0" expanded="true" />
-            <element signature="e#3246#3283#0" expanded="true" />
-            <element signature="e#4181#5010#0" expanded="true" />
-            <element signature="e#5009#5010#0" expanded="true" />
-            <element signature="e#5065#5685#0" expanded="true" />
-            <element signature="e#5684#5685#0" expanded="true" />
-            <element signature="e#6433#6434#0" expanded="true" />
-            <element signature="e#6475#6476#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/User.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/Messages.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
+        <state relative-caret-position="443">
+          <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
           <folding>
-            <element signature="e#1400#1421#0" expanded="true" />
-            <element signature="e#1451#1474#0" expanded="true" />
-            <element signature="e#1533#1742#0" expanded="true" />
-            <element signature="e#1741#1742#0" expanded="true" />
-            <element signature="e#2368#2400#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DbHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="321" column="11" selection-start-line="321" selection-start-column="11" selection-end-line="321" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="192" column="81" selection-start-line="192" selection-start-column="81" selection-end-line="192" selection-end-column="81" />
+        <state relative-caret-position="210">
+          <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="32" column="120" selection-start-line="32" selection-start-column="120" selection-end-line="32" selection-end-column="120" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/service/ChatService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
           <folding>
-            <element signature="e#1977#2008#0" expanded="true" />
-            <element signature="e#2010#2042#0" expanded="true" />
-            <element signature="e#3068#3801#0" expanded="true" />
-            <element signature="e#3145#3775#0" expanded="true" />
-            <element signature="e#3774#3775#0" expanded="true" />
-            <element signature="e#3800#3801#0" expanded="true" />
-            <element signature="e#6150#6179#0" expanded="true" />
-            <element signature="e#8055#8082#0" expanded="true" />
-            <element signature="e#8303#8331#0" expanded="true" />
-            <element signature="e#8679#8704#0" expanded="true" />
+            <element signature="e#893#2113#0" expanded="true" />
+            <element signature="e#2112#2113#0" expanded="true" />
           </folding>
         </state>
       </provider>

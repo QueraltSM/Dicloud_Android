@@ -19,7 +19,7 @@ import es.disoft.disoft.db.DbHelper;
 
 public class User {
 
-    public static boolean logged(Context context) {
+    public static boolean isLogged(Context context) {
         DbHelper myDb = new DbHelper(context);
         return myDb.userIsLogged();
     }

@@ -30,7 +30,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
 
-        <service android:enabled="true" android:name="es.disoft.disoft.service.ChatService" />
+        <service android:enabled="true" android:name="es.disoft.disoft.service.ChatService" android:stopWithTask="false"/>
 
         <receiver
             android:name=".service.StartServiceAtBootReceiver"

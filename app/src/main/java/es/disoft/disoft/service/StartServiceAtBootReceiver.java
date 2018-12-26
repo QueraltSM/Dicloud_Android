@@ -11,7 +11,7 @@ public class StartServiceAtBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && User.logged(context)) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && User.isLogged(context)) {
             StartService.setAlarmManager(context, ChatService.class);
         }
     }

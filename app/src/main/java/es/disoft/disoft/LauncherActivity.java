@@ -20,7 +20,7 @@ public class LauncherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launcher);
 
         Intent activityIntent;
-        activityIntent = User.logged(this) ?
+        activityIntent = User.isLogged(this) ?
                 new Intent(this, MainActivity.class) :
                 new Intent(this, LoginActivity.class);
 

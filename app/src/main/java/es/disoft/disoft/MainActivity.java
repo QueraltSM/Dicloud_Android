@@ -3,6 +3,7 @@ package es.disoft.disoft;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        //TODO eliminar esta linea cuando se pongan los mensajes en segundo plano
+        startService(new Intent(this, ChatService.class));
     }
 
 
