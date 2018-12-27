@@ -66,12 +66,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {      // la primera vez, cuando no existe ese ficherodb
-        db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + MENUS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + MENUS_TABLE);
+        dropTables(db, USERS_TABLE, MENUS_TABLE, MESSAGES_TABLE);
         db.execSQL(SQL_CREATE_USERS_TABLE);
         db.execSQL(SQL_CREATE_MENUS_TABLE);
         db.execSQL(SQL_CREATE_MESSAGES_TABLE);
+    }
+
+
+    private void dropTables(SQLiteDatabase db, String... tables) {
+        for (String table : tables) db.execSQL("DROP TABLE IF EXISTS " + table);
     }
 
 
@@ -133,15 +136,19 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public ContentValues getCurrentUserData() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE loggedIn=?", new String[]{"1"});
+        String sql = "" +
+                "SELECT user_id,          " +
+                       "dbAlias,          " +
+                       "fullName,         " +
+                       "token             " +
+                "FROM " + USERS_TABLE + " " +
+                "WHERE loggedIn = ?       ";
+        Cursor c = db.rawQuery(sql, new String[]{"1"});
 
         ContentValues values = new ContentValues();
-        if (c.moveToFirst()) {
-            values.put("user_id",  c.getString(c.getColumnIndex("user_id")));
-            values.put("dbAlias",  c.getString(c.getColumnIndex("dbAlias")));
-            values.put("fullName", c.getString(c.getColumnIndex("fullName")));
-            values.put("token",    c.getString(c.getColumnIndex("token")));
-        }
+        if (c.moveToFirst())
+            for (int i = 0; i < c.getColumnCount(); i++)
+                values.put(c.getColumnName(i), c.getString(i));
         db.close();
 
         return values;
@@ -265,30 +272,30 @@ public class DbHelper extends SQLiteOpenHelper {
         boolean updated = false;
 
         String sql_select_diff_messages =
-                "SELECT * FROM"                                                                                                                         +
-                        "("                                                                                                                             +
+                "SELECT * FROM"                                                                                                                     +
+                        "("                                                                                                                         +
                         "SELECT " + MESSAGES_TABLE + ".*, "                                                                                         +
-                        "       'equal' status "                                                                                                   +
+                        "       'equal' status "                                                                                                    +
                         "FROM   " + MESSAGES_TABLE + " "                                                                                            +
                         "       INNER JOIN " + tempTableName + " "                                                                                  +
                         "               ON " + MESSAGES_TABLE + ".id = " + tempTableName + ".id "                                                   +
                         "               AND " + MESSAGES_TABLE + ".last_message_timestamp = " + tempTableName + ".last_message_timestamp "          +
                         "UNION "                                                                                                                    +
                         "SELECT " + MESSAGES_TABLE + ".*, "                                                                                         +
-                        "       'deleted' status "                                                                                                 +
+                        "       'deleted' status "                                                                                                  +
                         "FROM   " + MESSAGES_TABLE + " "                                                                                            +
                         "WHERE  NOT EXISTS (SELECT * "                                                                                              +
                         "                   FROM   " + tempTableName + " "                                                                          +
                         "                   WHERE  " + MESSAGES_TABLE + ".id = " + tempTableName + ".id) "                                          +
                         "UNION "                                                                                                                    +
                         "SELECT " + tempTableName + ".*, "                                                                                          +
-                        "       'updated' status "                                                                                                 +
+                        "       'updated' status "                                                                                                  +
                         "FROM   " + tempTableName + " "                                                                                             +
                         "WHERE  NOT EXISTS (SELECT * "                                                                                              +
                         "                   FROM   " + MESSAGES_TABLE + " "                                                                         +
                         "                   WHERE  " + MESSAGES_TABLE + ".id = " + tempTableName + ".id "                                           +
                         "                   AND    " + MESSAGES_TABLE + ".last_message_timestamp = " + tempTableName + ".last_message_timestamp) "  +
-                        ") "                                                                                                                            +
+                        ") "                                                                                                                        +
                         "WHERE user_to_id = ?;";
 
         Cursor c = db.rawQuery(sql_select_diff_messages, new String[]{uid});

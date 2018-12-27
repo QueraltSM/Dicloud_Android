@@ -6,10 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import es.disoft.disoft.notification.NotificationUtils;
 import es.disoft.disoft.user.User;
 
 public class ChatService extends IntentService {
@@ -44,9 +50,21 @@ public class ChatService extends IntentService {
 
                 Context context = getApplicationContext();
 
+                        NotificationUtils mNotififacionUtils = new NotificationUtils(context);
+
                 if (User.isLogged(context)) {
                     Boolean updated = Messages.update(context);
                     if (updated) {
+
+
+//                        int randomNum = ThreadLocalRandom.current().nextInt(0, 100);
+//
+//                        NotificationCompat.Builder nb = mNotififacionUtils.getAndroidChannelNotification("Titulo", "Texto");
+//                        NotificationManagerCompat.from(context).notify(randomNum, nb.build());
+
+//                        mNotififacionUtils.createNotification("Titulo", "Texto");
+//                        mNotififacionUtils.show();
+
                         Map<?,?> messages = Messages.get(context);
                         Log.i("mensajes", "run: " + messages.toString());
                     }
@@ -55,6 +73,12 @@ public class ChatService extends IntentService {
 
                 for (int i = 0; i < 55; i++) {
                     try {
+                        mNotififacionUtils.createNotification("Titulo", "Texto");
+                        if (i == 3) mNotififacionUtils.show();
+                        if (i == 6) mNotififacionUtils.show();
+                        if (i == 9) mNotififacionUtils.show();
+                        if (i == 12) mNotififacionUtils.show();
+                        if (i == 16) mNotififacionUtils.show();
                         String TAG = "servicio_";
                         Thread.sleep(1000);
                         Log.i(TAG, "run: " + i);

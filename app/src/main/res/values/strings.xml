@@ -31,13 +31,13 @@
     <!--<string name="URL_INDEX">http://app.disoft.es/index.asp</string>-->
 
     <!-- *** TODO PRUEBAS *** -->
-    <!-- URL's ADRI -->
-    <!--<string name="URL_LOGIN">https:/172.26.0.23/login.asp</string>-->
-    <!--<string name="URL_INDEX">https:/172.26.0.23/index.asp</string>-->
 
     <!-- URL's SERVER ADMIN.LOCAL -->
     <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
     <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
+    <!--<string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>-->
+    <!--<string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>-->
+    <!--<string name="URL_ROOT">http://admin.local/</string>-->
 
     <!-- URL's LOCALHOST -->
     <string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>
@@ -60,5 +60,15 @@
     <string name="action_settings">Settings</string>
     <string name="menu_manage">Ajustes</string>
     <string name="menu_home">Página principal</string>
+
+    <!--Notifications-->
+    <string name="channel_name">es.disoft.disoft</string>
+    <string name="channel_ID">es.disoft.disoft</string>
+
+    <!--Singular-->
+    <string name="new_message">mensaje nuevo</string>
+
+    <!--Plural-->
+    <string name="new_messages">mensajes nuevos</string>
 
 </resources>
