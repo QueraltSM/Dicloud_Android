@@ -62,13 +62,18 @@
     <string name="menu_home">Página principal</string>
 
     <!--Notifications-->
-    <string name="channel_name">es.disoft.disoft</string>
+    <string name="channel_name">Nuevos mensajes</string>
     <string name="channel_ID">es.disoft.disoft</string>
 
     <!--Singular-->
     <string name="new_message">mensaje nuevo</string>
+    <string name="new_chat">chat nuevo</string>
 
     <!--Plural-->
     <string name="new_messages">mensajes nuevos</string>
+    <string name="new_chats">chats nuevos</string>
+
+
+    <string name="iconDescription">Icono</string>
 
 </resources>

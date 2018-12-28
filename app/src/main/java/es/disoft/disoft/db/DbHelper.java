@@ -57,6 +57,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     "messages_count INTEGER" +
                     ")";
     private static final String TAG = "MENU";
+    private ArrayList<ContentValues> messagesUpdated;
 
 
     public DbHelper(Context context) {
@@ -149,6 +150,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (c.moveToFirst())
             for (int i = 0; i < c.getColumnCount(); i++)
                 values.put(c.getColumnName(i), c.getString(i));
+        c.close();
         db.close();
 
         return values;
@@ -177,6 +179,7 @@ public class DbHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             menu.add(c.getString(c.getColumnIndex("menu")));
         }
+        c.close();
         db.close();
         return menu;
     }
@@ -197,6 +200,7 @@ public class DbHelper extends SQLiteOpenHelper {
             String shortname = c.getString(c.getColumnIndex("shortname"));
             submenuItems.put(submenuItem, shortname);
         }
+        c.close();
         db.close();
         return submenuItems;
     }
@@ -231,7 +235,6 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         Boolean updated   = false;
 
-        if (db != null) {
             String tempTableName = "my" + MESSAGES_TABLE;
 
             if (userIsLogged()) {
@@ -239,9 +242,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 updated = updateMessagesTable(db, tempTableName, getCurrentUserID(db));
                 Log.i(TAG, "updateCurrentUserPendingMessages: TERMINÉEEEEEE!!!!");
             }
-        }
-
         db.close();
+
         return updated;
     }
 
@@ -269,7 +271,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private Boolean updateMessagesTable(SQLiteDatabase db, String tempTableName, String uid) {
 
-        boolean updated = false;
+        messagesUpdated = new ArrayList<>();
 
         String sql_select_diff_messages =
                 "SELECT * FROM"                                                                                                                     +
@@ -312,35 +314,36 @@ public class DbHelper extends SQLiteOpenHelper {
                     ContentValues values = new ContentValues();
                     for (int i = 0; i < c.getColumnCount() - 1; i++)
                         values.put(c.getColumnName(i), c.getString(i));
+                    messagesUpdated.add(values);
                     try {
                         db.insertOrThrow(MESSAGES_TABLE, null, values);
                     } catch (SQLiteConstraintException e) {
                         db.update(MESSAGES_TABLE, values, "id=?", new String[]{id});
                     }
 
-                    updated = true;
                     break;
                 default:
             }
         }
-        return updated;
+        c.close();
+        return messagesUpdated.isEmpty();
     }
 
     public Map getCurrentUserMessages() {
 
-        Cursor c = null;
         Map<String,ContentValues> messages = new LinkedHashMap<>();
 
         if (userIsLogged()) {
             String sql = "SELECT * FROM " + MESSAGES_TABLE + " WHERE user_to_id=?";
             SQLiteDatabase db = getReadableDatabase();
-            c = db.rawQuery(sql, new String[]{getCurrentUserID(db)});
+            Cursor c = db.rawQuery(sql, new String[]{getCurrentUserID(db)});
 
             while (c.moveToNext()) {
                 ContentValues values = new ContentValues();
                 for (int i = 0; i < c.getColumnCount(); i++) values.put(c.getColumnName(i), c.getString(i));
                 messages.put(c.getString(c.getColumnIndex("id")), values);
             }
+            c.close();
             db.close();
         }
         return messages;
@@ -349,6 +352,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private String getCurrentUserID(SQLiteDatabase db) {
         Cursor c = db.rawQuery("SELECT user_id FROM " + USERS_TABLE + " WHERE loggedIn=?", new String[]{"1"});
         if (c.moveToFirst()) return c.getString(c.getColumnIndex("user_id"));
+        c.close();
         return null;
     }
 }

@@ -2,6 +2,7 @@ package es.disoft.disoft.user;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -142,11 +143,13 @@ public class LoginActivity extends AppCompatActivity {
 
         // Hide keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //noinspection ConstantConditions
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
         // Check Internet connection
         try {
             if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
+                Log.wtf("CONNX", "attemptLogin: " + new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get());
                 somethingWrong(5);
                 return;
             }
@@ -165,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
         String user     = mUserView.getText().toString().trim().toUpperCase();
         String password = mPasswordView.getText().toString().trim();
 
-        boolean cancel = false;
+        boolean cancel;
         View focusView = null;
 
         // Check for a valid password
@@ -240,37 +243,26 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
 
@@ -278,6 +270,7 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    @SuppressLint("StaticFieldLeak")
     public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
 
         private final String mAlias;
@@ -294,7 +287,7 @@ public class LoginActivity extends AppCompatActivity {
          * 5: internet error
          * 9: unknown error
          */
-        protected int exitCode;
+        int exitCode;
         private boolean error = true;
         private JSONObject loginResponse = null;
 
