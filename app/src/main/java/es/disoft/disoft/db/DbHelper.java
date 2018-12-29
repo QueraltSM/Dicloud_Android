@@ -57,7 +57,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     "messages_count INTEGER" +
                     ")";
     private static final String TAG = "MENU";
-    private ArrayList<ContentValues> messagesUpdated;
+    private ArrayList<ContentValues> updatedMessages;
 
 
     public DbHelper(Context context) {
@@ -125,13 +125,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public boolean userIsLogged() {
         SQLiteDatabase db = getReadableDatabase();
-        return 1 == DatabaseUtils.queryNumEntries(db, USERS_TABLE, "loggedIn=1");
+        boolean logged = 1 == DatabaseUtils.queryNumEntries(db, USERS_TABLE, "loggedIn=1");
+        db.close();
+        return logged;
     }
 
 
     public void updateCurrentUserData(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         db.update(USERS_TABLE, values, "loggedIn=?", new String[]{"1"});
+        db.close();
     }
 
 
@@ -206,11 +209,10 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void setCurrentUserMenu(String menuAsJsonString) throws JSONException {
-        SQLiteDatabase db = getWritableDatabase();
 
-        if (db != null) {
-
-            if (userIsLogged()) db.delete(MENUS_TABLE, "user_id=?", new String[]{getCurrentUserID(db)});
+        if (userIsLogged()) {
+            SQLiteDatabase db = getWritableDatabase();
+            db.delete(MENUS_TABLE, "user_id=?", new String[]{getCurrentUserID(db)});
 
             JSONArray jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
             for (int i = 0; i < jArray.length(); i++) {
@@ -231,20 +233,19 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Boolean updateCurrentUserPendingMessages(String messagesAsJsonString) throws JSONException {
-        SQLiteDatabase db = getWritableDatabase();
-        Boolean updated   = false;
+    public ArrayList<ContentValues> updateCurrentUserPendingMessages(String messagesAsJsonString) throws JSONException {
 
             String tempTableName = "my" + MESSAGES_TABLE;
 
             if (userIsLogged()) {
+                SQLiteDatabase db = getWritableDatabase();
                 createTempMessagesTable(db, tempTableName, messagesAsJsonString);
-                updated = updateMessagesTable(db, tempTableName, getCurrentUserID(db));
+                updateMessagesTable(db, tempTableName, getCurrentUserID(db));
                 Log.i(TAG, "updateCurrentUserPendingMessages: TERMINÉEEEEEE!!!!");
+                db.close();
             }
-        db.close();
 
-        return updated;
+        return updatedMessages;
     }
 
 
@@ -252,26 +253,28 @@ public class DbHelper extends SQLiteOpenHelper {
         String tempTable = SQL_CREATE_MESSAGES_TABLE.replace("TABLE " + MESSAGES_TABLE, "TEMPORARY TABLE " + tempTableName);
         db.execSQL(tempTable);
 
-        JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
-        for (int i = 0; i < jArray.length(); i++) {
-            JSONObject json_data = jArray.getJSONObject(i);
+        if (messagesAsJsonString != null) {
+            JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject json_data = jArray.getJSONObject(i);
 
-            ContentValues values = new ContentValues();
-            values.put("id",                     json_data.getString("id"));
-            values.put("user_to_id",             json_data.getInt("to_id"));
-            values.put("user_from_id",           json_data.getInt("from_id"));
-            values.put("user_from",              json_data.getString("from"));
-            values.put("last_message_timestamp", json_data.getString("last_message_timestamp"));
-            values.put("messages_count",         json_data.getInt("messages_count"));
+                ContentValues values = new ContentValues();
+                values.put("id",                     json_data.getString("id"));
+                values.put("user_to_id",             json_data.getInt("to_id"));
+                values.put("user_from_id",           json_data.getInt("from_id"));
+                values.put("user_from",              json_data.getString("from"));
+                values.put("last_message_timestamp", json_data.getString("last_message_timestamp"));
+                values.put("messages_count",         json_data.getInt("messages_count"));
 
-            db.insert(tempTableName, null, values);
+                db.insert(tempTableName, null, values);
+            }
         }
     }
 
 
     private Boolean updateMessagesTable(SQLiteDatabase db, String tempTableName, String uid) {
 
-        messagesUpdated = new ArrayList<>();
+        updatedMessages = new ArrayList<>();
 
         String sql_select_diff_messages =
                 "SELECT * FROM"                                                                                                                     +
@@ -314,7 +317,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     ContentValues values = new ContentValues();
                     for (int i = 0; i < c.getColumnCount() - 1; i++)
                         values.put(c.getColumnName(i), c.getString(i));
-                    messagesUpdated.add(values);
+                    updatedMessages.add(values);
                     try {
                         db.insertOrThrow(MESSAGES_TABLE, null, values);
                     } catch (SQLiteConstraintException e) {
@@ -326,7 +329,7 @@ public class DbHelper extends SQLiteOpenHelper {
             }
         }
         c.close();
-        return messagesUpdated.isEmpty();
+        return !updatedMessages.isEmpty();
     }
 
     public Map getCurrentUserMessages() {

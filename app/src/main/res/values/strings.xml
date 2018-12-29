@@ -67,10 +67,12 @@
 
     <!--Singular-->
     <string name="new_message">mensaje nuevo</string>
+    <string name="new_message_from">mensaje nuevo de</string>
     <string name="new_chat">chat nuevo</string>
 
     <!--Plural-->
     <string name="new_messages">mensajes nuevos</string>
+    <string name="new_messages_from">mensajes nuevos de</string>
     <string name="new_chats">chats nuevos</string>
 
 

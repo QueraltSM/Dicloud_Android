@@ -1,13 +1,15 @@
 package es.disoft.disoft.service;
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
-import java.util.Map;
+import java.util.ArrayList;
 
+import es.disoft.disoft.R;
 import es.disoft.disoft.notification.NotificationUtils;
 import es.disoft.disoft.user.User;
 
@@ -41,37 +43,17 @@ public class ChatService extends IntentService {
             public void run() {
                 Log.wtf("START", "run: ");
 
-                Context context = getApplicationContext();
-
-                        NotificationUtils mNotififacionUtils = new NotificationUtils(context);
-
-                if (User.isLogged(context)) {
-                    Boolean updated = Messages.update(context);
-                    if (updated) {
-
-
-//                        int randomNum = ThreadLocalRandom.current().nextInt(0, 100);
-//
-//                        NotificationCompat.Builder nb = mNotififacionUtils.getAndroidChannelNotification("Titulo", "Texto");
-//                        NotificationManagerCompat.from(context).notify(randomNum, nb.build());
-
-//                        mNotififacionUtils.createNotification("Titulo", "Texto");
-//                        mNotififacionUtils.show();
-
-                        Map<?,?> messages = Messages.get(context);
-                        Log.i("mensajes", "run: " + messages.toString());
-                    }
-                }
-
+                doSomething();
 
                 for (int i = 0; i < 55; i++) {
                     try {
-                        mNotififacionUtils.createNotification(12, "Titulo", "Texto");
-                        if (i == 2) mNotififacionUtils.show();
-                        if (i == 6) mNotififacionUtils.show();
-                        if (i == 9) mNotififacionUtils.show();
-                        if (i == 12) mNotififacionUtils.show();
-                        if (i == 16) mNotififacionUtils.show();
+                        if (i == 5)  doSomething();
+                        if (i == 10) doSomething();
+                        if (i == 15) doSomething();
+                        if (i == 20) doSomething();
+                        if (i == 25) doSomething();
+                        if (i == 30) doSomething();
+                        if (i == 35) doSomething();
                         String TAG = "servicio_";
                         Thread.sleep(1000);
                         Log.i(TAG, "run: " + i);
@@ -80,5 +62,32 @@ public class ChatService extends IntentService {
                 }
             }
         });
+    }
+
+    private void doSomething() {
+
+        Context context = getApplicationContext();
+
+        if (User.isLogged(context)) {
+            Boolean updated = Messages.update(context);
+            if (updated) {
+                ArrayList<ContentValues> messages = Messages.getUpdated();
+                for (ContentValues message : messages) {
+
+                    int messagesCount = message.getAsInteger("messages_count");
+                    String text       = messagesCount > 1 ? getString(R.string.new_messages_from) : getString(R.string.new_message_from);
+
+                    int id       = message.getAsInteger("user_from_id");
+                    String from  = message.getAsString("user_from");
+                    String title = getString(R.string.app_name);
+                    text         = messagesCount + " " + text + " " + from;
+
+                    NotificationUtils mNotififacionUtils = new NotificationUtils(context);
+                    mNotififacionUtils.createNotification(id, title, text);
+                    mNotififacionUtils.show();
+                }
+                Log.i("mensajes", "run: " + messages.toString());
+            }
+        }
     }
 }

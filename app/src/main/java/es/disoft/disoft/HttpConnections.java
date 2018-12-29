@@ -61,7 +61,9 @@ public class HttpConnections {
             }
         }
 
-        Log.i("JSON", "execute: " + jsonObject.toString());
+        try {
+            Log.i("JSON", "execute: " + jsonObject.toString());
+        } catch (Exception ignored) { }
         return jsonObject;
     }
 
@@ -74,6 +76,8 @@ public class HttpConnections {
         Map<String, String> userUID = new HashMap<>();
         userUID.put("uid",  uid);
 
-        return execute(url.toString(), new JSONObject(userUID).toString()).toString();
+        JSONObject data = execute(url.toString(), new JSONObject(userUID).toString());
+        if (data == null) return null;
+        else return data.toString();
     }
 }
