@@ -1,7 +1,5 @@
 package es.disoft.disoft;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -17,7 +15,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import es.disoft.disoft.user.User;
+import es.disoft.disoft.model.User;
 
 public class HttpConnections {
 
@@ -68,13 +66,10 @@ public class HttpConnections {
     }
 
 
-    public static String getData(Context context, URL url) {
-
-        ContentValues values = User.getData(context);
-        String uid           = values.getAsString("user_id");
+    public static String getData(URL url) {
 
         Map<String, String> userUID = new HashMap<>();
-        userUID.put("uid",  uid);
+        userUID.put("uid", "" + User.currentUser.getUser_id());
 
         JSONObject data = execute(url.toString(), new JSONObject(userUID).toString());
         if (data == null) return null;

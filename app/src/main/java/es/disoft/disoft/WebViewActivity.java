@@ -2,17 +2,21 @@ package es.disoft.disoft;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -28,16 +32,18 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import es.disoft.disoft.db.DisoftRoomDatabase;
+import es.disoft.disoft.model.User;
 import es.disoft.disoft.service.ChatService;
 import es.disoft.disoft.service.StartService;
-import es.disoft.disoft.user.Menu;
-import es.disoft.disoft.user.User;
+import es.disoft.disoft.user.LoginActivity;
+import es.disoft.disoft.user.MenuFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class WebViewActivity extends AppCompatActivity {
 
-    private String mDbAlias, mToken, mFullName, mUID;
+    private String mFullName;
 
-    private Activity activity;
+    private static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +62,10 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
 
         try {
-            getUserData();
             setMenu();
             setTextActionBar();
             setPage();
-            runAlarmManager();
+//            runAlarmManager();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setMenu() {
         ExpandableListView a = findViewById(R.id.expandableListView);
-        Menu myMenu = new Menu(this, mUID, a);
+        MenuFactory myMenu   = new MenuFactory(this, a);
         myMenu.loadMenu();
     }
 
@@ -89,19 +94,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void setTextActionBar(String dbAlias, String fullName) {
 
-        dbAlias  = ObjectUtils.firstNonNull(dbAlias, mDbAlias);
-        fullName = ObjectUtils.firstNonNull(fullName, mFullName);
+        final String finalDbAlias  = ObjectUtils.firstNonNull(dbAlias,  User.currentUser.getDbAlias());
+        final String finalFullName = ObjectUtils.firstNonNull(fullName, User.currentUser.getFullName());
 
-        final String finalDbAlias = dbAlias;
-        final String finalFullName = fullName;
         new Thread() {
             public void run() {
                 runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
-                        NavigationView navigationView = findViewById(R.id.nav_view);
-                        View header = navigationView.getHeaderView(0);
+                        NavigationView nv    = findViewById(R.id.nav_view);
+                        View header          = nv.getHeaderView(0);
                         TextView navCompany  = header.findViewById(R.id.nav_company);
                         TextView navFullName = header.findViewById(R.id.nav_full_name);
 
@@ -127,28 +129,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getUserData() {
-        ContentValues userData = User.getData(this);
-
-        mDbAlias  = userData.getAsString("dbAlias");
-        mFullName = userData.getAsString("fullName");
-        mToken    = userData.getAsString("token");
-        mUID      = userData.getAsString("user_id");
-    }
-
-
     class WebAppInterface {
         @JavascriptInterface
         public void sendData(String data) {
-            if (!data.equalsIgnoreCase(mFullName)) {
-                mFullName = data;
-                setTextActionBar(null, mFullName);
-                ContentValues values = new ContentValues();
-                values.put("fullName", mFullName);
-                User.updateData(activity, values);
-            Log.i("NAME", "distintoooo: " + mFullName);
+            if (!data.equalsIgnoreCase(User.currentUser.getFullName())) {
+                setTextActionBar(null, data);
+                User.currentUser.setFullName(data);
+                DisoftRoomDatabase.getDatabase(activity).userDao().insert(User.currentUser);
             }
-            Log.i("NAME", "sendData: " + mFullName);
         }
 
 //        This in html -> Allow send data to android through webview
@@ -168,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         final String url = getString(R.string.URL_INDEX);
 
-        String postData  = "token=" + URLEncoder.encode(mToken,"UTF-8");
+        String postData  = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
 
         // Allow send data to android through webview
         myWebView.addJavascriptInterface(new WebAppInterface(), "Android");
@@ -204,15 +192,15 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i("url_", "shouldOverrideUrlLoading: " + url);
                 if (url.endsWith("/disconect")) {
-                    User.logoutWithConfirmation(activity);
+                    WebViewActivity.closeSessionWithConfirmation();
                     return true;
                 } else if (url.endsWith("/pass_changed")) {
                     Toast.makeText(getApplicationContext(), R.string.error_pass_changed, Toast.LENGTH_LONG).show();
-                    User.logout(activity);
+                    closeSession();
                     return true;
                 } else if (url.endsWith("/disabled")) {
                     Toast.makeText(getApplicationContext(), R.string.error_user_disabled, Toast.LENGTH_LONG).show();
-                    User.logout(activity);
+                    closeSession();
                     return true;
                 } else if (url.contains("hibernar.asp")) {
                     return true;
@@ -220,15 +208,62 @@ public class MainActivity extends AppCompatActivity {
                     // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
                     Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
                     try {
-                        String postData = "token=" + URLEncoder.encode(mToken,"UTF-8");
+                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
                         myWebView.postUrl(url, postData.getBytes());
                     } catch (UnsupportedEncodingException e) {
-                        User.logout(activity);
+                        closeSession();
                     }
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    public static void closeSessionWithConfirmation() {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.logout_title)
+                .setMessage(R.string.logout_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        closeSession();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    private static void closeSession() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DisoftRoomDatabase.getDatabase(activity).userDao().logout(User.currentUser.getId());
+            }
+        }).start();
+
+        activity.startActivity(new Intent(activity, LoginActivity.class));
+        activity.finish();
+
+        clearWebViewData();
+    }
+
+    private static void clearWebViewData() {
+        WebView mWebView = (activity).findViewById(R.id.webView);
+
+        mWebView.clearCache(true);
+        mWebView.clearHistory();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(activity);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
+        }
     }
 }

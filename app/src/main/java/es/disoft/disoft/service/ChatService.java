@@ -10,8 +10,9 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import es.disoft.disoft.R;
+import es.disoft.disoft.model.Message;
+import es.disoft.disoft.model.User;
 import es.disoft.disoft.notification.NotificationUtils;
-import es.disoft.disoft.user.User;
 
 public class ChatService extends IntentService {
 
@@ -54,6 +55,10 @@ public class ChatService extends IntentService {
                         if (i == 25) doSomething();
                         if (i == 30) doSomething();
                         if (i == 35) doSomething();
+                        if (i == 40) doSomething();
+                        if (i == 45) doSomething();
+                        if (i == 50) doSomething();
+                        if (i == 54) doSomething();
                         String TAG = "servicio_";
                         Thread.sleep(1000);
                         Log.i(TAG, "run: " + i);
@@ -68,17 +73,17 @@ public class ChatService extends IntentService {
 
         Context context = getApplicationContext();
 
-        if (User.isLogged(context)) {
+        if (User.currentUser != null) {
             Boolean updated = Messages.update(context);
             if (updated) {
-                ArrayList<ContentValues> messages = Messages.getUpdated();
-                for (ContentValues message : messages) {
+                ArrayList<Message> messages = Messages.getUpdated();
+                for (Message message : messages) {
 
-                    int messagesCount = message.getAsInteger("messages_count");
+                    int messagesCount = message.getMessages_count();
                     String text       = messagesCount > 1 ? getString(R.string.new_messages_from) : getString(R.string.new_message_from);
 
-                    int id       = message.getAsInteger("user_from_id");
-                    String from  = message.getAsString("user_from");
+                    int id       = message.getFrom_id();
+                    String from  = message.getFrom();
                     String title = getString(R.string.app_name);
                     text         = messagesCount + " " + text + " " + from;
 

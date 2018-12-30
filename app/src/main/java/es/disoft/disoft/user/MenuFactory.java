@@ -1,12 +1,16 @@
 package es.disoft.disoft.user;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,42 +20,44 @@ import java.util.List;
 import java.util.Map;
 
 import es.disoft.disoft.HttpConnections;
-import es.disoft.disoft.MainActivity;
 import es.disoft.disoft.R;
-import es.disoft.disoft.db.DbHelper;
+import es.disoft.disoft.WebViewActivity;
+import es.disoft.disoft.db.DisoftRoomDatabase;
+import es.disoft.disoft.model.Menu;
+import es.disoft.disoft.model.MenuDao;
+import es.disoft.disoft.model.User;
 
-public class Menu {
+public class MenuFactory {
 
-    private MainActivity activity;
-    private String mUID;
-    private Map<String, Map<String, String>> menu;
+    private Context context;
+    private Map<String, List<Menu.SubmenuItem>> menu;
 
-    private ExpandableListView                  expandableListView;
-    private ExpandableListAdapter               expandableListAdapter;
-    private List<MenuModel>                     headerList;
-    private Map<MenuModel, List<MenuModel>>     childList;
+    private ExpandableListView              expandableListView;
+    private ExpandableListAdapter           expandableListAdapter;
+    private List<MenuModel>                 headerList;
+    private Map<MenuModel, List<MenuModel>> childList;
     private WebView webView;
 
-    public Menu(MainActivity activity, String mUID, ExpandableListView expandableListView) {
-        this.menu               = new LinkedHashMap<>();
-        this.mUID               = mUID;
+    public MenuFactory(Context context, ExpandableListView expandableListView) {
+        menu                    = new LinkedHashMap<>();
         this.expandableListView = expandableListView;
-        this.webView            = activity.findViewById(R.id.webView);
-        this.activity = activity;
+        this.webView            = ((Activity) context).findViewById(R.id.webView);
+        this.context            = context;
     }
 
     public void loadMenu() {
-        new JsonTask().execute(activity.getString(R.string.URL_SYNC_MENU));
+        new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
     }
 
     private void generateSkeleton() {
-        ArrayList<String> menuItems = User.getMenuItems(activity, mUID);
+        String user_id           = User.currentUser.getId();
+        MenuDao menuDao          = DisoftRoomDatabase.getDatabase(context).menuDao();
+        List<Menu.MenuItem> menuItems = menuDao.getMenuItems(user_id);
 
-        for (String menuItem : menuItems) {
-            menu.put(menuItem, User.getSubmenuItems(activity, mUID, menuItem));
+        for (Menu.MenuItem menuItem: menuItems) {
+            menu.put(menuItem.menu, menuDao.getSubmenuItems(user_id, menuItem.menu));
         }
 
-        setMenu();
     }
 
     private void setMenu() {
@@ -59,18 +65,18 @@ public class Menu {
         childList  = new LinkedHashMap<>();
 
         MenuModel menuModel;
-        menuModel = new MenuModel("Página principal", true, false, activity.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
+        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
         headerList.add(menuModel);
         childList.put(menuModel, null);
 
-        for (Map.Entry<String, Map<String, String>> headerEntry : menu.entrySet()) {
-            String menuHeader                    = headerEntry.getKey();
-
+        for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
+            String menuHeader = headerEntry.getKey();
+//
             if (menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel("Ajustes", true, false, "", R.drawable.ic_menu_manage);
                 headerList.add(menuModel);
                 childList.put(menuModel, null);
-                String urlLogoutString = activity.getString(R.string.URL_ROOT) + headerEntry.getValue().get("Desconectar");
+                String urlLogoutString = context.getString(R.string.URL_ROOT) + headerEntry.getValue().get(0).url;
                 menuModel = new MenuModel(menuHeader, true, false, urlLogoutString, R.drawable.ic_power_settings);
             } else {
                 menuModel = new MenuModel(menuHeader, true, true, "", null);
@@ -80,10 +86,9 @@ public class Menu {
             if (menuModel.hasChildren) {
                 List<MenuModel> childModelsList = new ArrayList<>();
                 MenuModel childModel;
-                for (Map.Entry<String, String> childEntry : headerEntry.getValue().entrySet()) {
-                    String menuChild = childEntry.getKey();
-                    String menulink  = childEntry.getValue();
-                    childModel       = new MenuModel(menuChild, false, false, activity.getString(R.string.URL_ROOT) + menulink, null);
+                for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
+                    String url = context.getString(R.string.URL_ROOT) + submenuItem.url;
+                    childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
                 childList.put(menuModel, childModelsList);
@@ -93,7 +98,7 @@ public class Menu {
         }
 
 
-        expandableListAdapter = new CustomExpandableListAdapter(activity, headerList, childList);
+        expandableListAdapter = new CustomExpandableListAdapter(context, headerList, childList);
 
         expandableListView.setAdapter(expandableListAdapter);
 
@@ -117,13 +122,13 @@ public class Menu {
                         case "Ajustes":
                             break;
                         case "Desconectar":
-                            User.logoutWithConfirmation(activity);
+                            WebViewActivity.closeSessionWithConfirmation();
                             break;
                         default:
                             webView.loadUrl(headerList.get(groupPosition).url);
                     }
 
-                    activity.onBackPressed();
+                    ((Activity) context).onBackPressed();
                 }
 
                 return false;
@@ -138,7 +143,7 @@ public class Menu {
                     MenuModel model = childList.get(headerList.get(groupPosition)).get(childPosition);
                     if (model.url.length() > 0) {
                         webView.loadUrl(model.url);
-                        activity.onBackPressed();
+                        ((Activity) context).onBackPressed();
                     }
                 }
 
@@ -147,13 +152,28 @@ public class Menu {
         });
     }
 
-    private String jsonRequest(URL url) throws IOException {
-        return HttpConnections.getData(activity, url);
+    private String jsonRequest(URL url) {
+        return HttpConnections.getData(url);
     }
 
-    private void jsonResponse(String menuAsJsonString) throws JSONException {
-        DbHelper myDb = new DbHelper(activity);
-        myDb.setCurrentUserMenu(menuAsJsonString);
+    private void jsonResponse(final String menuAsJsonString) {
+        try {
+            JSONArray jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
+            List<es.disoft.disoft.model.Menu> menus = new ArrayList<>();
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject json_data = jArray.getJSONObject(i);
+                es.disoft.disoft.model.Menu menu = new es.disoft.disoft.model.Menu(
+                        json_data.getString("menu"),
+                        json_data.getString("submenu"),
+                        json_data.getString("url"));
+                menus.add(menu);
+            }
+            MenuDao menuDao = DisoftRoomDatabase.getDatabase(context).menuDao();
+            menuDao.deleteUserMenu(User.currentUser.getId());
+            menuDao.insert(menus);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
     }
 
     private class JsonTask extends AsyncTask<String, Void, Void> {
@@ -164,7 +184,8 @@ public class Menu {
             try {
                 String json = jsonRequest(new URL(params[0]));
                 jsonResponse(json);
-            } catch (IOException | JSONException e) {
+                generateSkeleton();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;
@@ -172,7 +193,12 @@ public class Menu {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            generateSkeleton();
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setMenu();
+                }
+            });
         }
     }
 }

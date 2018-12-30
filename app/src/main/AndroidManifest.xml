@@ -25,7 +25,7 @@
         </activity>
         <activity android:name=".user.LoginActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".WebViewActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
 

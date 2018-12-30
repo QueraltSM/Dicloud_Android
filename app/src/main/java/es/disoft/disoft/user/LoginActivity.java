@@ -3,13 +3,10 @@ package es.disoft.disoft.user;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -30,15 +27,19 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.HttpConnections;
-import es.disoft.disoft.MainActivity;
+import es.disoft.disoft.WebViewActivity;
 import es.disoft.disoft.R;
-import es.disoft.disoft.db.DbHelper;
+import es.disoft.disoft.db.DisoftRoomDatabase;
+import es.disoft.disoft.model.User;
+import es.disoft.disoft.model.UserDao;
 
 /**
  * A login screen that offers login via email/password.
@@ -58,13 +59,12 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
 
     private Context context = this;
-    private DbHelper myDb;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myDb = new DbHelper(this);
+//        myDb = new DbHelper(this);
         setContentView(R.layout.activity_login);
         setUpLoginForm();
         enableSuggestions();
@@ -122,16 +122,39 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void enableSuggestions() {
-        enableSuggestions(mAliasView, myDb.getSuggestions(this, "dbAlias"));
-        enableSuggestions(mUserView,  myDb.getSuggestions(this, "user"));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<User.DbAlias> aliases = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getAllDbAlias();
+                ArrayList<String> suggestionsAL = new ArrayList<>();
+                for (User.DbAlias alias: aliases) suggestionsAL.add(alias.dbAlias.toLowerCase());
+                String[] suggestions = suggestionsAL.toArray(new String[0]);
+                enableSuggestions(mAliasView,  new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, suggestions));
+
+
+                List<User.UserAlias> users = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getAllUserAlias();
+                suggestionsAL = new ArrayList<>();
+                for (User.UserAlias user: users) suggestionsAL.add(user.userAlias.toLowerCase());
+                suggestions = suggestionsAL.toArray(new String[0]);
+                enableSuggestions(mUserView,  new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, suggestions));
+            }
+        }).start();
     }
 
 
-    private void enableSuggestions(AutoCompleteTextView textView, ArrayAdapter<String> adapter) {
-        textView.setThreshold(1);
-        textView.setAdapter(adapter);
+    private void enableSuggestions(final AutoCompleteTextView textView, final ArrayAdapter<String> adapter) {
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setThreshold(1);
+                        textView.setAdapter(adapter);
+                    }
+                });
+            }
+        }.start();
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -324,7 +347,7 @@ public class LoginActivity extends AppCompatActivity {
             if (somethingWrong(exitCode)) {
                 showProgress(false);
             } else {
-                Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
                 startActivity(mainActivity);
                 finish();
             }
@@ -363,20 +386,22 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        private void updateDDBB() throws JSONException {
-            String mfullName  = loginResponse.getString("fullName");
-            String mToken     = loginResponse.getString("token");
-            int mId           = loginResponse.getInt("id");
-
-            ContentValues values = new ContentValues();
-            values.put("pkCode",   mPkcode);
-            values.put("user_id",  mId);
-            values.put("user",     mUser);
-            values.put("fullName", mfullName);
-            values.put("dbAlias",  mAlias);
-            values.put("token",    mToken);
-
-            myDb.upsertUser(values);
+        private void updateDDBB() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String mfullName = loginResponse.getString("fullName");
+                        String mToken    = loginResponse.getString("token");
+                        int mId          = loginResponse.getInt("id");
+                        User.currentUser = new User(mId, mUser, mfullName, mAlias, mToken);
+                        UserDao userDao  = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao();
+                        userDao.insert(User.currentUser);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 
