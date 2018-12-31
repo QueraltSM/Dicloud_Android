@@ -9,17 +9,17 @@ import android.content.ContextWrapper;
 import android.graphics.Color;
 import android.os.Build;
 import android.provider.Settings;
-import android.service.notification.StatusBarNotification;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import es.disoft.disoft.R;
+import es.disoft.disoft.db.DisoftRoomDatabase;
+import es.disoft.disoft.model.Message;
+import es.disoft.disoft.model.User;
 
 public class NotificationUtils extends ContextWrapper {
     //use constant ID for notification used as group summary
@@ -28,7 +28,8 @@ public class NotificationUtils extends ContextWrapper {
     private final String CHANNEL_ID   = getString(R.string.channel_ID);
     private final String TAG          = getString(R.string.app_name);
     private final int COLOR           = Color.BLUE;
-    private  int IMPORTANCE;
+    private int IMPORTANCE;
+    private boolean create = true;
     private NotificationManager mManager;
 
     private String title;
@@ -40,9 +41,17 @@ public class NotificationUtils extends ContextWrapper {
 
     public NotificationUtils(Context base) {
         super(base);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            IMPORTANCE = NotificationManager.IMPORTANCE_MAX;
+        setImportance(true);
         createNotificationChannel();
+    }
+
+
+    private void setImportance(boolean importance) {
+        create = importance;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            IMPORTANCE = create ? NotificationCompat.PRIORITY_MAX : NotificationCompat.PRIORITY_DEFAULT;
+        else
+            IMPORTANCE = create ? NotificationManager.IMPORTANCE_MAX : NotificationManager.IMPORTANCE_MIN;
     }
 
 
@@ -58,10 +67,11 @@ public class NotificationUtils extends ContextWrapper {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @RequiresApi(api = Build.VERSION_CODES.M)
     private NotificationManager getManager() {
         if (mManager == null)
-            mManager = getSystemService(NotificationManager.class);
+//            mManager = getSystemService(NotificationManager.class);
+            mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         return mManager;
     }
 
@@ -74,86 +84,116 @@ public class NotificationUtils extends ContextWrapper {
 
 
     public void show() {
-        showGroupNotification();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            showCuteNotifications();
+        else
+            showPrehistoricAndUglyNotifications();
     }
 
 
-    private void showSingleNotification() {
-        NotificationManagerCompat.from(this).notify(TAG, id, getAndroidChannelNotification());
+    public void clear(int id) {
+        DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().delete(id);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            getManager().cancel(TAG, id);
+        } else {
+            clearOldNotifications();
+        }
     }
 
 
-    private void showGroupNotification() {
-        showSingleNotification();
-        NotificationManagerCompat.from(this).notify(TAG, SUMMARY_ID, getSummaryNotification());
+    private void clearOldNotifications() {
+        setImportance(false);
+        showPrehistoricAndUglyNotifications();
     }
 
 
-    private Notification getAndroidChannelNotification() {
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
+    private void showCuteNotifications() {
+        singleNotification();
+        NotificationManagerCompat.from(this).notify(TAG, SUMMARY_ID, summaryNotificationNewStyle());
+    }
+
+
+    private void showPrehistoricAndUglyNotifications() {
+        List<Message.EssentialInfo> messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
+        if (messages.size() > 1) {
+            singleNotification();
+            NotificationManagerCompat.from(this).notify(TAG, SUMMARY_ID, summaryNotificationOldStyle(messages));
+        } else if (messages.size() == 1){
+            String txt = messages.get(0).messages_count + " " + getString(R.string.new_message) + " " + messages.get(0).from;
+            title = ObjectUtils.firstNonNull(title, User.currentUser.getDbAlias());
+            text  = ObjectUtils.firstNonNull(text,  txt);
+            id    = ObjectUtils.firstNonNull(id,    messages.get(0).from_id);
+            getManager().cancelAll();
+            singleNotificationOld();
+        } else {
+            getManager().cancelAll();
+        }
+    }
+
+
+    private void singleNotification() {
+        NotificationManagerCompat.from(this).notify(TAG, id, notificationNewStyle());
+    }
+
+
+    private void singleNotificationOld() {
+        NotificationManagerCompat.from(this).notify(TAG, id, notificationOldStyle());
+    }
+
+
+    private Notification notificationNewStyle() {
+        return standardNotification(title, singleIcon)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+                .build();
+    }
+
+
+    private Notification notificationOldStyle() {
+        return standardNotification(title, singleIcon)
+                .build();
+    }
+
+
+    private Notification summaryNotificationNewStyle() {
+        return standardNotification(getString(R.string.app_name), groupIcon)
+                .setGroupSummary(true)
+                .build();
+    }
+
+
+    private Notification summaryNotificationOldStyle(List<Message.EssentialInfo> messages) {
+        int messagesCount = 0;
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
+                .setBigContentTitle(messages.size() + " " + getString(R.string.new_chats));
+        for (int i = 0; i < messages.size(); i++) {
+            if (i == 5) break;
+            Message.EssentialInfo message = messages.get(i);
+
+            messagesCount += message.messages_count;
+            String mText = message.messages_count > 1 ? getString(R.string.new_messages_from) : getString(R.string.new_message_from);
+            inboxStyle.addLine(message.messages_count + " " + mText + " " + message.from);
+        }
+
+        return standardNotification(getString(R.string.app_name), groupIcon)
+                .setGroupSummary(true)
+                .setContentText(messagesCount + " " + getString(R.string.new_messages))
+                .setStyle(inboxStyle).build();
+    }
+
+
+    private NotificationCompat.Builder standardNotification(String title, int icon) {
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setPriority(IMPORTANCE)
+                .setGroup(CHANNEL_NAME)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setSmallIcon(singleIcon)
-                .setGroup(CHANNEL_NAME)
-                .setPriority(IMPORTANCE)
-                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .build();
-    }
+                .setSmallIcon(icon);
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        else
+            if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
-    private Notification getSummaryNotification() {
-
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
-//           TODO recoger las notificaciones de la base de datos y mostrarlas todas
-            int notificationsCount = 1;
-            ArrayList<StatusBarNotification> myOtherNotifications = getMyOtherNotifications();
-            boolean isGroup = false;
-            for (StatusBarNotification notification : myOtherNotifications)
-                if (notification.getId() == 0) isGroup = true;
-
-            if (isGroup) {
-                String s = myOtherNotifications.get(0).getNotification().extras.getString(Notification.EXTRA_TEXT);
-                    notificationsCount = s != null ? Integer.parseInt(s.split(" ")[0]) + 1 : 1;
-            }
-
-            String mText = notificationsCount == 1 ? getString(R.string.new_chat) : getString(R.string.new_chats);
-            //noinspection deprecation
-            text = WordUtils.capitalize(mText, ".".toCharArray());
-            text = notificationsCount + " " + text;
-        }
-
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(text)
-                .setSmallIcon(groupIcon)
-                .setGroup(CHANNEL_NAME)
-                .setPriority(IMPORTANCE)
-                .setGroupSummary(true)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .build();
-    }
-
-
-    private boolean otherNotificationExists() {
-        return !getMyOtherNotifications().isEmpty();
-    }
-
-
-    private ArrayList<StatusBarNotification> getMyOtherNotifications() {
-        ArrayList<StatusBarNotification> myOtherNotifications = new ArrayList<>();
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            StatusBarNotification[] barNotifications = notificationManager.getActiveNotifications();
-
-            for (StatusBarNotification notification : barNotifications) {
-                Log.i("run", "getMyOtherNotifications: " + notification.getId());
-                Log.i("run", "getMyOtherNotifications: " + notification.getTag());
-                if (notification.getTag().equals(TAG))
-                    myOtherNotifications.add(notification);
-            }
-        }
-        return myOtherNotifications;
+        return notification;
     }
 }

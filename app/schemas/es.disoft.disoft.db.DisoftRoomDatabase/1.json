@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5e87a82d8120edcebf047a0e53aeaba9",
+    "identityHash": "7f778b81c192c1107497b794635ddaf8",
     "entities": [
       {
         "tableName": "users",
@@ -127,14 +127,8 @@
       },
       {
         "tableName": "messages",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `from_id` INTEGER NOT NULL, `from` TEXT NOT NULL, `last_message_timestamp` TEXT NOT NULL, `messages_count` INTEGER NOT NULL, FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `from_id` INTEGER NOT NULL, `from` TEXT NOT NULL, `last_message_timestamp` TEXT NOT NULL, `messages_count` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `from_id`), FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "user_id",
             "columnName": "user_id",
@@ -168,9 +162,10 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "user_id",
+            "from_id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -198,14 +193,8 @@
       },
       {
         "tableName": "messages_tmp",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `from_id` INTEGER NOT NULL, `from` TEXT NOT NULL, `last_message_timestamp` TEXT NOT NULL, `messages_count` INTEGER NOT NULL, FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `from_id` INTEGER NOT NULL, `from` TEXT NOT NULL, `last_message_timestamp` TEXT NOT NULL, `messages_count` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `from_id`), FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "user_id",
             "columnName": "user_id",
@@ -239,9 +228,10 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "user_id",
+            "from_id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -270,7 +260,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5e87a82d8120edcebf047a0e53aeaba9\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7f778b81c192c1107497b794635ddaf8\")"
     ]
   }
 }

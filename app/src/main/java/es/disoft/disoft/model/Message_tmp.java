@@ -9,15 +9,13 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName   = "messages_tmp",
         indices     = @Index("user_id"),
+        primaryKeys = {"user_id", "from_id"},
         foreignKeys = @ForeignKey(entity        = User.class,
                                   parentColumns = "id",
                                   childColumns  = "user_id",
                                   onDelete      = ForeignKey.CASCADE))
 public class Message_tmp {
 
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    private int id;
     @NonNull
     @ColumnInfo(name = "user_id")
     private String user_id;
@@ -39,15 +37,6 @@ public class Message_tmp {
         this.from                   = from;
         this.last_message_timestamp = last_message_timestamp;
         this.messages_count         = messages_count;
-    }
-
-    @NonNull
-    public int getId() {
-        return id;
-    }
-
-    public void setId(@NonNull int id) {
-        this.id = id;
     }
 
     @NonNull

@@ -45,6 +45,13 @@
     <string name="URL_SYNC_MENU">http://10.0.2.2/app/getMenu.asp</string>
     <string name="URL_SYNC_MESSAGES">http://10.0.2.2/app/getPendingMessages.asp</string>
     <string name="URL_ROOT">http://10.0.2.2/</string>
+
+    <!-- URL's CASA -->
+    <!--<string name="URL_LOGIN">http://192.168.137.1/app/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://192.168.137.1/index.asp</string>-->
+    <!--<string name="URL_SYNC_MENU">http://192.168.137.1/app/getMenu.asp</string>-->
+    <!--<string name="URL_SYNC_MESSAGES">http://192.168.137.1/app/getPendingMessages.asp</string>-->
+    <!--<string name="URL_ROOT">http://192.168.137.1/</string>-->
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->

@@ -4,20 +4,17 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity(tableName   = "messages",
         indices     = @Index("user_id"),
+        primaryKeys = {"user_id", "from_id"},
         foreignKeys = @ForeignKey(entity        = User.class,
                                   parentColumns = "id",
                                   childColumns  = "user_id",
                                   onDelete      = ForeignKey.CASCADE))
 public class Message {
 
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    private int id;
     @NonNull
     @ColumnInfo(name = "user_id")
     private String user_id;
@@ -39,15 +36,6 @@ public class Message {
         this.from                   = from;
         this.last_message_timestamp = last_message_timestamp;
         this.messages_count         = messages_count;
-    }
-
-    @NonNull
-    public int getId() {
-        return id;
-    }
-
-    public void setId(@NonNull int id) {
-        this.id = id;
     }
 
     @NonNull
@@ -97,7 +85,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return getId() + ">> From: " + getFrom() + "\tCount: " + getMessages_count() + "\tTime: " + getLast_message_timestamp();
+        return ">> From: " + getFrom() + "\tCount: " + getMessages_count() + "\tTime: " + getLast_message_timestamp();
     }
 
     public static class Fetch extends Message {
@@ -119,5 +107,17 @@ public class Message {
         public void setStatus(String status) {
             this.status = status;
         }
+
+        @Override
+        public String toString() {
+            return super.toString() + "\tstatus: " + status;
+        }
     }
+
+    public static class EssentialInfo {
+        public int    from_id;
+        public String from;
+        public int    messages_count;
+    }
+
 }

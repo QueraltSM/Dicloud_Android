@@ -4,7 +4,6 @@
     package="es.disoft.disoft">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -29,16 +28,6 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
 
-
-        <service android:enabled="true" android:name="es.disoft.disoft.service.ChatService" android:stopWithTask="false"/>
-
-        <receiver
-            android:name=".service.StartServiceAtBootReceiver"
-            android:label="StartMyServiceAtBootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

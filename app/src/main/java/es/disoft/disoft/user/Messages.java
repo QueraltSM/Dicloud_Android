@@ -1,4 +1,4 @@
-package es.disoft.disoft.service;
+package es.disoft.disoft.user;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,13 +21,14 @@ import es.disoft.disoft.model.MessageDao;
 import es.disoft.disoft.model.Message_tmp;
 import es.disoft.disoft.model.User;
 
-class Messages {
+public class Messages {
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static ArrayList<Message> updatedMessages;
+    private static ArrayList<Message> deletedMessages;
 
-    static boolean update(Context context) {
+    public static boolean update(Context context) {
         mContext = context;
 
         try {
@@ -38,8 +39,7 @@ class Messages {
             e.printStackTrace();
 
         }
-
-        return !updatedMessages.isEmpty();
+        return updatedMessages != null && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
     }
 
     private static String jsonRequest(URL url) {
@@ -48,18 +48,22 @@ class Messages {
 
     private static void updateMessages(String messagesAsJsonString) throws JSONException {
 
-        storeNewMessages(messagesAsJsonString);
+        if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
 
         updatedMessages = new ArrayList<>();
+        deletedMessages = new ArrayList<>();
         MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
         List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
-
+        Log.i("mensajeee", "fetched: " + fetch.toString());
         for (Message.Fetch message : fetch) {
             switch (message.getStatus()) {
                 case "deleted":
-                    messageDao.delete(message);
+                    Log.e("mensajeee", "deleted: " + message.toString());
+                    messageDao.delete(message.getFrom_id());
+                    deletedMessages.add(message);
                     break;
                 case "updated":
+                    Log.e("mensajeee", "updated: " + message.toString());
                     messageDao.insert(message);
                     updatedMessages.add(message);
                     break;
@@ -72,6 +76,7 @@ class Messages {
 
     private static void storeNewMessages(String messagesAsJsonString) throws JSONException {
         JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
+
         List<Message_tmp> newMessages = new ArrayList<>();
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject json_data = jArray.getJSONObject(i);
@@ -92,5 +97,9 @@ class Messages {
 
     public static ArrayList<Message> getUpdated() {
         return updatedMessages;
+    }
+
+    public static ArrayList<Message> getDeleted() {
+        return deletedMessages;
     }
 }

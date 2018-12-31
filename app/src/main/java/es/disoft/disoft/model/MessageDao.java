@@ -3,6 +3,7 @@ package es.disoft.disoft.model;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
@@ -11,20 +12,26 @@ import java.util.List;
 @Dao
 public interface MessageDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Message message);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Message> messages);
 
     @Query("SELECT * FROM messages")
     List<Message> getAllMessages();
+
+    @Query("SELECT from_id,`from`,messages_count FROM messages ORDER BY last_message_timestamp DESC")
+    List<Message.EssentialInfo> getAllMessagesEssentialInfo();
 
     @Update
     void update(Message message);
 
     @Delete
     void delete(Message message);
+
+    @Query("DELETE FROM messages WHERE from_id = :id")
+    void delete(int id);
 
     @Query("DELETE FROM messages")
     void deleteAll();

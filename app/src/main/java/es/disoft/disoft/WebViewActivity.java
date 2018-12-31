@@ -34,10 +34,9 @@ import java.net.URLEncoder;
 
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.User;
-import es.disoft.disoft.service.ChatService;
-import es.disoft.disoft.service.StartService;
 import es.disoft.disoft.user.LoginActivity;
 import es.disoft.disoft.user.MenuFactory;
+import es.disoft.disoft.workers.ChatWorker;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -65,25 +64,34 @@ public class WebViewActivity extends AppCompatActivity {
             setMenu();
             setTextActionBar();
             setPage();
-//            runAlarmManager();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
         //TODO eliminar esta linea cuando se pongan los mensajes en segundo plano
-        startService(new Intent(this, ChatService.class));
+//        startService(new Intent(this, ChatService.class));
     }
 
+
+    @Override
+    protected void onResume() {
+        Log.d("vivo", "onResume: ");
+        ChatWorker.checkMessagesEvery30sc.context = this;
+        ChatWorker.checkMessagesEvery30sc.start();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("vivo", "onPause: ");
+        ChatWorker.checkMessagesEvery30sc.stop();
+        super.onPause();
+    }
 
     private void setMenu() {
         ExpandableListView a = findViewById(R.id.expandableListView);
         MenuFactory myMenu   = new MenuFactory(this, a);
         myMenu.loadMenu();
-    }
-
-
-    private void runAlarmManager() {
-        StartService.setAlarmManager(this, ChatService.class);
     }
 
 
@@ -238,6 +246,7 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 DisoftRoomDatabase.getDatabase(activity).userDao().logout(User.currentUser.getId());
+                DisoftRoomDatabase.getDatabase(activity).messageDao().deleteAll();
             }
         }).start();
 
