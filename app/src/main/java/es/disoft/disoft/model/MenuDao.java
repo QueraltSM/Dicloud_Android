@@ -1,16 +1,12 @@
 package es.disoft.disoft.model;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import java.util.List;
 
 @Dao
-public interface MenuDao {
-
-    @Insert
-    void insert(List<Menu> menus);
+public interface MenuDao extends BaseDao<Menu> {
 
     @Query("SELECT * FROM menus")
     List<Menu> getAllMenus();

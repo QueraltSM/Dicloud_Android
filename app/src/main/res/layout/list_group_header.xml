@@ -47,25 +47,4 @@
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/iconDescription" />
     </android.support.constraint.ConstraintLayout>
-
-    <!--<ImageView-->
-    <!--android:id="@+id/imageView8"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:srcCompat="@drawable/ic_menu_home" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/lblListHeader"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="?attr/listPreferredItemHeightSmall"-->
-    <!--android:background="@color/colorSplashScreen"-->
-    <!--android:gravity="center_vertical"-->
-    <!--android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"-->
-    <!--android:paddingEnd="?attr/listPreferredItemPaddingRight" />-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/imageView9"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:srcCompat="@android:drawable/arrow_down_float" />-->
 </LinearLayout>

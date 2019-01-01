@@ -1,10 +1,7 @@
 package es.disoft.disoft.workers;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -19,15 +16,13 @@ import es.disoft.disoft.model.User;
 import es.disoft.disoft.notification.NotificationUtils;
 import es.disoft.disoft.user.Messages;
 
-import static es.disoft.disoft.workers.ChatWorker.checkMessagesEvery30sc.checkMessages;
-
 public class ChatWorker extends Worker {
 
     public ChatWorker(
             @NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        checkMessagesEvery30sc.context = context;
+        checkMessagesEvery5sc.context = context;
     }
 
     @NonNull
@@ -35,7 +30,7 @@ public class ChatWorker extends Worker {
     public Result doWork() {
         try {
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
-            checkMessages();
+            checkMessages(getApplicationContext());
             return Result.success();
         } catch (Exception e) {
             Log.e("WORKER", "doWork: ", e);
@@ -43,12 +38,7 @@ public class ChatWorker extends Worker {
         }
     }
 
-
-
-
-
-
-    public static class checkMessagesEvery30sc {
+    public static class checkMessagesEvery5sc {
 
         public static Context context;
         private static Thread thread;
@@ -74,7 +64,8 @@ public class ChatWorker extends Worker {
                         try {
                             // TODO cambiar tiempo a 15 segundos!!!
                             Thread.sleep(5 * 1000);
-                            checkMessages();
+                            checkMessages(context);
+//                            test();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -83,31 +74,49 @@ public class ChatWorker extends Worker {
             });
         }
 
+        private static void test() {
+            NotificationUtils mNotififacionUtils = new NotificationUtils(context);
+            mNotififacionUtils.createNotification(999, "superTaitol", "megatexta");
+            mNotififacionUtils.show();
+        }
+    }
 
-        public static void checkMessages() {
-            Log.i("vivo", "checkMessages: ");
-            if (User.currentUser != null) {
-                if (Messages.update(context)) {
+    private static void checkMessages(Context context) {
+        Log.i("vivo", "checkMessages: ");
+        if (User.currentUser != null)
+            if (Messages.update(context)) notificateMessages(context, Messages.getUpdated());
+    }
 
-                    NotificationUtils mNotififacionUtils = new NotificationUtils(context);
-                    for (Message message : Messages.getUpdated()) {
-                        int messagesCount = message.getMessages_count();
-                        String text       = messagesCount > 1 ? context.getString(R.string.new_messages_from) : context.getString(R.string.new_message_from);
+    public static void notificateMessages(Context context, List<?> messages) {
+        NotificationUtils mNotififacionUtils = new NotificationUtils(context);
 
-                        int id       = message.getFrom_id();
-                        String from  = message.getFrom();
-                        String title = User.currentUser.getDbAlias();
-                        text         = messagesCount + " " + text + " " + from;
+        for (Object message : messages) {
+            int messagesCount, id;
+            String from;
 
-                        mNotififacionUtils.createNotification(id, title, text);
-                        mNotififacionUtils.show();
-                    }
+            if (message instanceof Message) {
+                messagesCount = ((Message) message).getMessages_count();
+                from          = ((Message) message).getFrom();
+                id            = ((Message) message).getFrom_id();
+            } else {
+                messagesCount = ((Message.EssentialInfo) message).getMessages_count();
+                from          = ((Message.EssentialInfo) message).getFrom();
+                id            = ((Message.EssentialInfo) message).getFrom_id();
+            }
 
-                    for (Message message : Messages.getDeleted()) {
-                        Log.w("mensajeee", "clear: " + message.toString());
-                        mNotififacionUtils.clear(message.getFrom_id());
-                    }
-                }
+            String text = messagesCount > 1 ? context.getString(R.string.new_messages_from) : context.getString(R.string.new_message_from);
+            String title = User.currentUser.getDbAlias();
+            text = messagesCount + " " + text + " " + from;
+
+            mNotififacionUtils.createNotification(id, title, text);
+            mNotififacionUtils.show();
+        }
+
+        ArrayList<Message> deletedMessages = Messages.getDeleted();
+        if (deletedMessages != null) {
+            for (Message message : deletedMessages) {
+                Log.w("mensajeee", "clear: " + message.toString());
+                mNotififacionUtils.clear(message.getFrom_id());
             }
         }
     }

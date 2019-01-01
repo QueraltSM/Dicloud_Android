@@ -34,7 +34,9 @@ public abstract class DisoftRoomDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             DisoftRoomDatabase.class,
                             DATABASE_NAME)
-//                            .allowMainThreadQueries()
+                            // Esto solo se usa para iniciar la app desde las notificaciones
+                            // Evitar en cualquier caso los accesos a la bd desde el hilo principal!!!
+                            .allowMainThreadQueries()
                             .build();
                 }
             }

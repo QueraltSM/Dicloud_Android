@@ -1,4 +1,4 @@
-package es.disoft.disoft;
+package es.disoft.disoft.user;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,6 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -24,7 +27,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -32,17 +34,22 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import es.disoft.disoft.R;
+import es.disoft.disoft.Toast;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.User;
-import es.disoft.disoft.user.LoginActivity;
-import es.disoft.disoft.user.MenuFactory;
+import es.disoft.disoft.notification.NotificationUtils;
 import es.disoft.disoft.workers.ChatWorker;
 
 public class WebViewActivity extends AppCompatActivity {
 
-    private String mFullName;
+    private String notificationType;
+    private int notificationId;
+    private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
+    private final String NOTIFICATION_ID   = "NOTIFICATION_ID";
 
     private static Activity activity;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,32 +66,70 @@ public class WebViewActivity extends AppCompatActivity {
         toggle.syncState();
 
         activity = this;
+        webView = findViewById(R.id.webView);
+
+
+        if (User.currentUser == null)
+            User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
 
         try {
+            setPage();
             setMenu();
             setTextActionBar();
-            setPage();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-        //TODO eliminar esta linea cuando se pongan los mensajes en segundo plano
-//        startService(new Intent(this, ChatService.class));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_button, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.home_button) webView.loadUrl(getString(R.string.URL_INDEX));
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+    }
 
     @Override
     protected void onResume() {
-        Log.d("vivo", "onResume: ");
-        ChatWorker.checkMessagesEvery30sc.context = this;
-        ChatWorker.checkMessagesEvery30sc.start();
+
+        //TODO limpiar las notificaciones!!!
+//        new NotificationUtils(getApplicationContext()).clearAll();
+
+        if (loadedFromNotification()) openChat();
+
+        ChatWorker.checkMessagesEvery5sc.context = this;
+        ChatWorker.checkMessagesEvery5sc.start();
         super.onResume();
+    }
+
+    private boolean loadedFromNotification() {
+        if (notificationType == null && getIntent() != null) {
+            notificationType = getIntent().getStringExtra(NOTIFICATION_TYPE) ;
+            notificationId   = getIntent().getIntExtra(NOTIFICATION_ID, 0);
+        }
+        return notificationType != null;
+    }
+
+    private void openChat() {
+        webView.loadUrl(getString(R.string.URL_CHAT));
+
+        Log.d("mensajeee", "\n\nbundle:\nt: " + notificationType + "\nid: " + notificationId);
     }
 
     @Override
     protected void onPause() {
-        Log.d("vivo", "onPause: ");
-        ChatWorker.checkMessagesEvery30sc.stop();
+        ChatWorker.checkMessagesEvery5sc.stop();
         super.onPause();
     }
 
@@ -94,11 +139,9 @@ public class WebViewActivity extends AppCompatActivity {
         myMenu.loadMenu();
     }
 
-
     private void setTextActionBar() {
         setTextActionBar(null, null);
     }
-
 
     private void setTextActionBar(String dbAlias, String fullName) {
 
@@ -123,19 +166,16 @@ public class WebViewActivity extends AppCompatActivity {
         }.start();
     }
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            WebView mWebView = findViewById(R.id.webView);
-            if (mWebView.canGoBack()) mWebView.goBack();
+            if (webView.canGoBack()) webView.goBack();
             else finish();
         }
     }
-
 
     class WebAppInterface {
         @JavascriptInterface
@@ -151,47 +191,70 @@ public class WebViewActivity extends AppCompatActivity {
 //        Android.sendData("<%=session("name")%>");
     }
 
-
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     private void setPage() throws UnsupportedEncodingException {
-        final WebView myWebView = findViewById(R.id.webView);
-        WebSettings webSettings = myWebView.getSettings();
+
+        Log.e("webview!!!", "setPage: ");
+
+        WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
         // TODO para poder rellenar forumularios (servirá para el focus en los mensajes)
 //        webSettings.setDomStorageEnabled(true);
-        myWebView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient());
 
         final String url = getString(R.string.URL_INDEX);
 
-        String postData  = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
+        String postData  = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8")
+                + "&l=1"; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
 
         // Allow send data to android through webview
-        myWebView.addJavascriptInterface(new WebAppInterface(), "Android");
-        myWebView.postUrl(url, postData.getBytes());
+        webView.addJavascriptInterface(new WebAppInterface(), "Android");
+        webView.postUrl(url, postData.getBytes());
 
         // This is to show alerts
-        myWebView.setWebChromeClient(new WebChromeClient());
+        webView.setWebChromeClient(new WebChromeClient());
 
         // This is to handle events
-        myWebView.setWebViewClient(new WebViewClient() {
+        webView.setWebViewClient(new WebViewClient() {
             // In the 1st load, go back throws err_cache_miss
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                if (errorCode == -1) myWebView.loadUrl(url);
+                if (errorCode == -1) webView.loadUrl(url);
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
 
             // Avoid an infinite loop
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (url.endsWith("/index.asp")) myWebView.clearHistory();
+                if (url.endsWith("/index.asp")) webView.clearHistory();
+
+                if (loadedFromNotification()) {
+                    Log.e("mensajee", "ITS WORKS!!! " + notificationType);
+
+
+                    //TODO no se pueden abrir las conversaciones
+//                    myWebView.loadUrl("javascript:(function() { $('document').on('click', '#" + notificationId + "', function(){" +
+//                            "                                       alert($(this).text());" +
+//                            "                                   }); })()");
+
+//                    myWebView.loadUrl("javascript:(function() { $(document).on('click', 'body', function(){" +
+//                            "                                       alert($(this).text());" +
+//                            "                                   }); })()");
+
+//                    myWebView.loadUrl("javascript:(function() { $('#"+notificationId+"').remove(); })()");
+
+
+                    setIntent(null);
+                    notificationType = null;
+                }
+
                 /* TODO esto es para rellenar forumularios a través del webview -> tiene que estar esto activado
                    TODO webSettings.setDomStorageEnabled(true);
                    TODO (servirá para el focus en los mensajes) */
 //                myWebView.loadUrl("javascript:var x = document.getElementById('advanced').value = 'aaa';");
                 // TODO Esto no deberia estar aqui, deberia hacerlo la propia web
-                myWebView.loadUrl("javascript:(function() { $('.navbar-header button').remove(); })()");
+                webView.loadUrl("javascript:(function() { $('.navbar-header button').remove(); })()");
                 super.onPageFinished(view, url);
             }
 
@@ -203,21 +266,21 @@ public class WebViewActivity extends AppCompatActivity {
                     WebViewActivity.closeSessionWithConfirmation();
                     return true;
                 } else if (url.endsWith("/pass_changed")) {
-                    Toast.makeText(getApplicationContext(), R.string.error_pass_changed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.error_pass_changed).show();
                     closeSession();
                     return true;
                 } else if (url.endsWith("/disabled")) {
-                    Toast.makeText(getApplicationContext(), R.string.error_user_disabled, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.error_user_disabled).show();
                     closeSession();
                     return true;
                 } else if (url.contains("hibernar.asp")) {
                     return true;
                 } else if (url.contains("agententer.asp")) {
                     // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
-                    Toast.makeText(getApplicationContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.error_unexpected).show();
                     try {
                         String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
-                        myWebView.postUrl(url, postData.getBytes());
+                        webView.postUrl(url, postData.getBytes());
                     } catch (UnsupportedEncodingException e) {
                         closeSession();
                     }
@@ -247,6 +310,8 @@ public class WebViewActivity extends AppCompatActivity {
             public void run() {
                 DisoftRoomDatabase.getDatabase(activity).userDao().logout(User.currentUser.getId());
                 DisoftRoomDatabase.getDatabase(activity).messageDao().deleteAll();
+                User.currentUser = null;
+                (new NotificationUtils(activity.getApplicationContext())).clearAll();
             }
         }).start();
 

@@ -85,7 +85,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return ">> From: " + getFrom() + "\tCount: " + getMessages_count() + "\tTime: " + getLast_message_timestamp();
+        return "\n(" + getMessages_count() + ") " + getFrom();
     }
 
     public static class Fetch extends Message {
@@ -110,14 +110,25 @@ public class Message {
 
         @Override
         public String toString() {
-            return super.toString() + "\tstatus: " + status;
+           return String.format("%-20s  %s", super.toString(), status);
         }
     }
 
     public static class EssentialInfo {
-        public int    from_id;
+        public int from_id;
         public String from;
-        public int    messages_count;
-    }
+        public int messages_count;
 
+        public int getFrom_id() {
+            return from_id;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public int getMessages_count() {
+            return messages_count;
+        }
+    }
 }

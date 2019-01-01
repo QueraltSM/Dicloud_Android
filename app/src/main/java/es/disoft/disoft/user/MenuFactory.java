@@ -21,7 +21,6 @@ import java.util.Map;
 
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.R;
-import es.disoft.disoft.WebViewActivity;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Menu;
 import es.disoft.disoft.model.MenuDao;
@@ -65,13 +64,14 @@ public class MenuFactory {
         childList  = new LinkedHashMap<>();
 
         MenuModel menuModel;
-        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
-        headerList.add(menuModel);
-        childList.put(menuModel, null);
+
+//        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
+//        headerList.add(menuModel);
+//        childList.put(menuModel, null);
 
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
-//
+
             if (menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel("Ajustes", true, false, "", R.drawable.ic_menu_manage);
                 headerList.add(menuModel);

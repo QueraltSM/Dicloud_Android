@@ -22,7 +22,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 
 import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.HttpConnections;
-import es.disoft.disoft.WebViewActivity;
+import es.disoft.disoft.Toast;
 import es.disoft.disoft.R;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.User;
@@ -414,19 +413,19 @@ public class LoginActivity extends AppCompatActivity {
                 mAliasView.requestFocus();
                 break;
             case 2: // user or password error
-                Toast.makeText(context,"Fallo usuario o contraseña MIRAR COMO", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Fallo usuario o contraseña MIRAR COMO").show();
                 break;
             case 3: // inactive user error
                 ((TextInputLayout) mUserView.getParent().getParent()).setError(getString(R.string.error_inactive_user));
                 break;
             case 4: // json error
-                Toast.makeText(context, getString(R.string.error_json_response), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.error_json_response).show();
                 break;
             case 5: // internet error
-                Toast.makeText(context, getString(R.string.error_internet_connection), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.error_internet_connection).show();
                 break;
             default: // unknown error
-                Toast.makeText(context, R.string.error_unknown, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.error_unknown).show();
         }
         Log.i("LOGIN", "somethingWrong: " +exitCode);
         return exitCode != 0;
