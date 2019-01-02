@@ -37,6 +37,7 @@ import java.net.URLEncoder;
 import es.disoft.disoft.R;
 import es.disoft.disoft.Toast;
 import es.disoft.disoft.db.DisoftRoomDatabase;
+import es.disoft.disoft.menu.MenuFactory;
 import es.disoft.disoft.model.User;
 import es.disoft.disoft.notification.NotificationUtils;
 import es.disoft.disoft.workers.ChatWorker;
@@ -134,9 +135,8 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void setMenu() {
-        ExpandableListView a = findViewById(R.id.expandableListView);
-        MenuFactory myMenu   = new MenuFactory(this, a);
-        myMenu.loadMenu();
+        ExpandableListView expandableListView = findViewById(R.id.expandableListView);
+        new MenuFactory(this, expandableListView).loadMenu();
     }
 
     private void setTextActionBar() {

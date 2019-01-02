@@ -1,4 +1,4 @@
-package es.disoft.disoft.user;
+package es.disoft.disoft.menu;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,7 @@ import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Menu;
 import es.disoft.disoft.model.MenuDao;
 import es.disoft.disoft.model.User;
+import es.disoft.disoft.user.WebViewActivity;
 
 public class MenuFactory {
 
@@ -73,7 +74,7 @@ public class MenuFactory {
             String menuHeader = headerEntry.getKey();
 
             if (menuHeader.equals("Desconectar")) {
-                menuModel = new MenuModel("Ajustes", true, false, "", R.drawable.ic_menu_manage);
+                menuModel = new MenuModel(context.getString(R.string.menu_manage), true, false, "", R.drawable.ic_menu_manage);
                 headerList.add(menuModel);
                 childList.put(menuModel, null);
                 String urlLogoutString = context.getString(R.string.URL_ROOT) + headerEntry.getValue().get(0).url;

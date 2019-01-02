@@ -1,9 +1,7 @@
-package es.disoft.disoft.user;
+package es.disoft.disoft.menu;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +14,13 @@ import java.util.Map;
 
 import es.disoft.disoft.R;
 
-
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context                             context;
-    private List<MenuModel>                     listDataHeader;
-    private Map<MenuModel, List<MenuModel>>     listDataChild;
+    private Context                         context;
+    private List<MenuModel>                 listDataHeader;
+    private Map<MenuModel, List<MenuModel>> listDataChild;
 
-
-    public CustomExpandableListAdapter(Context context,
+    CustomExpandableListAdapter(Context context,
                                        List<MenuModel> listDataHeader,
                                        Map<MenuModel, List<MenuModel>> listChildData) {
 
@@ -33,18 +29,15 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         this.listDataChild  = listChildData;
     }
 
-
     @Override
     public MenuModel getChild(int groupPosition, int childPosititon) {
         return listDataChild.get(listDataHeader.get(groupPosition)).get(childPosititon);
     }
 
-
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
     }
-
 
     @Override
     public View getChildView(int groupPosition,
@@ -66,7 +59,6 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-
     @Override
     public int getChildrenCount(int groupPosition) {
 
@@ -74,12 +66,10 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         else return listDataChild.get(listDataHeader.get(groupPosition)).size();
     }
 
-
     @Override
     public MenuModel getGroup(int groupPosition) {
         return listDataHeader.get(groupPosition);
     }
-
 
     @Override
     public int getGroupCount() {
@@ -87,12 +77,10 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
     }
 
-
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
-
 
     @Override
     public View getGroupView(int groupPosition,
@@ -137,18 +125,13 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
             imgArrowListHeader.setImageBitmap(null);
             imgArrowListHeader.setColorFilter(null);
         }
-
-
-
         return convertView;
     }
-
 
     @Override
     public boolean hasStableIds() {
         return false;
     }
-
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {

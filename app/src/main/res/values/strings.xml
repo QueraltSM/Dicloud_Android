@@ -33,20 +33,20 @@
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- URL's SERVER ADMIN.LOCAL -->
-    <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
-    <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
-    <!--<string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>-->
-    <!--<string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>-->
-    <!--<string name="URL_CHAT">http://admin.local/news/chat.asp</string>-->
-    <!--<string name="URL_ROOT">http://admin.local/</string>-->
+    <string name="URL_LOGIN">http://admin.local/app/login.asp</string>
+    <string name="URL_INDEX">http://admin.local/index.asp</string>
+    <string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>
+    <string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>
+    <string name="URL_CHAT">http://admin.local/news/chat.asp</string>
+    <string name="URL_ROOT">http://admin.local/</string>
 
     <!-- URL's LOCALHOST -->
-    <string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>
-    <string name="URL_INDEX">http://10.0.2.2/index.asp</string>
-    <string name="URL_SYNC_MENU">http://10.0.2.2/app/getMenu.asp</string>
-    <string name="URL_SYNC_MESSAGES">http://10.0.2.2/app/getPendingMessages.asp</string>
-    <string name="URL_CHAT">http://10.0.2.2/news/chat.asp</string>
-    <string name="URL_ROOT">http://10.0.2.2/</string>
+    <!--<string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://10.0.2.2/index.asp</string>-->
+    <!--<string name="URL_SYNC_MENU">http://10.0.2.2/app/getMenu.asp</string>-->
+    <!--<string name="URL_SYNC_MESSAGES">http://10.0.2.2/app/getPendingMessages.asp</string>-->
+    <!--<string name="URL_CHAT">http://10.0.2.2/news/chat.asp</string>-->
+    <!--<string name="URL_ROOT">http://10.0.2.2/</string>-->
 
     <!-- URL's CASA -->
     <!--<string name="URL_LOGIN">http://192.168.137.1/app/login.asp</string>-->
@@ -68,7 +68,7 @@
     <string name="nav_header_subtitle">Dani</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="menu_manage">Ajustes</string>
+    <string name="menu_manage">Configuración</string>
     <string name="menu_home">Página principal</string>
 
     <!--Notifications-->

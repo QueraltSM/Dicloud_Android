@@ -1,4 +1,4 @@
-package es.disoft.disoft.user;
+package es.disoft.disoft.menu;
 
 public class MenuModel {
 
