@@ -26,6 +26,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -51,13 +52,15 @@ public class WebViewActivity extends AppCompatActivity {
 
     private static Activity activity;
     private WebView webView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_webview);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        progressBar = findViewById(R.id.progressBar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -67,19 +70,14 @@ public class WebViewActivity extends AppCompatActivity {
         toggle.syncState();
 
         activity = this;
-        webView = findViewById(R.id.webView);
 
 
         if (User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
 
-        try {
-            setPage();
-            setMenu();
-            setTextActionBar();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        createWebview();
+        setMenu();
+        setTextActionBar();
     }
 
     @Override
@@ -98,6 +96,9 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if (intent.getExtras() != null) {
+            Log.d("notificacion!!!", "\n\nbundle:\nt: " + intent.getStringExtra(NOTIFICATION_TYPE) + "\nid: " + intent.getIntExtra(NOTIFICATION_ID, -999));
+        }
         setIntent(intent);
     }
 
@@ -107,15 +108,21 @@ public class WebViewActivity extends AppCompatActivity {
         //TODO limpiar las notificaciones!!!
 //        new NotificationUtils(getApplicationContext()).clearAll();
 
-        if (loadedFromNotification()) openChat();
+        Log.e("URL_", "onResume: ");
+
+        if (loadedFromNotification())
+            openChat();
+        else
+            openIndex();
 
         ChatWorker.checkMessagesEvery5sc.context = this;
         ChatWorker.checkMessagesEvery5sc.start();
         super.onResume();
     }
 
+
     private boolean loadedFromNotification() {
-        if (notificationType == null && getIntent() != null) {
+        if (getIntent() != null) {
             notificationType = getIntent().getStringExtra(NOTIFICATION_TYPE) ;
             notificationId   = getIntent().getIntExtra(NOTIFICATION_ID, 0);
         }
@@ -123,9 +130,24 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void openChat() {
-        webView.loadUrl(getString(R.string.URL_CHAT));
+        if (webView.getUrl() != null && webView.getUrl().endsWith("chat.asp"))
+            webView.loadUrl(pushButton(100));
+        else
+            webView.loadUrl(getString(R.string.URL_CHAT));
 
         Log.d("mensajeee", "\n\nbundle:\nt: " + notificationType + "\nid: " + notificationId);
+    }
+
+    private void openIndex() {
+        try {
+            final String url = getString(R.string.URL_INDEX);
+            String postData = null; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
+            postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
+                    + "&l=1";
+            webView.postUrl(url, postData.getBytes());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -192,7 +214,9 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
-    private void setPage() throws UnsupportedEncodingException {
+    private void createWebview() {
+
+        webView = findViewById(R.id.webView);
 
         Log.e("webview!!!", "setPage: ");
 
@@ -203,47 +227,42 @@ public class WebViewActivity extends AppCompatActivity {
 //        webSettings.setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient());
 
-        final String url = getString(R.string.URL_INDEX);
-
-        String postData  = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8")
-                + "&l=1"; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
-
         // Allow send data to android through webview
         webView.addJavascriptInterface(new WebAppInterface(), "Android");
-        webView.postUrl(url, postData.getBytes());
 
         // This is to show alerts
-        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                progressBar.setProgress(newProgress);
+                if (newProgress == 100)
+                    progressBar.setVisibility(View.INVISIBLE);
+                else
+                    progressBar.setVisibility(View.VISIBLE);
+            }
+        });
 
         // This is to handle events
         webView.setWebViewClient(new WebViewClient() {
+
             // In the 1st load, go back throws err_cache_miss
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                if (errorCode == -1) webView.loadUrl(url);
+                if (errorCode == -1) webView.loadUrl(getString(R.string.URL_INDEX));
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
 
             // Avoid an infinite loop
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
                 if (url.endsWith("/index.asp")) webView.clearHistory();
 
                 if (loadedFromNotification()) {
                     Log.e("mensajee", "ITS WORKS!!! " + notificationType);
 
-
-                    //TODO no se pueden abrir las conversaciones
-//                    myWebView.loadUrl("javascript:(function() { $('document').on('click', '#" + notificationId + "', function(){" +
-//                            "                                       alert($(this).text());" +
-//                            "                                   }); })()");
-
-//                    myWebView.loadUrl("javascript:(function() { $(document).on('click', 'body', function(){" +
-//                            "                                       alert($(this).text());" +
-//                            "                                   }); })()");
-
-//                    myWebView.loadUrl("javascript:(function() { $('#"+notificationId+"').remove(); })()");
-
+                    webView.loadUrl(pushButton(500));
 
                     setIntent(null);
                     notificationType = null;
@@ -253,9 +272,6 @@ public class WebViewActivity extends AppCompatActivity {
                    TODO webSettings.setDomStorageEnabled(true);
                    TODO (servirá para el focus en los mensajes) */
 //                myWebView.loadUrl("javascript:var x = document.getElementById('advanced').value = 'aaa';");
-                // TODO Esto no deberia estar aqui, deberia hacerlo la propia web
-                webView.loadUrl("javascript:(function() { $('.navbar-header button').remove(); })()");
-                super.onPageFinished(view, url);
             }
 
             @Override
@@ -339,5 +355,37 @@ public class WebViewActivity extends AppCompatActivity {
             cookieSyncMngr.stopSync();
             cookieSyncMngr.sync();
         }
+    }
+
+    private String pushButton(int ms) {
+        return  "javascript:(function() {" +
+
+                "               var checkExist = setInterval(function() {" +
+                "                   var button;" +
+
+                "                   console.log('funcion:');" +
+
+                "                   $('button').each(function() {" +
+                "                       if($(this).attr('id') == " + notificationId + ") {" +
+
+                "                           button = $(this);" +
+
+                "                           console.log('if: ' + button.attr('id'));" +
+
+                "                           clearInterval(checkExist);" +
+                "                           setTimeout(" +
+                "                               function(){ " +
+
+                "                                   console.log('interval: ' + button.attr('id'));" +
+
+                "                                   button.click();" +
+                "                               }," + ms + ");" +
+
+                "                       }" +
+                "                   }); " +
+
+                "               }, 100);" +
+
+                "           })()";
     }
 }

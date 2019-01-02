@@ -172,8 +172,8 @@ public class MenuFactory {
             MenuDao menuDao = DisoftRoomDatabase.getDatabase(context).menuDao();
             menuDao.deleteUserMenu(User.currentUser.getId());
             menuDao.insert(menus);
-        } catch (JSONException e1) {
-            e1.printStackTrace();
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

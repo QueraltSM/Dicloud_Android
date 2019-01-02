@@ -298,7 +298,6 @@ public class LoginActivity extends AppCompatActivity {
         private final String mAlias;
         private final String mUser;
         private final String mPassword;
-        private final String mPkcode;
 
         /**
          * 0: success
@@ -317,7 +316,6 @@ public class LoginActivity extends AppCompatActivity {
             mAlias = alias;
             mUser = user;
             mPassword = password;
-            mPkcode = mUser + mAlias;
         }
 
 

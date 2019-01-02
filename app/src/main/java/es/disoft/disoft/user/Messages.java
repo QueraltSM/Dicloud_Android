@@ -28,7 +28,7 @@ public class Messages {
     private static ArrayList<Message> updatedMessages;
     private static ArrayList<Message> deletedMessages;
 
-    public static boolean update(Context context) {
+    public static synchronized boolean update(Context context) {
         mContext = context;
 
         try {

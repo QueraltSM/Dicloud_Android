@@ -13,6 +13,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -177,6 +178,7 @@ public class NotificationUtils extends ContextWrapper {
     private NotificationCompat.Builder standardNotification(String title, int icon) {
 
         String type = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().count() > 1 ? "group" : "notification";
+        Log.d(TAG, "standardNotification: type: " + type);
 
         Intent resultIntent = new Intent(this, WebViewActivity.class);
         resultIntent.putExtra(NOTIFICATION_ID, id);

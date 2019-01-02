@@ -66,7 +66,7 @@ public class HttpConnections {
     }
 
 
-    public static synchronized String getData(URL url) {
+    public static String getData(URL url) {
 
         Map<String, String> userUID = new HashMap<>();
         userUID.put("uid", "" + User.currentUser.getUser_id());
