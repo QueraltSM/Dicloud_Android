@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.PeriodicWorkRequest;
@@ -52,6 +53,7 @@ public class LauncherActivity extends AppCompatActivity {
                 activityIntent = User.currentUser != null ?
                         new Intent(context, WebViewActivity.class) :
                         new Intent(context, LoginActivity.class);
+
 
                 startActivity(activityIntent);
                 overridePendingTransition(R.anim.fade_in, R.anim.nothing);

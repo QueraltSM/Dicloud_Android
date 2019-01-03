@@ -1,8 +1,10 @@
 package es.disoft.disoft.menu;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ExpandableListAdapter;
@@ -24,7 +26,6 @@ import es.disoft.disoft.R;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Menu;
 import es.disoft.disoft.model.MenuDao;
-import es.disoft.disoft.model.User;
 import es.disoft.disoft.user.WebViewActivity;
 
 public class MenuFactory {
@@ -45,19 +46,27 @@ public class MenuFactory {
         this.context            = context;
     }
 
-    public void loadMenu() {
-        new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
+    public void loadMenu(boolean internetAvailable) {
+        if (internetAvailable) {
+           new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
+        } else {
+            Log.i("asdasd", "loadMenu: ");
+            new Thread(){
+                @Override
+                public void run() {
+                    generateSkeleton();
+                    setMenu();
+                }
+            }.start();
+        }
     }
 
     private void generateSkeleton() {
-        String user_id           = User.currentUser.getId();
-        MenuDao menuDao          = DisoftRoomDatabase.getDatabase(context).menuDao();
-        List<Menu.MenuItem> menuItems = menuDao.getMenuItems(user_id);
+        MenuDao menuDao               = DisoftRoomDatabase.getDatabase(context).menuDao();
+        List<Menu.MenuItem> menuItems = menuDao.getMenuItems();
 
-        for (Menu.MenuItem menuItem: menuItems) {
-            menu.put(menuItem.menu, menuDao.getSubmenuItems(user_id, menuItem.menu));
-        }
-
+        for (Menu.MenuItem menuItem: menuItems)
+            menu.put(menuItem.menu, menuDao.getSubmenuItems(menuItem.menu));
     }
 
     private void setMenu() {
@@ -170,36 +179,35 @@ public class MenuFactory {
                 menus.add(menu);
             }
             MenuDao menuDao = DisoftRoomDatabase.getDatabase(context).menuDao();
-            menuDao.deleteUserMenu(User.currentUser.getId());
+            menuDao.deleteAll();
             menuDao.insert(menus);
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class JsonTask extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
 
+            Log.i("hilo", "start: ");
+
             try {
                 String json = jsonRequest(new URL(params[0]));
                 jsonResponse(json);
-                generateSkeleton();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            Log.i("hilo", "end: ");
+            generateSkeleton();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setMenu();
-                }
-            });
+            setMenu();
         }
     }
 }

@@ -1,9 +1,12 @@
 package es.disoft.disoft.user;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -34,7 +38,9 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
 
+import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.R;
 import es.disoft.disoft.Toast;
 import es.disoft.disoft.db.DisoftRoomDatabase;
@@ -53,6 +59,7 @@ public class WebViewActivity extends AppCompatActivity {
     private static Activity activity;
     private WebView webView;
     private ProgressBar progressBar;
+    private boolean internetAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +78,10 @@ public class WebViewActivity extends AppCompatActivity {
 
         activity = this;
 
+        checkInternetconnection();
 
-        if (User.currentUser == null)
-            User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
-
-        createWebview();
         setMenu();
+        createWebview();
         setTextActionBar();
     }
 
@@ -105,6 +110,9 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
+        if (User.currentUser == null)
+            User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
+
         //TODO limpiar las notificaciones!!!
 //        new NotificationUtils(getApplicationContext()).clearAll();
 
@@ -118,6 +126,20 @@ public class WebViewActivity extends AppCompatActivity {
         ChatWorker.checkMessagesEvery5sc.context = this;
         ChatWorker.checkMessagesEvery5sc.start();
         super.onResume();
+    }
+
+    private void checkInternetconnection() {
+        // Check Internet connection
+        internetAvailable = true;
+        try {
+            if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
+                internetAvailable = false;
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            internetAvailable = false;
+        }
+
+        Log.e("internet", "run: no hay internet 123");
     }
 
 
@@ -158,7 +180,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void setMenu() {
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
-        new MenuFactory(this, expandableListView).loadMenu();
+        new MenuFactory(this, expandableListView).loadMenu(internetAvailable);
     }
 
     private void setTextActionBar() {
@@ -220,7 +242,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         Log.e("webview!!!", "setPage: ");
 
-        WebSettings webSettings = webView.getSettings();
+        final WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
         // TODO para poder rellenar forumularios (servirá para el focus en los mensajes)
@@ -245,11 +267,22 @@ public class WebViewActivity extends AppCompatActivity {
         // This is to handle events
         webView.setWebViewClient(new WebViewClient() {
 
-            // In the 1st load, go back throws err_cache_miss
+            @Override public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
+                switch (errorCode) {
+                    case WebViewClient.ERROR_HOST_LOOKUP:
+                        webView.loadUrl(getString(R.string.URL_ERROR));
+                        break;
+                    case WebViewClient.ERROR_UNKNOWN:
+                        webView.loadUrl(getString(R.string.URL_INDEX));
+                }
+            }
+
             @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                if (errorCode == -1) webView.loadUrl(getString(R.string.URL_INDEX));
-                super.onReceivedError(view, errorCode, description, failingUrl);
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (!internetAvailable && !url.equals(getString(R.string.URL_ERROR)))
+                    webView.loadUrl(getString(R.string.URL_ERROR));
             }
 
             // Avoid an infinite loop
@@ -324,8 +357,10 @@ public class WebViewActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DisoftRoomDatabase.getDatabase(activity).userDao().logout(User.currentUser.getId());
-                DisoftRoomDatabase.getDatabase(activity).messageDao().deleteAll();
+                DisoftRoomDatabase db = DisoftRoomDatabase.getDatabase(activity);
+                db.userDao().logout(User.currentUser.getId());
+                db.messageDao().deleteAll();
+                db.menuDao().deleteAll();
                 User.currentUser = null;
                 (new NotificationUtils(activity.getApplicationContext())).clearAll();
             }
@@ -388,4 +423,27 @@ public class WebViewActivity extends AppCompatActivity {
 
                 "           })()";
     }
+
+//    private void showProgress(final boolean show) {
+//        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//
+//        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+//        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+//                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+//            }
+//        });
+//
+//        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+//        mProgressView.animate().setDuration(shortAnimTime).alpha(
+//                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+//            }
+//        });
+//    }
+
 }

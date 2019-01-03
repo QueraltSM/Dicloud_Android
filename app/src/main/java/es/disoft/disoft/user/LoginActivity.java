@@ -171,7 +171,6 @@ public class LoginActivity extends AppCompatActivity {
         // Check Internet connection
         try {
             if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
-                Log.wtf("CONNX", "attemptLogin: " + new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get());
                 somethingWrong(5);
                 return;
             }
