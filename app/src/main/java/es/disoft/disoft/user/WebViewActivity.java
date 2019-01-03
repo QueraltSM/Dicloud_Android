@@ -4,14 +4,19 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
@@ -59,7 +65,6 @@ public class WebViewActivity extends AppCompatActivity {
     private static Activity activity;
     private WebView webView;
     private ProgressBar progressBar;
-    private boolean internetAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +83,6 @@ public class WebViewActivity extends AppCompatActivity {
 
         activity = this;
 
-        checkInternetconnection();
-
         setMenu();
         createWebview();
         setTextActionBar();
@@ -94,6 +97,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        String TAG = "aaaaaaaa";
         int itemId = item.getItemId();
         if (itemId == R.id.home_button) webView.loadUrl(getString(R.string.URL_INDEX));
         return super.onOptionsItemSelected(item);
@@ -105,6 +109,12 @@ public class WebViewActivity extends AppCompatActivity {
             Log.d("notificacion!!!", "\n\nbundle:\nt: " + intent.getStringExtra(NOTIFICATION_TYPE) + "\nid: " + intent.getIntExtra(NOTIFICATION_ID, -999));
         }
         setIntent(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        ChatWorker.checkMessagesEvery5sc.stop();
+        super.onPause();
     }
 
     @Override
@@ -126,20 +136,6 @@ public class WebViewActivity extends AppCompatActivity {
         ChatWorker.checkMessagesEvery5sc.context = this;
         ChatWorker.checkMessagesEvery5sc.start();
         super.onResume();
-    }
-
-    private void checkInternetconnection() {
-        // Check Internet connection
-        internetAvailable = true;
-        try {
-            if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
-                internetAvailable = false;
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            internetAvailable = false;
-        }
-
-        Log.e("internet", "run: no hay internet 123");
     }
 
 
@@ -172,15 +168,9 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        ChatWorker.checkMessagesEvery5sc.stop();
-        super.onPause();
-    }
-
     private void setMenu() {
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
-        new MenuFactory(this, expandableListView).loadMenu(internetAvailable);
+        new MenuFactory(this, expandableListView).loadMenu(isNetworkAvailable());
     }
 
     private void setTextActionBar() {
@@ -268,7 +258,6 @@ public class WebViewActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
 
             @Override public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
                 switch (errorCode) {
                     case WebViewClient.ERROR_HOST_LOOKUP:
                         webView.loadUrl(getString(R.string.URL_ERROR));
@@ -281,8 +270,9 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                if (!internetAvailable && !url.equals(getString(R.string.URL_ERROR)))
+                if (!isNetworkAvailable() && !url.equals(getString(R.string.URL_ERROR))) {
                     webView.loadUrl(getString(R.string.URL_ERROR));
+                }
             }
 
             // Avoid an infinite loop
@@ -424,26 +414,10 @@ public class WebViewActivity extends AppCompatActivity {
                 "           })()";
     }
 
-//    private void showProgress(final boolean show) {
-//        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-//
-//        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-//        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-//                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-//            }
-//        });
-//
-//        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-//        mProgressView.animate().setDuration(shortAnimTime).alpha(
-//                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-//            }
-//        });
-//    }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

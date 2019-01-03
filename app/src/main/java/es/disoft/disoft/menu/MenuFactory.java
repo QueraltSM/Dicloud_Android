@@ -46,8 +46,8 @@ public class MenuFactory {
         this.context            = context;
     }
 
-    public void loadMenu(boolean internetAvailable) {
-        if (internetAvailable) {
+    public void loadMenu(boolean networkAvailable) {
+        if (networkAvailable) {
            new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
         } else {
             Log.i("asdasd", "loadMenu: ");

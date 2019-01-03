@@ -55,9 +55,8 @@
             }
 
             body {
-                width: 100%;
-                max-height: 100%;
-                background: #48a9e6;
+                width: 100vw;
+                height: 100vh;
                 font-family: "Raleway", sans-serif;
                 font-weight: 300;
                 margin: 0;
@@ -66,9 +65,11 @@
 
 
             #title {
+                background: #48a9e6;
+                height: 7.5em;
                 text-align: center;
-                font-size: 2em;
-                margin-top: 1em;
+                font-size: 1.5em;
+                padding-top: 1em;
                 position: relative;
                 color: #fff;
             }
@@ -77,13 +78,13 @@
                 content: "";
                 display: inline-block;
                 width: 100%;
-                height: 100px;
+                height: 10em;
                 background: #fff;
                 position: absolute;
-                top: -50px;
+                top: -13.5em;
                 left: 0;
-                transform: skewY(-4deg);
-                -webkit-transform: skewY(-4deg);
+                transform: skewY(-3deg);
+                -webkit-transform: skewY(-3deg);
             }
 
             .text {
@@ -91,25 +92,18 @@
                 text-align: center;
                 position: relative;
                 margin-top: -4em;
-                box-shadow: inset -1px -4px 4px rgba(0, 0, 0, 0.2);
             }
 
             .text p {
-                font-size: 10em;
+                font-size: 2em;
                 color: #999;
-                padding-top: 1em;
-                padding-bottom: 1em;
-                margin-bottom: 0.5em;
+                margin-top: 5em;
                 position: relative;
                 z-index: 9;
                 line-height: 100%;
             }
 
-            .text p small {
-                font-size: 40px;
-                line-height: 100%;
-                vertical-align: top;
-            }
+
 
         </style>
 </head>
@@ -118,9 +112,7 @@
 <section id="not-found">
     <div id="title">Sin conexión a internet</div>
     <div class="text">
-        <p>
-            <small>Prueba más tarde</small>
-        </p>
+        <p>Prueba más tarde</p>
     </div>
 </section>
 </body>

@@ -33,9 +33,9 @@ public class NotificationUtils extends ContextWrapper {
     //use constant ID for notification used as group summary
     private final int SUMMARY_ID      = 0;
     private final String CHANNEL_NAME = getString(R.string.channel_name);
-    private final String CHANNEL_ID   = getString(R.string.channel_ID);
+    private String CHANNEL_ID   = getString(R.string.channel_ID);
     private final String TAG          = getString(R.string.app_name);
-    private final int COLOR           = Color.BLUE;
+    private int COLOR;
     private int IMPORTANCE;
     private boolean create = true;
     private NotificationManager mManager;
@@ -49,6 +49,10 @@ public class NotificationUtils extends ContextWrapper {
 
     public NotificationUtils(Context base) {
         super(base);
+
+        COLOR = Color.RED;
+
+
         setImportance(true);
         createNotificationChannel();
     }
@@ -64,6 +68,12 @@ public class NotificationUtils extends ContextWrapper {
     @SuppressLint("WrongConstant")
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            int i = 2;
+            int j = i - 1;
+            getManager().deleteNotificationChannel(CHANNEL_ID + j);
+            CHANNEL_ID = CHANNEL_ID + i;
+
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE);
             channel.enableLights(true);
             channel.setLightColor(COLOR);
@@ -189,6 +199,7 @@ public class NotificationUtils extends ContextWrapper {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setPriority(IMPORTANCE)
                 .setGroup(CHANNEL_NAME)
+                .setLights(COLOR, 1, 1)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(icon)
