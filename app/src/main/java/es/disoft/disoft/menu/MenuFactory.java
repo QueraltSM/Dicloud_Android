@@ -3,7 +3,9 @@ package es.disoft.disoft.menu;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -27,6 +29,8 @@ import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Menu;
 import es.disoft.disoft.model.MenuDao;
 import es.disoft.disoft.user.WebViewActivity;
+
+import static es.disoft.disoft.user.WebViewActivity.closeSession;
 
 public class MenuFactory {
 
@@ -132,7 +136,7 @@ public class MenuFactory {
                         case "Ajustes":
                             break;
                         case "Desconectar":
-                            WebViewActivity.closeSessionWithConfirmation();
+                            closeSessionWithConfirmation();
                             break;
                         default:
                             webView.loadUrl(headerList.get(groupPosition).url);
@@ -209,5 +213,17 @@ public class MenuFactory {
         protected void onPostExecute(Void aVoid) {
             setMenu();
         }
+    }
+
+    public void closeSessionWithConfirmation() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.logout_title)
+                .setMessage(R.string.logout_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        closeSession();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
     }
 }

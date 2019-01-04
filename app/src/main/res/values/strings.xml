@@ -10,7 +10,7 @@
     <string name="error_invalid_alias">Este alias es incorrecto</string>
     <string name="error_invalid_user">Este usuario es incorrecto</string>
     <string name="error_inactive_user">Este usuario se encuentra desactivado</string>
-    <string name="error_invalid_password">Esta contraseña parece demasiado corta</string>
+    <string name="error_invalid_password">Esta contraseña no es válida</string>
     <string name="error_incorrect_password">Esta contraseña es incorrecta</string>
     <string name="error_field_required">Este campo es obligatorio</string>
     <string name="error_internet_connection">No hay conexión a internet</string>
@@ -21,6 +21,7 @@
     <string name="error_pass_changed">Se ha cambiado su contraseña, vuelva a iniciar sesión</string>
     <string name="error_user_disabled">Se ha deshabilitado su usuario</string>
     <string name="error_unexpected">Ha habido algún problema inesperado, vuelva a iniciar sesión</string>
+    <string name="error_user_or_password">Usuario o contraseña incorrectas</string>
 
     <!-- Strings related to logout -->
     <string name="logout_title">¿Cerrar sesión?</string>
@@ -36,12 +37,12 @@
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- URL's SERVER ADMIN.LOCAL -->
-    <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
-    <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
-    <!--<string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>-->
-    <!--<string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>-->
-    <!--<string name="URL_CHAT">http://admin.local/news/chat.asp</string>-->
-    <!--<string name="URL_ROOT">http://admin.local/</string>-->
+    <string name="URL_LOGIN">http://admin.local/app/login.asp</string>
+    <string name="URL_INDEX">http://admin.local/index.asp</string>
+    <string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>
+    <string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>
+    <string name="URL_CHAT">http://admin.local/news/chat.asp</string>
+    <string name="URL_ROOT">http://admin.local/</string>
 
     <!-- URL's LOCALHOST -->
     <!--<string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>-->
@@ -52,12 +53,12 @@
     <!--<string name="URL_ROOT">http://10.0.2.2/</string>-->
 
     <!-- URL's CASA -->
-    <string name="URL_LOGIN">http://192.168.137.1/app/login.asp</string>
-    <string name="URL_INDEX">http://192.168.137.1/index.asp</string>
-    <string name="URL_SYNC_MENU">http://192.168.137.1/app/getMenu.asp</string>
-    <string name="URL_SYNC_MESSAGES">http://192.168.137.1/app/getPendingMessages.asp</string>
-    <string name="URL_CHAT">http://192.168.137.1/news/chat.asp</string>
-    <string name="URL_ROOT">http://192.168.137.1/</string>
+    <!--<string name="URL_LOGIN">http://192.168.137.1/app/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://192.168.137.1/index.asp</string>-->
+    <!--<string name="URL_SYNC_MENU">http://192.168.137.1/app/getMenu.asp</string>-->
+    <!--<string name="URL_SYNC_MESSAGES">http://192.168.137.1/app/getPendingMessages.asp</string>-->
+    <!--<string name="URL_CHAT">http://192.168.137.1/news/chat.asp</string>-->
+    <!--<string name="URL_ROOT">http://192.168.137.1/</string>-->
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->
@@ -90,5 +91,7 @@
 
 
     <string name="iconDescription">Icono</string>
+
+    <string name="hackerino">Parece que eres un hackerino, bandido</string>
 
 </resources>

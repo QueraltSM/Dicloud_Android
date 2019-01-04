@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.HttpConnections;
@@ -39,6 +39,8 @@ import es.disoft.disoft.R;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.User;
 import es.disoft.disoft.model.UserDao;
+
+import static es.disoft.disoft.ConnectionAvailable.isNetworkAvailable;
 
 /**
  * A login screen that offers login via email/password.
@@ -57,9 +59,6 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-    private Context context = this;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         setUpLoginForm();
         enableSuggestions();
     }
-
 
     private void setUpLoginForm() {
         mAliasView = findViewById(R.id.alias);
@@ -119,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
     }
 
-
     private void enableSuggestions() {
         new Thread(new Runnable() {
             @Override
@@ -128,18 +125,17 @@ public class LoginActivity extends AppCompatActivity {
                 ArrayList<String> suggestionsAL = new ArrayList<>();
                 for (User.DbAlias alias: aliases) suggestionsAL.add(alias.dbAlias.toLowerCase());
                 String[] suggestions = suggestionsAL.toArray(new String[0]);
-                enableSuggestions(mAliasView,  new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, suggestions));
+                enableSuggestions(mAliasView,  new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, suggestions));
 
 
                 List<User.UserAlias> users = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getAllUserAlias();
                 suggestionsAL = new ArrayList<>();
                 for (User.UserAlias user: users) suggestionsAL.add(user.userAlias.toLowerCase());
                 suggestions = suggestionsAL.toArray(new String[0]);
-                enableSuggestions(mUserView,  new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, suggestions));
+                enableSuggestions(mUserView,  new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, suggestions));
             }
         }).start();
     }
-
 
     private void enableSuggestions(final AutoCompleteTextView textView, final ArrayAdapter<String> adapter) {
         new Thread() {
@@ -169,14 +165,20 @@ public class LoginActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
         // Check Internet connection
-        try {
-            if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
-                somethingWrong(5);
+
+        if (isNetworkAvailable(getApplicationContext())) {
+            try {
+                if (!(new ConnectionAvailable(getString(R.string.URL_LOGIN)).execute().get())) {
+                    somethingWrong(4);
+                    return;
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                somethingWrong(4);
                 return;
             }
-        } catch (ExecutionException | InterruptedException e) {
-            somethingWrong(5);
-            return;
+        } else {
+                somethingWrong(5);
+                return;
         }
 
         // Reset errors.
@@ -189,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
         String user     = mUserView.getText().toString().trim().toUpperCase();
         String password = mPasswordView.getText().toString().trim();
 
-        boolean cancel;
+        boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password
@@ -225,8 +227,6 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // TODO quitar esta linea
-        cancel = false;
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -235,31 +235,35 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-
             showProgress(true);
             mAuthTask = new UserLoginTask(alias, user, password);
             mAuthTask.execute((Void) null);
         }
     }
 
-
     private boolean isAliasValid(String alias) {
-        //TODO: Replace this with your own logic
-        return !alias.contains(" ");
+        return isValidText(alias);
     }
-
 
     private boolean isUserValid(String user) {
-        //TODO: Replace this with your own logic
-        return !user.contains(" ");
+        if (user.equalsIgnoreCase("sqlinjection") || user.equalsIgnoreCase("inyeccionsql")) {
+            Toast.setText(getApplicationContext(), R.string.hackerino).show();
+            return false;
+        }
+        return isValidText(user);
     }
-
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 0;
+        if (password.length() >= 3)
+            return isValidText(password);
+        return false;
     }
 
+    private boolean isValidText(String text) {
+        String regex    = "^[a-zA-Z0-9]+$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(text).matches();
+    }
 
     /**
      * Shows the progress UI and hides the login form.
@@ -285,7 +289,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
@@ -317,7 +320,6 @@ public class LoginActivity extends AppCompatActivity {
             mPassword = password;
         }
 
-
         @Override
         protected Integer doInBackground(Void... params) {
 
@@ -335,7 +337,6 @@ public class LoginActivity extends AppCompatActivity {
             return exitCode;
         }
 
-
         @Override
         protected void onPostExecute(final Integer exitCode) {
             mAuthTask = null;
@@ -349,13 +350,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-
         @Override
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
         }
-
 
         private void login() throws JSONException {
 
@@ -380,7 +379,6 @@ public class LoginActivity extends AppCompatActivity {
 
             if (loginResponse != null) error = loginResponse.getBoolean("error");
         }
-
 
         private void updateDDBB() {
             new Thread(new Runnable() {
@@ -410,21 +408,22 @@ public class LoginActivity extends AppCompatActivity {
                 mAliasView.requestFocus();
                 break;
             case 2: // user or password error
-                Toast.makeText(context,"Fallo usuario o contraseña MIRAR COMO").show();
+                Toast.setText(getApplicationContext(), R.string.error_user_or_password).show();
                 break;
             case 3: // inactive user error
                 ((TextInputLayout) mUserView.getParent().getParent()).setError(getString(R.string.error_inactive_user));
                 break;
             case 4: // json error
-                Toast.makeText(context, R.string.error_json_response).show();
+                Toast.setText(getApplicationContext(), R.string.error_json_response).show();
                 break;
             case 5: // internet error
-                Toast.makeText(context, R.string.error_internet_connection).show();
+                Toast.setText(getApplicationContext(), R.string.error_internet_connection).show();
                 break;
             default: // unknown error
-                Toast.makeText(context, R.string.error_unknown).show();
+                Toast.setText(getApplicationContext(), R.string.error_unknown).show();
         }
-        Log.i("LOGIN", "somethingWrong: " +exitCode);
+
+        Log.i("LOGIN", "somethingWrong: " + exitCode);
         return exitCode != 0;
     }
 }

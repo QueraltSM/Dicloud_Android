@@ -62,7 +62,7 @@ public class ChatWorker extends Worker {
                 public void run() {
                     while (!thread.isInterrupted()) {
                         try {
-                            // TODO cambiar tiempo a 15 segundos!!!
+                            // TODO cambiar tiempo a 15 segundos?
                             Thread.sleep(5 * 1000);
                             checkMessages(context);
 //                            test();
