@@ -31,9 +31,10 @@ public class ChatWorker extends Worker {
         try {
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
             checkMessages(getApplicationContext());
+            Log.wtf("WORKER", "doWork: HE ENTRADO SEEEEEEEEEEEEEEEH");
             return Result.success();
         } catch (Exception e) {
-            Log.e("WORKER", "doWork: ", e);
+            Log.wtf("WORKER", "doWork: ", e);
             return Result.retry();
         }
     }

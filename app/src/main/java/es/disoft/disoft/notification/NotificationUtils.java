@@ -160,11 +160,20 @@ public class NotificationUtils extends ContextWrapper {
 
     public void clear(int id) {
         DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().delete(id);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            getManager().cancel(TAG, id);
-        } else {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+            clearNewNotifications(id);
+        else
             clearOldNotifications();
-        }
+    }
+
+    private void clearNewNotifications(int id) {
+        List<Message.EssentialInfo> messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
+
+        if (messages.size() >= 1)
+            getManager().cancel(TAG, id);
+        else
+            getManager().cancelAll();
+
     }
 
     private void clearOldNotifications() {
