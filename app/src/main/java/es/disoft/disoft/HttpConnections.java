@@ -1,5 +1,6 @@
 package es.disoft.disoft;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.User;
 
 public class HttpConnections {
@@ -66,9 +68,12 @@ public class HttpConnections {
     }
 
 
-    public static String getData(URL url) {
+    public static String getData(URL url, Context mContext) {
 
         Map<String, String> userUID = new HashMap<>();
+        if(User.currentUser == null){
+            User.currentUser = DisoftRoomDatabase.getDatabase(mContext).userDao().getUserLoggedIn();
+        }
         userUID.put("uid", "" + User.currentUser.getUser_id());
 
         JSONObject data = execute(url.toString(), new JSONObject(userUID).toString());

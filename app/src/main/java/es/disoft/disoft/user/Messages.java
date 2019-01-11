@@ -43,7 +43,7 @@ public class Messages {
     }
 
     private static String jsonRequest(URL url) {
-        return HttpConnections.getData(url);
+        return HttpConnections.getData(url,mContext);
     }
 
     private static void updateMessages(String messagesAsJsonString) throws JSONException {

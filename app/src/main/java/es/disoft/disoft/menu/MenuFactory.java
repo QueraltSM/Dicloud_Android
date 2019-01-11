@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -25,10 +26,10 @@ import java.util.Map;
 
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.R;
+import es.disoft.disoft.settings.SettingsActivity;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Menu;
 import es.disoft.disoft.model.MenuDao;
-import es.disoft.disoft.user.WebViewActivity;
 
 import static es.disoft.disoft.user.WebViewActivity.closeSession;
 
@@ -133,7 +134,10 @@ public class MenuFactory {
                 if (headerList.get(groupPosition).isGroup && !headerList.get(groupPosition).hasChildren) {
 
                     switch (headerList.get(groupPosition).menuName) {
-                        case "Ajustes":
+                        case "Configuración":
+                            Intent intent = new Intent(context,SettingsActivity.class);
+                            context.startActivity(intent);
+                            ((Activity) context).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             break;
                         case "Desconectar":
                             closeSessionWithConfirmation();
@@ -167,7 +171,7 @@ public class MenuFactory {
     }
 
     private String jsonRequest(URL url) {
-        return HttpConnections.getData(url);
+        return HttpConnections.getData(url,context);
     }
 
     private void jsonResponse(final String menuAsJsonString) {

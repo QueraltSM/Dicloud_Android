@@ -1,14 +1,16 @@
 package es.disoft.disoft;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import es.disoft.disoft.db.DisoftRoomDatabase;
@@ -28,18 +30,23 @@ public class LauncherActivity extends AppCompatActivity {
         Log.v("servicio", "App starts");
         context = getApplicationContext();
 
-//        animacion de inicio de app?
         setContentView(R.layout.activity_launcher);
-        runChatWork();
+        runChatWork(context,this);
         login();
     }
 
-    private void runChatWork() {
-        PeriodicWorkRequest.Builder logCheckBuilder =
-                new PeriodicWorkRequest.Builder(ChatWorker.class, 15, TimeUnit.MINUTES);
+    public static void runChatWork(Context context, Activity activ) {
 
-        PeriodicWorkRequest chatWork = logCheckBuilder.build();
-        WorkManager.getInstance().enqueue(chatWork);
+        int syncFrequency = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency", "15"));
+        if (syncFrequency != -1) {
+            PeriodicWorkRequest.Builder logCheckBuilder =
+                    new PeriodicWorkRequest.Builder(ChatWorker.class, syncFrequency, TimeUnit.MINUTES);
+            PeriodicWorkRequest chatWork = logCheckBuilder.build();
+            WorkManager.getInstance().enqueueUniquePeriodicWork(activ.getString(R.string.app_name), ExistingPeriodicWorkPolicy.REPLACE, chatWork);
+//            WorkManager.getInstance().enqueue(chatWork);
+        }else{
+            WorkManager.getInstance().cancelAllWorkByTag(activ.getString(R.string.app_name));
+        }
     }
 
     private void login() {

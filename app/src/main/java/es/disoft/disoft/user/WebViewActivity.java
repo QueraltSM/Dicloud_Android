@@ -110,7 +110,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        ChatWorker.checkMessagesEvery5sc.stop();
+       // ChatWorker.checkMessagesEvery5sc.stop();
         super.onPause();
     }
 
@@ -176,7 +176,9 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void setTextActionBar(String dbAlias, String fullName) {
-
+        if(User.currentUser == null){
+            User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
+        }
         final String finalDbAlias  = ObjectUtils.firstNonNull(dbAlias,  User.currentUser.getDbAlias());
         final String finalFullName = ObjectUtils.firstNonNull(fullName, User.currentUser.getFullName());
 

@@ -8,9 +8,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -20,21 +23,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import java.util.List;
 
 import es.disoft.disoft.R;
-import es.disoft.disoft.user.WebViewActivity;
 import es.disoft.disoft.db.DisoftRoomDatabase;
 import es.disoft.disoft.model.Message;
 import es.disoft.disoft.model.User;
+import es.disoft.disoft.user.WebViewActivity;
 
 public class NotificationUtils extends ContextWrapper {
 
     private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
-    private final String NOTIFICATION_ID   = "NOTIFICATION_ID";
+    private final String NOTIFICATION_ID = "NOTIFICATION_ID";
 
     //use constant ID for notification used as group summary
-    private final int SUMMARY_ID      = 0;
+    private final int SUMMARY_ID = 0;
     private final String CHANNEL_NAME = getString(R.string.channel_name);
-    private String CHANNEL_ID   = getString(R.string.channel_ID);
-    private final String TAG          = getString(R.string.app_name);
+    private String CHANNEL_ID = getString(R.string.channel_ID);
+    private final String TAG = getString(R.string.app_name);
     private int COLOR;
     private int IMPORTANCE;
     private boolean create = true;
@@ -42,15 +45,15 @@ public class NotificationUtils extends ContextWrapper {
 
     private String title;
     private String text;
-    private int    id;
+    private int id;
 
-    private int singleIcon = R.drawable.ic_menu_gallery;
-    private int groupIcon  = R.drawable.ic_menu_slideshow;
+    private int singleIcon = R.drawable.ic_chat;
+    private int groupIcon = R.drawable.ic_chat;
 
     public NotificationUtils(Context base) {
         super(base);
 
-        COLOR = Color.RED;
+        COLOR = translateColor(PreferenceManager.getDefaultSharedPreferences(this).getString("notification_led", ""));
 
 
         setImportance(true);
@@ -68,21 +71,72 @@ public class NotificationUtils extends ContextWrapper {
     @SuppressLint("WrongConstant")
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            int i = 2;
-            int j = i - 1;
-            getManager().deleteNotificationChannel(CHANNEL_ID + j);
-            CHANNEL_ID = CHANNEL_ID + i;
+            CHANNEL_ID = checkingSharedNotif();
 
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE);
             channel.enableLights(true);
-            channel.setLightColor(COLOR);
+            channel.setLightColor(getColor());
             channel.enableVibration(true);
             getManager().createNotificationChannel(channel);
         }
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String checkingSharedNotif() {
+        String TAG = "ledDeColores";
+        SharedPreferences prefs = getSharedPreferences("es.disoft.disoft_preferences", MODE_PRIVATE);
+        Integer prefsCheck = prefs.getInt("idChannel", 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.i(TAG, "checkingSharedNotif: "  + prefsCheck);
+
+        if (prefsCheck != 0) {
+            NotificationChannel notificationChannel = getManager().getNotificationChannel(getString(R.string.channel_ID) + prefsCheck);
+            if (translateColor(settings.getString("notification_led", "")) != notificationChannel.getLightColor()) {
+
+                Log.i(TAG, "checkingSharedNotif:  nueva notif");
+                getManager().deleteNotificationChannel(CHANNEL_ID + prefsCheck);
+                prefsCheck += 1;
+
+            }
+
+        }else{
+            prefsCheck = 1;
+        }
+        prefs.edit().putInt("idChannel", prefsCheck).apply();
+        return CHANNEL_ID + prefsCheck;
+    }
+
+    private int translateColor(String notification_led) {
+        String TAG = "ledDeColores";
+        Log.i(TAG, "translateColor: " + notification_led);
+        switch (notification_led) {
+
+            case "Blue":
+                return Color.BLUE;
+
+            case "Yellow":
+                return Color.YELLOW;
+
+            case "Green":
+                Log.i(TAG, "translateColor: estoy dentro de verde");
+                return Color.GREEN;
+
+            case "Red":
+                return Color.RED;
+
+            default:
+                return Color.WHITE;
+        }
+
+    }
+
+    private int getColor() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String color1 = settings.getString("notification_led", "");
+        return translateColor(color1);
+    }
+
+    //    @RequiresApi(api = Build.VERSION_CODES.M)
     private NotificationManager getManager() {
         if (mManager == null)
 //            mManager = getSystemService(NotificationManager.class);
@@ -91,9 +145,9 @@ public class NotificationUtils extends ContextWrapper {
     }
 
     public void createNotification(int id, String title, String text) {
-        this.id    = id;
+        this.id = id;
         this.title = title;
-        this.text  = text;
+        this.text = text;
     }
 
     public void show() {
@@ -129,11 +183,11 @@ public class NotificationUtils extends ContextWrapper {
         if (messages.size() > 1) {
             singleNotification();
             NotificationManagerCompat.from(this).notify(TAG, SUMMARY_ID, summaryNotificationOldStyle(messages));
-        } else if (messages.size() == 1){
+        } else if (messages.size() == 1) {
             String txt = messages.get(0).messages_count + " " + getString(R.string.new_message) + " " + messages.get(0).from;
             title = ObjectUtils.firstNonNull(title, User.currentUser.getDbAlias());
-            text  = ObjectUtils.firstNonNull(text,  txt);
-            id    = ObjectUtils.firstNonNull(id,    messages.get(0).from_id);
+            text = ObjectUtils.firstNonNull(text, txt);
+            id = ObjectUtils.firstNonNull(id, messages.get(0).from_id);
             getManager().cancelAll();
             singleNotificationOld();
         } else {
@@ -203,13 +257,12 @@ public class NotificationUtils extends ContextWrapper {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(icon)
-//                .setAutoCancel(true)
+                .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
-        else
-            if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+            else if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
         return notification;
     }
