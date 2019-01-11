@@ -28,6 +28,7 @@ import java.util.List;
 
 import es.disoft.disoft.LauncherActivity;
 import es.disoft.disoft.R;
+import es.disoft.disoft.workers.ChatWorker;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -54,10 +55,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (preference instanceof ListPreference) {
                 String TAG = "kys";
                 Log.i(TAG, "onPreferenceChange: " + preference.getKey());
-                if(preference.getKey().equals("sync_frequency")){
-                    LauncherActivity.runChatWork(preference.getContext(), (Activity)preference.getContext());
-
-                }
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
@@ -68,6 +65,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         index >= 0
                                 ? listPreference.getEntries()[index]
                                 : null);
+
+                if(preference.getKey().equals("sync_frequency")){
+                    int repeatInterval = index != -1 ?
+                            Integer.parseInt(listPreference.getEntryValues()[index].toString()) :
+                            index;
+                    ChatWorker.runChatWork(LauncherActivity.UID, repeatInterval);
+                }
 
             } else if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value

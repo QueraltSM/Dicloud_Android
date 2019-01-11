@@ -1,12 +1,18 @@
 package es.disoft.disoft.workers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import es.disoft.disoft.R;
@@ -36,6 +42,27 @@ public class ChatWorker extends Worker {
         } catch (Exception e) {
             Log.wtf("WORKER", "doWork: ", e);
             return Result.retry();
+        }
+    }
+
+    public static void runChatWork(String UID, int repeatInterval) {
+
+//        int syncFrequency = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency", "15"));
+        if (repeatInterval != -1) {
+            PeriodicWorkRequest.Builder logCheckBuilder =
+                    new PeriodicWorkRequest.Builder(
+                            ChatWorker.class,
+                            repeatInterval,
+                            TimeUnit.MINUTES);
+
+            PeriodicWorkRequest chatWork = logCheckBuilder.build();
+            WorkManager.getInstance().enqueueUniquePeriodicWork(
+                    UID,
+                    ExistingPeriodicWorkPolicy.REPLACE,
+                    chatWork);
+//            WorkManager.getInstance().enqueue(chatWork);
+        }else{
+            WorkManager.getInstance().cancelAllWorkByTag(UID);
         }
     }
 

@@ -11,7 +11,7 @@ public interface MessageDao extends BaseDao<Message> {
     @Query("SELECT * FROM messages")
     List<Message> getAllMessages();
 
-    @Query("SELECT COUNT(from_id) FROM messages")
+    @Query("SELECT COUNT(DISTINCT from_id) FROM messages")
     int count();
 
     @Query("SELECT from_id,`from`,messages_count FROM messages ORDER BY last_message_timestamp DESC")

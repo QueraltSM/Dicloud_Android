@@ -30,6 +30,9 @@ import es.disoft.disoft.user.WebViewActivity;
 
 public class NotificationUtils extends ContextWrapper {
 
+    private final String NOTIFICATION_GROUP_TYPE = "group";
+    private final String NOTIFICATION_NOTIFICATION_TYPE = "notification";
+
     private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
     private final String NOTIFICATION_ID = "NOTIFICATION_ID";
 
@@ -219,12 +222,15 @@ public class NotificationUtils extends ContextWrapper {
     }
 
     private Notification notificationOldStyle() {
+
         return standardNotification(title, singleIcon)
                 .build();
     }
 
     private Notification summaryNotificationNewStyle() {
+
         return standardNotification(getString(R.string.app_name), groupIcon)
+                .setContentIntent(getPendingIntent(NOTIFICATION_GROUP_TYPE))
                 .setGroupSummary(true)
                 .build();
     }
@@ -245,19 +251,12 @@ public class NotificationUtils extends ContextWrapper {
         return standardNotification(getString(R.string.app_name), groupIcon)
                 .setGroupSummary(true)
                 .setContentText(messagesCount + " " + getString(R.string.new_messages))
-                .setStyle(inboxStyle).build();
+                .setStyle(inboxStyle)
+                .setContentIntent(getPendingIntent(NOTIFICATION_GROUP_TYPE))
+                .build();
     }
 
     private NotificationCompat.Builder standardNotification(String title, int icon) {
-
-        String type = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().count() > 1 ? "group" : "notification";
-        Log.d(TAG, "standardNotification: type: " + type);
-
-        Intent resultIntent = new Intent(this, WebViewActivity.class);
-        resultIntent.putExtra(NOTIFICATION_ID, id);
-        resultIntent.putExtra(NOTIFICATION_TYPE, type);
-        int uniqueInt = (int) (System.currentTimeMillis() & 0xfffffff);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, uniqueInt, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setPriority(IMPORTANCE)
@@ -267,13 +266,21 @@ public class NotificationUtils extends ContextWrapper {
                 .setContentText(text)
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(getPendingIntent(NOTIFICATION_NOTIFICATION_TYPE));
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
             else if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
         return notification;
+    }
+
+    private PendingIntent getPendingIntent(String type) {
+        Intent resultIntent = new Intent(this, WebViewActivity.class);
+        resultIntent.putExtra(NOTIFICATION_ID, id);
+        resultIntent.putExtra(NOTIFICATION_TYPE, type);
+        int uniqueInt = (int) (System.currentTimeMillis() & 0xfffffff);
+        return PendingIntent.getActivity(this, uniqueInt, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public void clearAll() {
