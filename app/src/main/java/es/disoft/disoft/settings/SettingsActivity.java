@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
@@ -38,7 +37,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             int id = item.getItemId();
-            if (id == android.R.id.home) startMainView();
+            if (id == android.R.id.home) backToMainView();
         }
 
         return super.onOptionsItemSelected(item);
@@ -47,12 +46,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startMainView();
+        backToMainView();
     }
 
-    private void startMainView() {
-        if (mainSettingsView)
+    private void backToMainView() {
+        if (mainSettingsView) {
+            Log.i("baack", "onBackPressed: ");
             startActivity(new Intent(getApplicationContext(), WebViewActivity.class));
+            finish();
+        }
+            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     @Override
@@ -232,8 +235,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             mainSettingsView = false;
-
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
 
@@ -256,6 +259,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
+                getActivity().overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -271,6 +275,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             mainSettingsView = false;
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
@@ -293,6 +298,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
+                getActivity().overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             }
             return super.onOptionsItemSelected(item);

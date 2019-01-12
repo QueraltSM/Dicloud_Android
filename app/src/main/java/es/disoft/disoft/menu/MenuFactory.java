@@ -135,8 +135,7 @@ public class MenuFactory {
 
                     switch (headerList.get(groupPosition).menuName) {
                         case "Configuración":
-                            Intent intent = new Intent(context,SettingsActivity.class);
-                            context.startActivity(intent);
+                            context.startActivity(new Intent(context,SettingsActivity.class));
                             ((Activity) context).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             break;
                         case "Desconectar":

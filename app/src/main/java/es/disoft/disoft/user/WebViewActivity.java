@@ -143,10 +143,10 @@ public class WebViewActivity extends AppCompatActivity {
 
         Log.e("URL_", "onResume: ");
 
-        if (state != null)
-            webView.saveState(state);
-        else if (loadedFromNotification())
+        if (loadedFromNotification())
             openChat();
+        else if (state != null)
+            webView.saveState(state);
         else
             openIndex();
 
