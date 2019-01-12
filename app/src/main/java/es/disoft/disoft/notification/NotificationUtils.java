@@ -1,6 +1,5 @@
 package es.disoft.disoft.notification;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,17 +9,21 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import es.disoft.disoft.R;
 import es.disoft.disoft.db.DisoftRoomDatabase;
@@ -43,45 +46,48 @@ public class NotificationUtils extends ContextWrapper {
     private final String TAG = getString(R.string.app_name);
     private int COLOR;
     private int IMPORTANCE;
-    private boolean create = true;
     private NotificationManager mManager;
 
     private String title;
     private String text;
     private int id;
 
-    private int singleIcon = R.drawable.ic_chat;
-    private int groupIcon = R.drawable.ic_chat;
+    private int icon = R.drawable.ic_chat;
 
     public NotificationUtils(Context base) {
         super(base);
 
-        COLOR = translateColor(PreferenceManager.getDefaultSharedPreferences(this).getString("notification_led", ""));
+        if (notificationEnabled()) {
+            COLOR = translateColor(Objects.requireNonNull(PreferenceManager.getDefaultSharedPreferences(this).getString("notification_led", "Red")));
 
-
-        setImportance(true);
-        createNotificationChannel();
-    }
-
-    private void setImportance(boolean importance) {
-        create = importance;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            IMPORTANCE = create ? NotificationCompat.PRIORITY_MAX : NotificationCompat.PRIORITY_DEFAULT;
-        else
-            IMPORTANCE = create ? NotificationManager.IMPORTANCE_MAX : NotificationManager.IMPORTANCE_MIN;
-    }
-
-    @SuppressLint("WrongConstant")
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CHANNEL_ID = checkingSharedNotif();
-
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE);
-            channel.enableLights(true);
-            channel.setLightColor(getColor());
-            channel.enableVibration(true);
-            getManager().createNotificationChannel(channel);
+            setImportance(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                createNotificationChannel();
         }
+    }
+
+    private void setImportance(boolean notification) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            IMPORTANCE = notification ? NotificationCompat.PRIORITY_MAX : NotificationCompat.PRIORITY_DEFAULT;
+        else
+            IMPORTANCE = notification ? NotificationManager.IMPORTANCE_MAX : NotificationManager.IMPORTANCE_MIN;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        CHANNEL_ID = checkingSharedNotif();
+
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE);
+        channel.enableLights(true);
+        channel.setLightColor(getPreferenceColor());
+        channel.setSound(getPreferenceSound(), audioAttributes);
+        channel.setVibrationPattern(getPreferenceVibration());
+        getManager().createNotificationChannel(channel);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -89,17 +95,28 @@ public class NotificationUtils extends ContextWrapper {
         String TAG = "ledDeColores";
         SharedPreferences prefs = getSharedPreferences("es.disoft.disoft_preferences", MODE_PRIVATE);
         Integer prefsCheck = prefs.getInt("idChannel", 0);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         Log.i(TAG, "checkingSharedNotif: "  + prefsCheck);
 
         if (prefsCheck != 0) {
             NotificationChannel notificationChannel = getManager().getNotificationChannel(getString(R.string.channel_ID) + prefsCheck);
-            if (translateColor(settings.getString("notification_led", "")) != notificationChannel.getLightColor()) {
+
+            int preferenceColor      = getPreferenceColor();
+            String preferenceSound   = ObjectUtils.firstNonNull(getPreferenceSound(), "").toString();
+            long[] preferenceVibrate = getPreferenceVibration();
+            Log.i(TAG, "preferences v: " + ArrayUtils.toString(preferenceVibrate));
+
+            int channelColor      = notificationChannel.getLightColor();
+            String channelSound   = ObjectUtils.firstNonNull(notificationChannel.getSound(), "").toString();
+            long[] channelVibrate = notificationChannel.getVibrationPattern();
+            Log.i(TAG, "channel v: " + ArrayUtils.toString(channelVibrate));
+
+            if (preferenceColor != channelColor
+                    || !preferenceSound.equals(channelSound)
+                    || !Arrays.equals(preferenceVibrate, channelVibrate)) {
 
                 Log.i(TAG, "checkingSharedNotif:  nueva notif");
                 getManager().deleteNotificationChannel(CHANNEL_ID + prefsCheck);
                 prefsCheck += 1;
-
             }
 
         }else{
@@ -107,6 +124,35 @@ public class NotificationUtils extends ContextWrapper {
         }
         prefs.edit().putInt("idChannel", prefsCheck).apply();
         return CHANNEL_ID + prefsCheck;
+    }
+
+    private boolean notificationEnabled() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return settings.getBoolean("notifications_new_message", true);
+    }
+
+    private Uri getPreferenceSound() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String tone = settings.getString("notifications_new_message_ringtone", getString(R.string.pref_ringtone));
+        Uri sound = null;
+        if (!Objects.requireNonNull(tone).isEmpty()) sound = Uri.parse(tone);
+        return sound;
+    }
+
+    private long[] getPreferenceVibration() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Boolean vibration = settings.getBoolean("notifications_new_message_vibrate", true);
+        // 0   : Start without a delay
+        // 400 : Vibrate for 400 milliseconds
+        // 200 : Pause for 200 milliseconds
+        // 400 : Vibrate for 400 milliseconds
+        return vibration ? new long[]{0, 400, 200, 400} : new long[0];
+    }
+
+    private int getPreferenceColor() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String color = settings.getString("notification_led", "");
+        return translateColor(Objects.requireNonNull(color));
     }
 
     private int translateColor(String notification_led) {
@@ -121,7 +167,6 @@ public class NotificationUtils extends ContextWrapper {
                 return Color.YELLOW;
 
             case "Green":
-                Log.i(TAG, "translateColor: estoy dentro de verde");
                 return Color.GREEN;
 
             case "Red":
@@ -133,12 +178,6 @@ public class NotificationUtils extends ContextWrapper {
 
     }
 
-    private int getColor() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String color1 = settings.getString("notification_led", "");
-        return translateColor(color1);
-    }
-
     //    @RequiresApi(api = Build.VERSION_CODES.M)
     private NotificationManager getManager() {
         if (mManager == null)
@@ -148,17 +187,19 @@ public class NotificationUtils extends ContextWrapper {
     }
 
     public void createNotification(int id, String title, String text) {
-        this.id = id;
+        this.id    = id;
         this.title = title;
-        this.text = text;
+        this.text  = text;
     }
 
     public void show() {
-//        messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            showCuteNotifications();
-        else
-            showPrehistoricAndUglyNotifications();
+        if (notificationEnabled()) {
+    //        messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                showCuteNotifications();
+            else
+                showPrehistoricAndUglyNotifications();
+        }
     }
 
     public void clear(int id) {
@@ -171,7 +212,6 @@ public class NotificationUtils extends ContextWrapper {
 
     private void clearNewNotifications(int id) {
         List<Message.EssentialInfo> messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
-
         if (messages.size() >= 1)
             getManager().cancel(TAG, id);
         else
@@ -198,8 +238,8 @@ public class NotificationUtils extends ContextWrapper {
         } else if (messages.size() == 1) {
             String txt = messages.get(0).messages_count + " " + getString(R.string.new_message) + " " + messages.get(0).from;
             title = ObjectUtils.firstNonNull(title, User.currentUser.getDbAlias());
-            text = ObjectUtils.firstNonNull(text, txt);
-            id = ObjectUtils.firstNonNull(id, messages.get(0).from_id);
+            text  = ObjectUtils.firstNonNull(text, txt);
+            id    = ObjectUtils.firstNonNull(id, messages.get(0).from_id);
             getManager().cancelAll();
             singleNotificationOld();
         } else {
@@ -216,20 +256,20 @@ public class NotificationUtils extends ContextWrapper {
     }
 
     private Notification notificationNewStyle() {
-        return standardNotification(title, singleIcon)
+        return standardNotification(title, icon)
                 .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
                 .build();
     }
 
     private Notification notificationOldStyle() {
 
-        return standardNotification(title, singleIcon)
+        return standardNotification(title, icon)
                 .build();
     }
 
     private Notification summaryNotificationNewStyle() {
 
-        return standardNotification(getString(R.string.app_name), groupIcon)
+        return standardNotification(getString(R.string.app_name), icon)
                 .setContentIntent(getPendingIntent(NOTIFICATION_GROUP_TYPE))
                 .setGroupSummary(true)
                 .build();
@@ -248,7 +288,7 @@ public class NotificationUtils extends ContextWrapper {
             inboxStyle.addLine(message.messages_count + " " + mText + " " + message.from);
         }
 
-        return standardNotification(getString(R.string.app_name), groupIcon)
+        return standardNotification(getString(R.string.app_name), icon)
                 .setGroupSummary(true)
                 .setContentText(messagesCount + " " + getString(R.string.new_messages))
                 .setStyle(inboxStyle)
@@ -261,7 +301,7 @@ public class NotificationUtils extends ContextWrapper {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setPriority(IMPORTANCE)
                 .setGroup(CHANNEL_NAME)
-                .setLights(COLOR, 1, 1)
+                .setLights(COLOR, 2000, 3000)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(icon)
@@ -269,8 +309,9 @@ public class NotificationUtils extends ContextWrapper {
                 .setContentIntent(getPendingIntent(NOTIFICATION_NOTIFICATION_TYPE));
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
-            else if (create) notification.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+                notification
+                        .setSound(getPreferenceSound())
+                        .setVibrate(getPreferenceVibration());
 
         return notification;
     }

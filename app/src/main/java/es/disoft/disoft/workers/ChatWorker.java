@@ -1,5 +1,6 @@
 package es.disoft.disoft.workers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -68,11 +69,12 @@ public class ChatWorker extends Worker {
 
     public static class checkMessagesEvery5sc {
 
+        @SuppressLint("StaticFieldLeak")
         public static Context context;
         private static Thread thread;
 
-        public void setContext(Context context) {
-            this.context = context;
+        public void setContext(Context cnt) {
+            context = cnt;
         }
 
         public static void start() {
@@ -100,12 +102,6 @@ public class ChatWorker extends Worker {
                     }
                 }
             });
-        }
-
-        private static void test() {
-            NotificationUtils mNotififacionUtils = new NotificationUtils(context);
-            mNotififacionUtils.createNotification(999, "superTaitol", "megatexta");
-            mNotififacionUtils.show();
         }
     }
 
@@ -142,10 +138,8 @@ public class ChatWorker extends Worker {
 
         ArrayList<Message> deletedMessages = Messages.getDeleted();
         if (deletedMessages != null) {
-            for (Message message : deletedMessages) {
-                Log.w("mensajeee", "clear: " + message.toString());
+            for (Message message : deletedMessages)
                 mNotififacionUtils.clear(message.getFrom_id());
-            }
         }
     }
 }

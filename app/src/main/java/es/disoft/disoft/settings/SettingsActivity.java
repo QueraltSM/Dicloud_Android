@@ -1,7 +1,6 @@
 package es.disoft.disoft.settings;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -28,20 +27,46 @@ import java.util.List;
 
 import es.disoft.disoft.LauncherActivity;
 import es.disoft.disoft.R;
+import es.disoft.disoft.user.WebViewActivity;
 import es.disoft.disoft.workers.ChatWorker;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    static boolean mainSettingsView = true;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) startMainView();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startMainView();
+    }
+
+    private void startMainView() {
+        if (mainSettingsView)
+            startActivity(new Intent(getApplicationContext(), WebViewActivity.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ChatWorker.checkMessagesEvery5sc.context = this;
+        ChatWorker.checkMessagesEvery5sc.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ChatWorker.checkMessagesEvery5sc.stop();
+    }
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -50,6 +75,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
+            Log.i("KYS_", "onPreferenceChange: " + preference + " : " + value);
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
@@ -59,7 +85,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
-                changeColorIcon(index, preference.getIcon());
                 // Set the summary to reflect the new value.
                 preference.setSummary(
                         index >= 0
@@ -67,10 +92,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 : null);
 
                 if(preference.getKey().equals("sync_frequency")){
-                    int repeatInterval = index != -1 ?
-                            Integer.parseInt(listPreference.getEntryValues()[index].toString()) :
-                            index;
-                    ChatWorker.runChatWork(LauncherActivity.UID, repeatInterval);
+                    ChatWorker.runChatWork(
+                            LauncherActivity.UID,
+                            index >= 0
+                                    ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
+                                    : index);
+                } else if(preference.getKey().equals("notification_led")){
+                    preference.setIcon(R.drawable.ic_led);
+                    changeColorIcon(index, preference.getIcon());
                 }
 
             } else if (preference instanceof RingtonePreference) {
@@ -105,25 +134,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     };
 
     private static void changeColorIcon(int index, Drawable icon) {
-
-        if (icon != null) {
-
-            switch (index) {
-                case 0:
-                    icon.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
-                    break;
-
-                case 1:
-                    icon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
-                    break;
-
-                case 2:
-                    icon.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
-                    break;
-
-                case 3:
-                    icon.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
-            }
+        switch (index) {
+            case 0:
+                icon.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                break;
+            case 1:
+                icon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
+                break;
+            case 2:
+                icon.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                break;
+            case 3:
+                icon.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
         }
     }
 
@@ -210,6 +232,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            mainSettingsView = false;
+
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
 
@@ -219,6 +243,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_led"));
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            mainSettingsView = true;
         }
 
         @Override
@@ -241,6 +271,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            mainSettingsView = false;
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
 
@@ -249,6 +280,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            mainSettingsView = true;
         }
 
         @Override

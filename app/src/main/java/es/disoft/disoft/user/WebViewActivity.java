@@ -54,6 +54,7 @@ public class WebViewActivity extends AppCompatActivity {
     private static Activity activity;
     private WebView webView;
     private ProgressBar progressBar;
+    private Bundle state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +73,25 @@ public class WebViewActivity extends AppCompatActivity {
 
         activity = this;
 
+        Log.i("qweasd", "onCreate: " + savedInstanceState);
         setMenu();
         createWebview();
         setTextActionBar();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.i("qwe", "onSaveInstanceState: ");
+        state = outState;
+        webView.saveState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i("qwe", "onRestoreInstanceState: ");
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
     }
 
     @Override
@@ -110,12 +127,13 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-       // ChatWorker.checkMessagesEvery5sc.stop();
         super.onPause();
+        ChatWorker.checkMessagesEvery5sc.stop();
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
 
         if (User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
@@ -125,14 +143,15 @@ public class WebViewActivity extends AppCompatActivity {
 
         Log.e("URL_", "onResume: ");
 
-        if (loadedFromNotification())
+        if (state != null)
+            webView.saveState(state);
+        else if (loadedFromNotification())
             openChat();
         else
             openIndex();
 
         ChatWorker.checkMessagesEvery5sc.context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        super.onResume();
     }
 
 
@@ -159,7 +178,7 @@ public class WebViewActivity extends AppCompatActivity {
     private void openIndex() {
         try {
             final String url = getString(R.string.URL_INDEX);
-            String postData = null; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
+            String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
             webView.postUrl(url, postData.getBytes());
@@ -174,14 +193,14 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void setTextActionBar() {
-        setTextActionBar(null, null);
+        setTextActionBar(null);
     }
 
-    private void setTextActionBar(String dbAlias, String fullName) {
-        if(User.currentUser == null){
+    private void setTextActionBar(String fullName) {
+        if(User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
-        }
-        final String finalDbAlias  = ObjectUtils.firstNonNull(dbAlias,  User.currentUser.getDbAlias());
+
+        final String finalDbAlias  = User.currentUser.getDbAlias();
         final String finalFullName = ObjectUtils.firstNonNull(fullName, User.currentUser.getFullName());
 
         new Thread() {
@@ -214,7 +233,7 @@ public class WebViewActivity extends AppCompatActivity {
         @JavascriptInterface
         public void sendData(String data) {
             if (!data.equalsIgnoreCase(User.currentUser.getFullName())) {
-                setTextActionBar(null, data);
+                setTextActionBar(data);
                 User.currentUser.setFullName(data);
                 DisoftRoomDatabase.getDatabase(activity.getApplicationContext()).userDao().insert(User.currentUser);
             }
@@ -223,6 +242,7 @@ public class WebViewActivity extends AppCompatActivity {
 //        This in html -> Allow send data to android through webview
 //        Android.sendData("<%=session("name")%>");
     }
+
 
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     private void createWebview() {

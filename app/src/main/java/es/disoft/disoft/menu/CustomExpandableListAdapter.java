@@ -2,6 +2,7 @@ package es.disoft.disoft.menu;
 
 import android.content.Context;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,6 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                              ViewGroup parent) {
 
         String childText = getChild(groupPosition, childPosition).menuName;
-
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView       = li.inflate(R.layout.list_group_child, null);
@@ -95,13 +95,15 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
             convertView       = li.inflate(R.layout.list_group_header, null);
         }
 
-        int arrow, color;
-        if (isExpanded) {
-            arrow = R.drawable.ic_expand_less;
-            color = ResourcesCompat.getColor(context.getResources(), R.color.menuItemsFocus, null);
-        } else {
-            arrow = R.drawable.ic_expand_more;
-            color = ResourcesCompat.getColor(context.getResources(), R.color.menuItems, null);
+        int color = ResourcesCompat.getColor(context.getResources(), R.color.menuItems, null);
+        int arrow = -1;
+        if (getGroup(groupPosition).hasChildren) {
+            if (isExpanded) {
+                arrow = R.drawable.ic_expand_less;
+                color = ResourcesCompat.getColor(context.getResources(), R.color.menuItemsFocus, null);
+            } else {
+                arrow = R.drawable.ic_expand_more;
+            }
         }
 
         TextView lblListHeader = convertView.findViewById(R.id.lblListHeader);
