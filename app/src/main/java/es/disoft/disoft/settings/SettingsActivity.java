@@ -21,6 +21,9 @@ import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -100,9 +103,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             index >= 0
                                     ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
                                     : index);
-                } else if(preference.getKey().equals("notification_led")){
-                    preference.setIcon(R.drawable.ic_led);
-                    changeColorIcon(index, preference.getIcon());
                 }
 
             } else if (preference instanceof RingtonePreference) {
@@ -135,22 +135,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
-
-    private static void changeColorIcon(int index, Drawable icon) {
-        switch (index) {
-            case 0:
-                icon.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
-                break;
-            case 1:
-                icon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
-                break;
-            case 2:
-                icon.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
-                break;
-            case 3:
-                icon.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
-        }
-    }
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
