@@ -4,9 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -21,9 +18,6 @@ import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -38,27 +32,30 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) backToMainView();
-        }
-
+        if (item.getItemId() == android.R.id.home) backToMainView();
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
+        Log.i("transi", "onBackPressed: " + "a");
         super.onBackPressed();
         backToMainView();
     }
 
     private void backToMainView() {
-        if (mainSettingsView) {
-            Log.i("baack", "onBackPressed: ");
-            startActivity(new Intent(getApplicationContext(), WebViewActivity.class));
-            finish();
-        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (mainSettingsView) {
+                Log.i("baack", "onBackPressed: ");
+                startActivity(new Intent(getApplicationContext(), WebViewActivity.class));
+                finish();
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+            } else {
+                overridePendingTransition(R.anim.nothing, R.anim.fade_out);
+            }
+        } else {
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        }
     }
 
     @Override
@@ -218,8 +215,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class NotificationPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
+            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
             super.onCreate(savedInstanceState);
-            getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             mainSettingsView = false;
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
@@ -243,13 +240,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
-                getActivity().overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
                 return true;
             }
             return super.onOptionsItemSelected(item);
         }
     }
-
     /**
      * This fragment shows data and sync preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -258,8 +254,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
+            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
             super.onCreate(savedInstanceState);
-            getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             mainSettingsView = false;
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
@@ -282,7 +278,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
-                getActivity().overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
                 return true;
             }
             return super.onOptionsItemSelected(item);

@@ -31,10 +31,8 @@
         android:entries="@array/pref_notification_led"
         android:entryValues="@array/pref_notification_led_values"
         android:key="@string/notification_led"
+        android:layout="@layout/led_preference"
         android:negativeButtonText="@android:string/cancel"
         android:positiveButtonText="@android:string/ok"
-        android:layout="@layout/led_preference"
         android:title="@string/pref_title_notification_led" />
-
-    <!--android:icon="@drawable/ic_led"-->
 </PreferenceScreen>
