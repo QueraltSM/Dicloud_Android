@@ -71,9 +71,9 @@ public class HttpConnections {
     public static String getData(URL url, Context mContext) {
 
         Map<String, String> userUID = new HashMap<>();
-        if(User.currentUser == null){
+        if(User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(mContext).userDao().getUserLoggedIn();
-        }
+
         userUID.put("uid", "" + User.currentUser.getUser_id());
 
         JSONObject data = execute(url.toString(), new JSONObject(userUID).toString());

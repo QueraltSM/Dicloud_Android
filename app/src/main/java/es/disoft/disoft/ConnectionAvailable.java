@@ -28,6 +28,7 @@ public class ConnectionAvailable extends AsyncTask<Void, Void, Boolean> {
             // Check the connection to the web
 //            String ip = "8.8.8.8";
             String ip = InetAddress.getByName(new URL(URL).getHost()).getHostAddress();
+            if (ip.equals("::1")) return true;
             sock.connect(new InetSocketAddress(ip, 80), 5000);
             sock.close();
             return true;

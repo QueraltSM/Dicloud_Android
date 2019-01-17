@@ -48,30 +48,32 @@ public class Messages {
 
     private static void updateMessages(String messagesAsJsonString) throws JSONException {
 
-        if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
+        if (User.currentUser != null) {
+            if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
 
-        updatedMessages = new ArrayList<>();
-        deletedMessages = new ArrayList<>();
-        MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
-        List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
-        Log.i("mensajeee", "fetched: " + fetch.toString());
-        for (Message.Fetch message : fetch) {
-            switch (message.getStatus()) {
-                case "deleted":
-                    Log.e("mensajeee", "deleted: " + message.toString());
-                    messageDao.delete(message.getFrom_id());
-                    deletedMessages.add(message);
-                    break;
-                case "updated":
-                    Log.e("mensajeee", "updated: " + message.toString());
-                    messageDao.insert(message);
-                    updatedMessages.add(message);
-                    break;
-                default:
+            updatedMessages = new ArrayList<>();
+            deletedMessages = new ArrayList<>();
+            MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
+            List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
+            Log.i("mensajeee", "fetched: " + fetch.toString());
+            for (Message.Fetch message : fetch) {
+                switch (message.getStatus()) {
+                    case "deleted":
+                        Log.e("mensajeee", "deleted: " + message.toString());
+                        messageDao.delete(message.getFrom_id());
+                        deletedMessages.add(message);
+                        break;
+                    case "updated":
+                        Log.e("mensajeee", "updated: " + message.toString());
+                        messageDao.insert(message);
+                        updatedMessages.add(message);
+                        break;
+                    default:
+                }
             }
+            DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().deleteAll();
         }
 
-        DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().deleteAll();
     }
 
     private static void storeNewMessages(String messagesAsJsonString) throws JSONException {

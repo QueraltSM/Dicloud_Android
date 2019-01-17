@@ -1,13 +1,21 @@
 package es.disoft.disoft.user;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,8 +26,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -33,8 +43,12 @@ import android.widget.TextView;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import es.disoft.disoft.R;
 import es.disoft.disoft.Toast;
@@ -57,6 +71,20 @@ public class WebViewActivity extends AppCompatActivity {
     private WebView webView;
     private ProgressBar progressBar;
     private Bundle state;
+
+
+    private String asw_cam_message;
+    private ValueCallback<Uri> asw_file_message;
+    private ValueCallback<Uri[]> asw_file_path;
+    private final static int asw_file_req = 1;
+
+    private final static int file_perm = 2;
+
+    static boolean FUPLOAD   = true;
+    static boolean CAMUPLOAD = true;
+    static boolean ONLYCAM   = false;
+    static boolean MULFILE   = false;
+    private String TYPE      = "*/*";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +129,49 @@ public class WebViewActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.home_button, menu);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
+            Uri[] results = null;
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == asw_file_req) {
+                    if (null == asw_file_path) return;
+                    if (data == null || data.getData() == null) {
+                        if (asw_cam_message != null)
+                            results = new Uri[]{Uri.parse(asw_cam_message)};
+
+                    } else {
+                        String dataString = data.getDataString();
+                        if (dataString != null) {
+                            results = new Uri[]{ Uri.parse(dataString) };
+                        } else {
+                            if(MULFILE) {
+                                if (data.getClipData() != null) {
+                                    final int numSelectedFiles = data.getClipData().getItemCount();
+                                    results = new Uri[numSelectedFiles];
+                                    for (int i = 0; i < numSelectedFiles; i++)
+                                        results[i] = data.getClipData().getItemAt(i).getUri();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            asw_file_path.onReceiveValue(results);
+            asw_file_path = null;
+        } else {
+            if (requestCode == asw_file_req) {
+                if (null == asw_file_message) return;
+                Uri result = data == null || resultCode != RESULT_OK ? null : data.getData();
+                asw_file_message.onReceiveValue(result);
+                asw_file_message = null;
+            }
+        }
     }
 
     @Override
@@ -245,6 +316,49 @@ public class WebViewActivity extends AppCompatActivity {
 //        Android.sendData("<%=session("name")%>");
     }
 
+    //Checking if particular permission is given or not
+    public boolean checkPermission(int permission){
+        switch(permission){
+            case 1:
+                return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+            case 2:
+                return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+            case 3:
+                return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+
+        }
+        return false;
+    }
+
+    //Creating image file for upload
+    private File create_image() throws IOException {
+        @SuppressLint("SimpleDateFormat")
+        String file_name = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
+        String new_name = "disoft_" + file_name + "_";
+        File sd_directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(new_name, ".jpg", sd_directory);
+    }
+
+
+    //Checking permission for storage and camera for writing and uploading images
+    public void requestPermissions() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+
+        //Checking for storage permission to write images for upload
+        if (FUPLOAD && CAMUPLOAD && !checkPermission(2) && !checkPermission(3)) {
+            ActivityCompat.requestPermissions(this, perms, file_perm);
+
+            //Checking for WRITE_EXTERNAL_STORAGE permission
+        } else if (FUPLOAD && !checkPermission(2)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, file_perm);
+
+            //Checking for CAMERA permissions
+        } else if (CAMUPLOAD && !checkPermission(3)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, file_perm);
+        }
+    }
 
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     private void createWebview() {
@@ -272,6 +386,21 @@ public class WebViewActivity extends AppCompatActivity {
         // Allow send data to android through webview
         webView.addJavascriptInterface(new WebAppInterface(), "Android");
 
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+
+                Toast.setText(getApplicationContext(), R.string.download_start).show();
+
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+//                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Name of your downloadble file goes here, example: Mathematics II ");
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(request);
+            }
+        });
+
         // This is to show alerts
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
@@ -281,6 +410,67 @@ public class WebViewActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.INVISIBLE);
                 else
                     progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+
+            /**
+             * Thanks to
+             * https://github.com/mgks/Android-SmartWebView
+             */
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+
+                if (checkPermission(2) && checkPermission(3)) {
+                    if (FUPLOAD) {
+                        if (asw_file_path != null)
+                            asw_file_path.onReceiveValue(null);
+
+                        asw_file_path = filePathCallback;
+                        Intent takePictureIntent = null;
+                        if (CAMUPLOAD) {
+                            takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                                File photoFile = null;
+                                try {
+                                    photoFile = create_image();
+                                    takePictureIntent.putExtra("PhotoPath", asw_cam_message);
+                                } catch (IOException ex) {
+                                    Log.e("aaaah", "Image file creation failed", ex);
+                                }
+                                if (photoFile != null) {
+                                    asw_cam_message = "file:" + photoFile.getAbsolutePath();
+                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                                } else {
+                                    takePictureIntent = null;
+                                }
+                            }
+                        }
+                        Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        if (!ONLYCAM) {
+                            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                            contentSelectionIntent.setType(TYPE);
+                            if (MULFILE) {
+                                contentSelectionIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                            }
+                        }
+                        Intent[] intentArray;
+                        if (takePictureIntent != null)
+                            intentArray = new Intent[]{takePictureIntent};
+                        else
+                            intentArray = new Intent[0];
+
+
+                        Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+                        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+                        chooserIntent.putExtra(Intent.EXTRA_TITLE, getString(R.string.fileChooser));
+                        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+                        startActivityForResult(chooserIntent, asw_file_req);
+                    }
+                    return true;
+                } else {
+                    requestPermissions();
+                    return false;
+                }
             }
         });
 
