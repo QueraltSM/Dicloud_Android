@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -254,6 +256,17 @@ public class WebViewActivity extends AppCompatActivity {
         final WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setUseWideViewPort(true);
+
+        webSettings.setAllowContentAccess(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setDomStorageEnabled(true);
+
         webView.setWebViewClient(new WebViewClient());
 
         // Allow send data to android through webview
@@ -341,6 +354,14 @@ public class WebViewActivity extends AppCompatActivity {
                     } catch (UnsupportedEncodingException e) {
                         closeSession();
                     }
+                    return true;
+                } else if (url.contains("maps.google.com")) {
+                    Uri IntentUri    = Uri.parse(url);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+
+                    if (mapIntent.resolveActivity(getPackageManager()) != null)
+                        startActivity(mapIntent);
                     return true;
                 }
                 return false;
