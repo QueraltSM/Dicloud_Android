@@ -30,6 +30,11 @@ public class Toast {
         return toast;
     }
 
+    public static android.widget.Toast setText(Context ctx, CharSequence s) {
+        getInstance(ctx).setText(s);
+        return toast;
+    }
+
     public static void show() {
         getInstance(context).cancel();
         getInstance(context).show();

@@ -1,6 +1,7 @@
 package es.disoft.disoft.user;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -18,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +53,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.R;
 import es.disoft.disoft.Toast;
 import es.disoft.disoft.db.DisoftRoomDatabase;
@@ -67,11 +71,14 @@ public class WebViewActivity extends AppCompatActivity {
     private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
     private final String NOTIFICATION_ID   = "NOTIFICATION_ID";
 
+    @SuppressLint("StaticFieldLeak")
     private static Activity activity;
-    private WebView webView;
+    private NestedWebView webView;
+    private NestedScrollView scrollView;
     private ProgressBar progressBar;
     private Bundle state;
 
+    private String urlBeforeFail;
 
     private String asw_cam_message;
     private ValueCallback<Uri> asw_file_message;
@@ -101,9 +108,9 @@ public class WebViewActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        activity = this;
+        activity   = this;
+        scrollView = findViewById(R.id.scrollview);
 
-        Log.i("qweasd", "onCreate: " + savedInstanceState);
         setMenu();
         createWebview();
         setTextActionBar();
@@ -201,26 +208,28 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ChatWorker.checkMessagesEvery5sc.stop();
+        try { ChatWorker.checkMessagesEvery5sc.stop(); }
+        catch (NullPointerException ignored) {}
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+
         if (User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
 
         //TODO limpiar las notificaciones!!!
-//        new NotificationUtils(getApplicationContext()).clearAll();
+        new NotificationUtils(getApplicationContext()).clearAll();
 
-        Log.e("URL_", "onResume: ");
+        Log.e("URL_", "onResume: " + webView.getUrl());
 
         if (loadedFromNotification())
             openChat();
         else if (state != null)
             webView.saveState(state);
-        else
+        else if (webView.getUrl() == null || webView.getUrl() != null && !webView.getUrl().contains("chat.asp"))
             openIndex();
 
         ChatWorker.checkMessagesEvery5sc.context = this;
@@ -248,6 +257,7 @@ public class WebViewActivity extends AppCompatActivity {
         Log.d("mensajeee", "\n\nbundle:\nt: " + notificationType + "\nid: " + notificationId);
     }
 
+    // TODO no inicia sesion, creo que es aqui
     private void openIndex() {
         try {
             final String url = getString(R.string.URL_INDEX);
@@ -311,6 +321,11 @@ public class WebViewActivity extends AppCompatActivity {
                 DisoftRoomDatabase.getDatabase(activity.getApplicationContext()).userDao().insert(User.currentUser);
             }
         }
+        @JavascriptInterface
+        public void printLog() {
+            if (scrollView != null) scrollView.scrollTo(0, 0);
+            Log.i("log", "printLog: ");
+        }
 
 //        This in html -> Allow send data to android through webview
 //        Android.sendData("<%=session("name")%>");
@@ -363,13 +378,15 @@ public class WebViewActivity extends AppCompatActivity {
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
     private void createWebview() {
 
-        webView = findViewById(R.id.webView);
+        webView    = findViewById(R.id.webView);
+        scrollView = findViewById(R.id.scrollview);
 
         Log.e("webview!!!", "setPage: ");
 
         final WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(true);
@@ -381,7 +398,13 @@ public class WebViewActivity extends AppCompatActivity {
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setDomStorageEnabled(true);
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            webSettings.setMixedContentMode( WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
+        }
+
         webView.setWebViewClient(new WebViewClient());
+
+//        webView.setView(findViewById(R.id.appBarLayout), findViewById(R.id.progressBarLayout));
 
         // Allow send data to android through webview
         webView.addJavascriptInterface(new WebAppInterface(), "Android");
@@ -406,10 +429,9 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setProgress(newProgress);
-                if (newProgress == 100)
-                    progressBar.setVisibility(View.INVISIBLE);
-                else
-                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(newProgress == 100
+                            ? View.INVISIBLE
+                            : View.VISIBLE);
             }
 
             @Override
@@ -477,21 +499,34 @@ public class WebViewActivity extends AppCompatActivity {
         // This is to handle events
         webView.setWebViewClient(new WebViewClient() {
 
-            @Override public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 switch (errorCode) {
                     case WebViewClient.ERROR_HOST_LOOKUP:
-                        webView.loadUrl(getString(R.string.URL_ERROR));
+                        view.loadUrl(getString(R.string.URL_ERROR));
+                        urlBeforeFail = failingUrl == null
+                                ? getString(R.string.URL_INDEX)
+                                : failingUrl;
                         break;
                     case WebViewClient.ERROR_UNKNOWN:
-                        webView.loadUrl(getString(R.string.URL_INDEX));
+                        if (description.equals(getString(R.string.ERR_CACHE_MISS))) {
+                            Log.i("url_", "onReceivedError: " + description);
+                            view.loadUrl(getString(R.string.URL_INDEX));
+                        }
                 }
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                Log.i("start", "onPageStarted: ");
+
                 super.onPageStarted(view, url, favicon);
                 if (!isNetworkAvailable(getApplicationContext()) && !url.equals(getString(R.string.URL_ERROR))) {
-                    webView.loadUrl(getString(R.string.URL_ERROR));
+                    view.loadUrl(getString(R.string.URL_ERROR));
+                    urlBeforeFail = url;
+                    Toast.setText(getApplicationContext(), "No hay internet").show();
+                    loadURLWhenNetworkAvailable(view);
                 }
             }
 
@@ -500,8 +535,15 @@ public class WebViewActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-                if (url.endsWith("/index.asp")) webView.clearHistory();
+//                webView.loadUrl(renderHTMLinjection());
+//                if (scrollView != null) scrollView.scrollTo(0, 0);
 
+                ObjectAnimator anim = ObjectAnimator.ofInt(scrollView, "scrollY", 0);
+                anim.setDuration(400);
+                anim.start();
+
+
+                if (url.endsWith("/index.asp")) webView.clearHistory();
                 if (loadedFromNotification()) {
                     Log.e("mensajee", "ITS WORKS!!! " + notificationType);
 
@@ -521,9 +563,11 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
 
-                Log.i("url_", "shouldOverrideUrlLoading: " + url);
-                if (url.endsWith("/disconect")) {
-//                    closeSessionWithConfirmation();
+                Log.i("aaa", "shouldOverrideUrlLoading: " + url);
+
+                if (url.contains("disconect")) {
+                    // TODO arreglar fallo desonectar desde url
+                    new MenuFactory(getApplicationContext()).closeSessionWithConfirmation();
                     return true;
                 } else if (url.endsWith("/pass_changed")) {
                     Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
@@ -535,16 +579,17 @@ public class WebViewActivity extends AppCompatActivity {
                     return true;
                 } else if (url.contains("hibernar.asp")) {
                     return true;
-                } else if (url.contains("agententer.asp")) {
-                    // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
-                    Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
-                    try {
-                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
-                        webView.postUrl(url, postData.getBytes());
-                    } catch (UnsupportedEncodingException e) {
-                        closeSession();
-                    }
-                    return true;
+//                } else if (url.contains("agententer.asp")) {
+//                    // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
+//                    Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
+//                    try {
+//                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
+//                        view.postUrl(url, postData.getBytes());
+//                        closeSession();
+//                    } catch (UnsupportedEncodingException e) {
+//                        closeSession();
+//                    }
+//                    return true;
                 } else if (url.contains("maps.google.com")) {
                     Uri IntentUri    = Uri.parse(url);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
@@ -557,6 +602,35 @@ public class WebViewActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void loadURLWhenNetworkAvailable(final WebView view) {
+
+        final Handler handler = new Handler();
+        final int delay = 1000; //milliseconds
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+
+                while (!ConnectionAvailable.isNetworkAvailable(getApplicationContext())) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                try {
+                    if ((new ConnectionAvailable(getString(R.string.URL_INDEX)).execute().get())) {
+                        view.loadUrl(urlBeforeFail);
+                    } else {
+                        handler.postDelayed(this, delay);
+                    }
+                } catch (Exception ignored) { }
+
+            }
+        }, delay);
+
     }
 
     public static void closeSession() {
@@ -605,21 +679,13 @@ public class WebViewActivity extends AppCompatActivity {
                 "               var checkExist = setInterval(function() {" +
                 "                   var button;" +
 
-                "                   console.log('funcion:');" +
-
                 "                   $('button').each(function() {" +
                 "                       if($(this).attr('id') == " + notificationId + ") {" +
-
                 "                           button = $(this);" +
-
-                "                           console.log('if: ' + button.attr('id'));" +
-
                 "                           clearInterval(checkExist);" +
+
                 "                           setTimeout(" +
                 "                               function(){ " +
-
-                "                                   console.log('interval: ' + button.attr('id'));" +
-
                 "                                   button.click();" +
                 "                               }," + ms + ");" +
 
@@ -628,6 +694,12 @@ public class WebViewActivity extends AppCompatActivity {
 
                 "               }, 100);" +
 
+                "           })()";
+    }
+
+    private String renderHTMLinjection() {
+        return  "javascript:(function() {" +
+                "               Android.printLog(); " +
                 "           })()";
     }
 }

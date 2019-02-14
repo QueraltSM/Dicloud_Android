@@ -33,21 +33,25 @@
 
     <!-- URL's -->
     <string name="URL_ERROR">file:///android_asset/error.html</string>
+    <string name="ERR_CACHE_MISS">net::ERR_CACHE_MISS</string>
 
-
-    <!--<string name="URL_LOGIN">http://app.disoft.es/login.asp</string>-->
-    <!--<string name="URL_INDEX">http://app.disoft.es/index.asp</string>-->
+    <string name="URL_LOGIN">https://app.dicloud.es/login.asp</string>
+    <string name="URL_INDEX">https://www.dicloud.es/index.asp</string>
+    <string name="URL_SYNC_MENU">https://app.dicloud.es/getMenu.asp</string>
+    <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
+    <string name="URL_CHAT">https://www.dicloud.es/news/chat.asp</string>
+    <string name="URL_ROOT">https://www.dicloud.es/</string>
 
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- URL's SERVER ADMIN.LOCAL -->
 
-    <string name="URL_LOGIN">http://admin.local/app/login.asp</string>
-    <string name="URL_INDEX">http://admin.local/index.asp</string>
-    <string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>
-    <string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>
-    <string name="URL_CHAT">http://admin.local/news/chat.asp</string>
-    <string name="URL_ROOT">http://admin.local/</string>
+    <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
+    <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
+    <!--<string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>-->
+    <!--<string name="URL_SYNC_MESSAGES">http://admin.local/app/getPendingMessages.asp</string>-->
+    <!--<string name="URL_CHAT">http://admin.local/news/chat.asp</string>-->
+    <!--<string name="URL_ROOT">http://admin.local/</string>-->
 
      URL's LOCALHOST
     <!--<string name="URL_LOGIN">http://10.0.2.2/app/login.asp</string>-->
@@ -59,6 +63,7 @@
 
     <!-- URL's CASA -->
     <!--<string name="URL_LOGIN">http://192.168.137.1/app/login.asp</string>-->
+    <!--&lt;!&ndash;<string name="URL_INDEX">http://192.168.137.1/a/index.asp</string>&ndash;&gt;-->
     <!--<string name="URL_INDEX">http://192.168.137.1/index.asp</string>-->
     <!--<string name="URL_SYNC_MENU">http://192.168.137.1/app/getMenu.asp</string>-->
     <!--<string name="URL_SYNC_MESSAGES">http://192.168.137.1/app/getPendingMessages.asp</string>-->

@@ -100,23 +100,26 @@ public class NotificationUtils extends ContextWrapper {
         if (prefsCheck != 0) {
             NotificationChannel notificationChannel = getManager().getNotificationChannel(getString(R.string.channel_ID) + prefsCheck);
 
-            int preferenceColor      = getPreferenceColor();
-            String preferenceSound   = ObjectUtils.firstNonNull(getPreferenceSound(), "").toString();
-            long[] preferenceVibrate = getPreferenceVibration();
-            Log.i(TAG, "preferences v: " + ArrayUtils.toString(preferenceVibrate));
+            if (notificationChannel != null) {
 
-            int channelColor      = notificationChannel.getLightColor();
-            String channelSound   = ObjectUtils.firstNonNull(notificationChannel.getSound(), "").toString();
-            long[] channelVibrate = notificationChannel.getVibrationPattern();
-            Log.i(TAG, "channel v: " + ArrayUtils.toString(channelVibrate));
+                int preferenceColor      = getPreferenceColor();
+                String preferenceSound   = ObjectUtils.firstNonNull(getPreferenceSound(), "").toString();
+                long[] preferenceVibrate = getPreferenceVibration();
+                Log.i(TAG, "preferences v: " + ArrayUtils.toString(preferenceVibrate));
 
-            if (preferenceColor != channelColor
-                    || !preferenceSound.equals(channelSound)
-                    || !Arrays.equals(preferenceVibrate, channelVibrate)) {
+                int channelColor      = notificationChannel.getLightColor();
+                String channelSound   = ObjectUtils.firstNonNull(notificationChannel.getSound(), "").toString();
+                long[] channelVibrate = notificationChannel.getVibrationPattern();
+                Log.i(TAG, "channel v: " + ArrayUtils.toString(channelVibrate));
 
-                Log.i(TAG, "checkingSharedNotif:  nueva notif");
-                getManager().deleteNotificationChannel(CHANNEL_ID + prefsCheck);
-                prefsCheck += 1;
+                if (preferenceColor != channelColor
+                        || !preferenceSound.equals(channelSound)
+                        || !Arrays.equals(preferenceVibrate, channelVibrate)) {
+
+                    Log.i(TAG, "checkingSharedNotif:  nueva notif");
+                    getManager().deleteNotificationChannel(CHANNEL_ID + prefsCheck);
+                    prefsCheck += 1;
+                }
             }
 
         }else{

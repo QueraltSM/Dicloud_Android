@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-            <!--app:layout_scrollFlags="scroll|enterAlways|snap"-->
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,12 +19,13 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:id="@+id/include"
+        android:id="@+id/scrollview"
         layout="@layout/content_main" />
 
     <ProgressBar
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="-8dp"
         android:visibility="invisible"
-        app:layout_anchor="@+id/include"
+        app:layout_anchor="@+id/scrollview"
         app:layout_anchorGravity="top|center" />
 
 </android.support.design.widget.CoordinatorLayout>

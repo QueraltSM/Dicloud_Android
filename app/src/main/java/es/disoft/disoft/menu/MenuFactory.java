@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.disoft.disoft.ConnectionAvailable;
 import es.disoft.disoft.HttpConnections;
 import es.disoft.disoft.R;
 import es.disoft.disoft.settings.SettingsActivity;
@@ -43,6 +44,10 @@ public class MenuFactory {
     private List<MenuModel>                 headerList;
     private Map<MenuModel, List<MenuModel>> childList;
     private WebView webView;
+
+    public MenuFactory(Context context) {
+        this.context = context;
+    }
 
     public MenuFactory(Context context, ExpandableListView expandableListView) {
         menu                    = new LinkedHashMap<>();
@@ -222,6 +227,7 @@ public class MenuFactory {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.logout_title)
                 .setMessage(R.string.logout_message)
+//                TODO poner en espñaol
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         closeSession();
