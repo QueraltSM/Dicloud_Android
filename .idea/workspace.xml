@@ -7,55 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ef794ac-e511-4a88-a432-4046267fb86a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/es/disoft/disoft/ExampleInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/es/disoft/dicloud/ExampleInstrumentedTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/BootReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/BootReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/ConnectionAvailable.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/ConnectionAvailable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/HttpConnections.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/HttpConnections.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/LauncherActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/LauncherActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/PruebaCifrado.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/PruebaCifrado.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/Toast.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/Toast.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/_Volley.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/_Volley.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/_VolleyCallback.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/_VolleyCallback.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/db/DisoftRoomDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/db/DisoftRoomDatabase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/menu/CustomExpandableListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/menu/CustomExpandableListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/menu/MenuFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/menu/MenuFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/menu/MenuModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/menu/MenuModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/BaseDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/BaseDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/Menu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/MenuDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/MenuDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/MessageDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/MessageDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/MessageDao_tmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/MessageDao_tmp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/Message_tmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/Message_tmp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/model/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/model/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/notification/NotificationUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/notification/NotificationUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/security/Decryptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/security/Decryptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/security/Encryptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/security/Encryptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/settings/AppCompatPreferenceActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/settings/AppCompatPreferenceActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/settings/LedListPreference.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/settings/LedListPreference.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/settings/SettingsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/settings/SettingsActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/Messages.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/Messages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/NestedWebView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/NestedWebView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/user/WebViewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/WebViewActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es/disoft/disoft/workers/ChatWorker.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/workers/ChatWorker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/xml/pref_headers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/pref_headers.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/xml/pref_notification.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/pref_notification.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/es/disoft/disoft/ExampleUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/es/disoft/dicloud/ExampleUnitTest.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,24 +35,24 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="java" value="2" />
-          <entry key="xml" value="7" />
+          <entry key="xml" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="JAVA" value="2" />
-          <entry key="XML" value="7" />
+          <entry key="XML" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="6" />
+          <entry key="java" value="14" />
           <entry key="xml" value="26" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="6" />
+          <entry key="JAVA" value="14" />
           <entry key="XML" value="26" />
         </counts>
       </usages-collector>
@@ -109,12 +63,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/WebViewActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="250">
-              <caret line="726" column="99" selection-start-line="726" selection-start-column="99" selection-end-line="726" selection-end-column="99" />
+              <caret line="580" column="32" lean-forward="true" selection-start-line="580" selection-start-column="32" selection-end-line="580" selection-end-column="32" />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml">
+          <provider selected="true" editor-type-id="android-designer2" />
+          <provider editor-type-id="text-editor">
+            <state relative-caret-position="-561" />
           </provider>
         </entry>
       </file>
@@ -125,6 +87,7 @@
       <find>disoft</find>
       <find>shared</find>
       <find>disof</find>
+      <find>promp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -176,6 +139,17 @@
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="dicloud" type="cbb59c9e:AndroidPsiDirectoryNode" />
               <item name="user" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Dicloud" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="Dicloud" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
           </expand>
           <select />
@@ -280,28 +254,29 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" visible="true" weight="0.32995737" />
+      <window_info content_ui="combo" id="Project" sideWeight="0.49838188" weight="0.32995737" />
       <window_info id="Structure" side_tool="true" />
-      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Build Variants" sideWeight="0.50161815" side_tool="true" weight="0.32995737" />
       <window_info id="Image Layers" />
       <window_info id="Designer" />
       <window_info id="Capture Tool" />
-      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Favorites" sideWeight="0.50161815" side_tool="true" weight="0.32995737" />
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Run" sideWeight="0.49946696" visible="true" weight="0.329718" />
+      <window_info anchor="bottom" id="Run" sideWeight="0.49946696" weight="0.329718" />
       <window_info anchor="bottom" id="Logcat" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="TODO" />
       <window_info anchor="bottom" id="Android Profiler" />
       <window_info anchor="bottom" id="Debug" />
       <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" sideWeight="0.50053304" side_tool="true" visible="true" weight="0.329718" />
-      <window_info anchor="bottom" id="Build" sideWeight="0.49946696" weight="0.329718" />
+      <window_info anchor="bottom" id="Event Log" sideWeight="0.5010661" side_tool="true" weight="0.329718" />
+      <window_info anchor="bottom" id="Build" sideWeight="0.4989339" weight="0.329718" />
       <window_info anchor="bottom" id="Find" />
       <window_info anchor="right" id="Device File Explorer" side_tool="true" weight="0.32995737" />
       <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="right" id="Gradle" />
       <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Preview" />
       <window_info anchor="right" id="Palette&#9;" />
     </layout>
   </component>
@@ -339,8 +314,14 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/es/disoft/dicloud/user/WebViewActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
-          <caret line="726" column="99" selection-start-line="726" selection-start-column="99" selection-end-line="726" selection-end-column="99" />
+          <caret line="580" column="32" lean-forward="true" selection-start-line="580" selection-start-column="32" selection-end-line="580" selection-end-column="32" />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml">
+      <provider selected="true" editor-type-id="android-designer2" />
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="-561" />
       </provider>
     </entry>
   </component>
