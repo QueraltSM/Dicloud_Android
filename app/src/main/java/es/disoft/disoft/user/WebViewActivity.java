@@ -4,9 +4,7 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DownloadManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -136,7 +134,7 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.home_button, menu);
+        inflater.inflate(R.menu.buttons, menu);
         return true;
     }
 
@@ -187,6 +185,7 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.home_button) webView.loadUrl(getString(R.string.URL_INDEX));
+        if (itemId == R.id.resfresh_button) webView.reload();
         return super.onOptionsItemSelected(item);
     }
 

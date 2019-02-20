@@ -3,8 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/resfresh_button"
+        android:icon="@drawable/ic_refresh"
+        android:title="@string/iconRefreshDescription"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/home_button"
         android:icon="@drawable/ic_menu_home"
-        android:title="@string/iconDescription"
+        android:title="@string/iconHomeDescription"
         app:showAsAction="always" />
 </menu>

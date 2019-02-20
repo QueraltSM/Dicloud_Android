@@ -101,7 +101,8 @@
     <string name="new_chats">chats nuevos</string>
 
 
-    <string name="iconDescription">Icono</string>
+    <string name="iconHomeDescription">Página principal</string>
+    <string name="iconRefreshDescription">Actualizar página</string>
 
     <string name="hackerino">Parece que eres un hackerino, bandido</string>
     <string name="title_activity_settings">Settings</string>
