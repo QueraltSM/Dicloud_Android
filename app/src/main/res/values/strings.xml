@@ -36,11 +36,11 @@
     <string name="ERR_CACHE_MISS">net::ERR_CACHE_MISS</string>
 
     <string name="URL_LOGIN">https://app.dicloud.es/login.asp</string>
-    <string name="URL_INDEX">https://www.dicloud.es/index.asp</string>
+    <string name="URL_INDEX">https://admin.dicloud.es/index.asp</string>
     <string name="URL_SYNC_MENU">https://app.dicloud.es/getMenu.asp</string>
     <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
-    <string name="URL_CHAT">https://www.dicloud.es/news/chat.asp</string>
-    <string name="URL_ROOT">https://www.dicloud.es/</string>
+    <string name="URL_CHAT">https://admin.dicloud.es/news/chat.asp</string>
+    <string name="URL_ROOT">https://admin.dicloud.es/</string>
 
     <!-- *** TODO PRUEBAS *** -->
 

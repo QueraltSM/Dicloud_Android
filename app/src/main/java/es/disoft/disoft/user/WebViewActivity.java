@@ -4,7 +4,9 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -563,13 +565,9 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
 
-                Log.i("aaa", "shouldOverrideUrlLoading: " + url);
+                Log.i("new url", "shouldOverrideUrlLoading: " + url);
 
-                if (url.contains("disconect")) {
-                    // TODO arreglar fallo desonectar desde url
-                    new MenuFactory(getApplicationContext()).closeSessionWithConfirmation();
-                    return true;
-                } else if (url.endsWith("/pass_changed")) {
+                if (url.endsWith("/pass_changed")) {
                     Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
                     closeSession();
                     return true;
@@ -579,17 +577,17 @@ public class WebViewActivity extends AppCompatActivity {
                     return true;
                 } else if (url.contains("hibernar.asp")) {
                     return true;
-//                } else if (url.contains("agententer.asp")) {
-//                    // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
-//                    Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
-//                    try {
-//                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
-//                        view.postUrl(url, postData.getBytes());
-//                        closeSession();
-//                    } catch (UnsupportedEncodingException e) {
-//                        closeSession();
-//                    }
-//                    return true;
+                } else if (url.contains("agententer.asp")) {
+                    // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
+                    Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
+                    try {
+                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
+                        view.postUrl(url, postData.getBytes());
+                        closeSession();
+                    } catch (UnsupportedEncodingException e) {
+                        closeSession();
+                    }
+                    return true;
                 } else if (url.contains("maps.google.com")) {
                     Uri IntentUri    = Uri.parse(url);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
