@@ -185,7 +185,8 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.home_button) webView.loadUrl(getString(R.string.URL_INDEX));
-        if (itemId == R.id.resfresh_button) webView.reload();
+//        if (itemId == R.id.resfresh_button) webView.reload();  // No funciona con la primera página
+        if (itemId == R.id.resfresh_button) webView.loadUrl( "javascript:window.location.reload( true )");
         return super.onOptionsItemSelected(item);
     }
 
@@ -307,6 +308,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Log.i("log", "onBackPressed: ");
         if (!closeNav()) {
             if (webView.canGoBack()) webView.goBack();
             else finish();
@@ -326,6 +328,12 @@ public class WebViewActivity extends AppCompatActivity {
         public void printLog() {
             if (scrollView != null) scrollView.scrollTo(0, 0);
             Log.i("log", "printLog: ");
+        }
+
+        @JavascriptInterface
+        public void goBack() {
+            Log.i("log", "goBack: ");
+            onBackPressed();
         }
 
 //        This in html -> Allow send data to android through webview
@@ -534,7 +542,9 @@ public class WebViewActivity extends AppCompatActivity {
             // Avoid an infinite loop
             @Override
             public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+
+                Log.i("ended", "onPageFinished: " + url);
+                webView.loadUrl(replaceCloseWindows());
 
 //                webView.loadUrl(renderHTMLinjection());
 //                if (scrollView != null) scrollView.scrollTo(0, 0);
@@ -559,6 +569,7 @@ public class WebViewActivity extends AppCompatActivity {
                 /* esto es para rellenar forumularios a través del webview -> tiene que estar esto activado
                    webView.getSettings().setDomStorageEnabled(true); */
 //                webView.loadUrl("javascript:var x = $('#advanced').text() = 'aaa';");
+                super.onPageFinished(view, url);
             }
 
             @Override
@@ -697,6 +708,13 @@ public class WebViewActivity extends AppCompatActivity {
     private String renderHTMLinjection() {
         return  "javascript:(function() {" +
                 "               Android.printLog(); " +
+                "           })()";
+    }
+
+    private String replaceCloseWindows() {
+        return  "javascript:(function() {" +
+                "               $('.btn.btn-md.btn-danger[onclick][value=\" X \"]').click(() => window.history.back());" +
+                "               $('.buttonToClose[onclick]').click(() => window.history.back());" +
                 "           })()";
     }
 }
