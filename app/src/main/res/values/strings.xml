@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Disoft</string>
+    <string name="app_name">Dicloud</string>
 
     <!-- Strings related to login with password -->
     <string name="prompt_alias">Alias</string>
@@ -72,13 +72,13 @@
     <!-- *** TODO PRUEBAS *** -->
 
     <!-- Strings related to databases -->
-    <string name="DB_main">disoft.db</string>
+    <string name="DB_main">dicloud.db</string>
 
 
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Disoft</string>
+    <string name="nav_header_title">Dicloud</string>
     <string name="nav_header_subtitle">Dani</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -88,7 +88,7 @@
 
     <!--Notifications-->
     <string name="channel_name">Nuevos mensajes</string>
-    <string name="channel_ID">es.disoft.disoft</string>
+    <string name="channel_ID">es.disoft.dicloud</string>
 
     <!--Singular-->
     <string name="new_message">mensaje nuevo</string>

@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
-    <es.disoft.disoft.user.NestedWebView
+    <es.disoft.dicloud.user.NestedWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
