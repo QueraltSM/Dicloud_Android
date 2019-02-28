@@ -41,7 +41,8 @@
     <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
     <string name="URL_CHAT">https://admin.dicloud.es/news/chat.asp</string>
     <string name="URL_ROOT">https://admin.dicloud.es/</string>
-    <string name="URL_LOGO">https://app.dicloud.es/getLogoPath.asp</string>
+    <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
+    <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
 
 
     <!-- *** TODO PRUEBAS *** -->

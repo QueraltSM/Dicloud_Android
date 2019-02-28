@@ -35,7 +35,6 @@ import static es.disoft.dicloud.user.WebViewActivity.closeSession;
 
 public class MenuFactory {
 
-    private static final String TAG = "menuses";
     private Context context;
     private Map<String, List<Menu.SubmenuItem>> menu;
 
@@ -89,7 +88,6 @@ public class MenuFactory {
 //        headerList.add(menuModel);
 //        childList.put(menuModel, null);
 
-        Log.i(TAG, "setMenu: antes de entrar");
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
 
@@ -118,7 +116,6 @@ public class MenuFactory {
         String urlLogoutString = context.getString(R.string.URL_ROOT) + "disconect";
         menuModel = new MenuModel(context.getString(R.string.menu_disconect), true, false, urlLogoutString, R.drawable.ic_power_settings);
         headerList.add(menuModel);
-        Log.i(TAG, "setMenu: despues de entrar");
 
 
         expandableListAdapter = new CustomExpandableListAdapter(context, headerList, childList);

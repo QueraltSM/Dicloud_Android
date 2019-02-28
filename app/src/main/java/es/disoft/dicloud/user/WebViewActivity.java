@@ -49,16 +49,21 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import es.disoft.dicloud.ConnectionAvailable;
+import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
 import es.disoft.dicloud.Toast;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
@@ -305,15 +310,22 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+
+            URL url               = null;
+            JSONObject jsonObject = null;
+            Bitmap mIcon11        = null;
+
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
+                url            = new URL(getString(R.string.URL_LOGO));
+                jsonObject     = new JSONObject(HttpConnections.getData(url, activity));
+                String imgName = jsonObject.getString("img");
+
+                url = new URL(getString(R.string.URL_LOGOS_ROOT) + imgName);
+
+                InputStream in = url.openStream();
+                mIcon11        = BitmapFactory.decodeStream(in);
+            } catch (Exception ignored) { }
+
             return mIcon11;
         }
 
