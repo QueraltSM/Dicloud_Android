@@ -8,7 +8,9 @@ import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,6 +43,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -49,6 +52,7 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -114,6 +118,7 @@ public class WebViewActivity extends AppCompatActivity {
                 super.onDrawerOpened(drawerView);
             }
         };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -123,6 +128,7 @@ public class WebViewActivity extends AppCompatActivity {
         setMenu();
         createWebview();
         setTextActionBar();
+        setLogo();
     }
 
     @Override
@@ -231,7 +237,6 @@ public class WebViewActivity extends AppCompatActivity {
         if (User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
 
-        //TODO limpiar las notificaciones!!!
         new NotificationUtils(getApplicationContext()).clearAll();
 
         Log.e("URL_", "onResume: " + webView.getUrl());
@@ -268,7 +273,6 @@ public class WebViewActivity extends AppCompatActivity {
         Log.d("mensajeee", "\n\nbundle:\nt: " + notificationType + "\nid: " + notificationId);
     }
 
-    // TODO no inicia sesion, creo que es aqui
     private void openIndex() {
         try {
             final String url = getString(R.string.URL_INDEX);
@@ -284,6 +288,38 @@ public class WebViewActivity extends AppCompatActivity {
     private void setMenu() {
         ExpandableListView expandableListView = findViewById(R.id.expandableListView);
         new MenuFactory(this, expandableListView).loadMenu(isNetworkAvailable(getApplicationContext()));
+    }
+
+    private void setLogo() {
+        View viewById = findViewById(R.id.nav_view);
+        new DownloadImageTask().execute(getString(R.string.URL_LOGO));
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask() {
+            NavigationView nv = findViewById(R.id.nav_view);
+            View header       = nv.getHeaderView(0);
+            bmImage           = header.findViewById(R.id.menuLogo);
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            if (bmImage != null && result != null) bmImage.setImageBitmap(result);
+        }
     }
 
     private void setTextActionBar() {
@@ -663,6 +699,8 @@ public class WebViewActivity extends AppCompatActivity {
                 (new NotificationUtils(activity.getApplicationContext())).clearAll();
             }
         }).start();
+
+        ChatWorker.cancelWork(activity.getString(R.string.app_name));
 
         activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
         activity.finish();

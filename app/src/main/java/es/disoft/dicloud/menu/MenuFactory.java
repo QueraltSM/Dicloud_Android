@@ -35,6 +35,7 @@ import static es.disoft.dicloud.user.WebViewActivity.closeSession;
 
 public class MenuFactory {
 
+    private static final String TAG = "menuses";
     private Context context;
     private Map<String, List<Menu.SubmenuItem>> menu;
 
@@ -82,27 +83,22 @@ public class MenuFactory {
         headerList = new ArrayList<>();
         childList  = new LinkedHashMap<>();
 
-        MenuModel menuModel;
+        MenuModel menuModel = null;
 
 //        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
 //        headerList.add(menuModel);
 //        childList.put(menuModel, null);
 
+        Log.i(TAG, "setMenu: antes de entrar");
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
 
-            if (menuHeader.equals("Desconectar")) {
-                menuModel = new MenuModel(context.getString(R.string.menu_manage), true, false, "", R.drawable.ic_menu_manage);
-                headerList.add(menuModel);
-                childList.put(menuModel, null);
-                String urlLogoutString = context.getString(R.string.URL_ROOT) + headerEntry.getValue().get(0).url;
-                menuModel = new MenuModel(menuHeader, true, false, urlLogoutString, R.drawable.ic_power_settings);
-            } else {
+            if (!menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel(menuHeader, true, true, "", null);
+                headerList.add(menuModel);
             }
-            headerList.add(menuModel);
 
-            if (menuModel.hasChildren) {
+            if (menuModel != null && menuModel.hasChildren) {
                 List<MenuModel> childModelsList = new ArrayList<>();
                 MenuModel childModel;
                 for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
@@ -115,6 +111,14 @@ public class MenuFactory {
                 childList.put(menuModel, null);
             }
         }
+
+        menuModel = new MenuModel(context.getString(R.string.menu_manage), true, false, "", R.drawable.ic_menu_manage);
+        headerList.add(menuModel);
+        childList.put(menuModel, null);
+        String urlLogoutString = context.getString(R.string.URL_ROOT) + "disconect";
+        menuModel = new MenuModel(context.getString(R.string.menu_disconect), true, false, urlLogoutString, R.drawable.ic_power_settings);
+        headerList.add(menuModel);
+        Log.i(TAG, "setMenu: despues de entrar");
 
 
         expandableListAdapter = new CustomExpandableListAdapter(context, headerList, childList);

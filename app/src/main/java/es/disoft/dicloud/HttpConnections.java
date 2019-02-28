@@ -74,9 +74,14 @@ public class HttpConnections {
         if(User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(mContext).userDao().getUserLoggedIn();
 
-        userUID.put("uid", "" + User.currentUser.getUser_id());
+        JSONObject data = null;
 
-        JSONObject data = execute(url.toString(), new JSONObject(userUID).toString());
+        if (User.currentUser != null) {
+            userUID.put("appSource", mContext.getString(R.string.app_name));
+            userUID.put("token", User.currentUser.getToken());
+            data = execute(url.toString(), new JSONObject(userUID).toString());
+        }
+
         if (data == null) return null;
         else return data.toString();
     }

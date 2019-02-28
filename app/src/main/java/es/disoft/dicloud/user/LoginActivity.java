@@ -370,6 +370,7 @@ public class LoginActivity extends AppCompatActivity {
             userData.put("aliasDb",  mAlias);
             userData.put("user",     mUser);
             userData.put("password", mPassword);
+            userData.put("appSource", getString(R.string.app_name));
 
             Log.wtf("login_: ", "ENTRA");
 

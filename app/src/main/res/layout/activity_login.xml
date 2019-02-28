@@ -45,7 +45,8 @@
                     android:hint="@string/prompt_alias"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:text="disoft" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -61,7 +62,8 @@
                     android:hint="@string/prompt_user"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:text="practicas" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -83,6 +85,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:text="daniel"
                     tools:targetApi="o" />
 
             </android.support.design.widget.TextInputLayout>

@@ -61,8 +61,12 @@ public class ChatWorker extends Worker {
                     chatWork);
 //            WorkManager.getInstance().enqueue(chatWork);
         }else{
-            WorkManager.getInstance().cancelAllWorkByTag(UID);
+            cancelWork(UID);
         }
+    }
+
+    public static void cancelWork(String UID) {
+            WorkManager.getInstance().cancelAllWorkByTag(UID);
     }
 
     public static class checkMessagesEvery5sc {
