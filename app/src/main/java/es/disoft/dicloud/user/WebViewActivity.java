@@ -49,14 +49,12 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -564,6 +562,8 @@ public class WebViewActivity extends AppCompatActivity {
         // This is to handle events
         webView.setWebViewClient(new WebViewClient() {
 
+            private int sendMessagePageReloads = 0;
+
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 switch (errorCode) {
@@ -647,13 +647,23 @@ public class WebViewActivity extends AppCompatActivity {
                     // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
                     Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
                     try {
-                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(),"UTF-8");
+                        String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8");
                         view.postUrl(url, postData.getBytes());
                         closeSession();
                     } catch (UnsupportedEncodingException e) {
                         closeSession();
                     }
                     return true;
+                } else if (url.contains("/news/resmen.asp")) {
+
+                    Log.wtf("----> ", "shouldOverrideUrlLoading:");
+                    Log.wtf("----> ", "antes:" + sendMessagePageReloads);
+                    if (sendMessagePageReloads++ > 0) {
+                        Log.wtf("----> ", "dentro:" + sendMessagePageReloads);
+                        sendMessagePageReloads = 0;
+                        webView.goBackOrForward(-2);
+                        return true;
+                    }
                 } else if (url.contains("maps.google.com")) {
                     Uri IntentUri    = Uri.parse(url);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
@@ -771,9 +781,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     private String replaceCloseWindows() {
         return  "javascript:(function() {" +
-                "               $('.btn.btn-md.btn-danger[onclick][value=\" X \"]').click(() => window.history.back());" +
-                "               $('.buttonToClose[onclick]').click(() => window.history.back());" +
-                "               $('#closer[onclick]').click(() => window.history.back());" +
+                "               window.close = () => window.history.back(); " +
                 "           })()";
     }
 
