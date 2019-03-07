@@ -17,11 +17,13 @@
     <string name="error_json_response">Ha habido algún problema en la comunicación</string>
     <string name="error_unknown">Error desconocido</string>
 
+
     <!-- Strings related to login with token -->
     <string name="error_pass_changed">Se ha cambiado su contraseña, vuelva a iniciar sesión</string>
     <string name="error_user_disabled">Se ha deshabilitado su usuario</string>
     <string name="error_unexpected">Ha habido algún problema inesperado, vuelva a iniciar sesión</string>
     <string name="error_user_or_password">Usuario o contraseña incorrectas</string>
+
 
     <!-- Strings related to logout -->
     <string name="logout_title">¿Cerrar sesión?</string>
@@ -31,18 +33,20 @@
     <!-- Strings related to webview -->
     <string name="fileChooser">Selecciona una acción</string>
 
+
     <!-- URL's -->
     <string name="URL_ERROR">file:///android_asset/error.html</string>
     <string name="ERR_CACHE_MISS">net::ERR_CACHE_MISS</string>
 
     <string name="URL_LOGIN">https://app.dicloud.es/login.asp</string>
-    <string name="URL_INDEX">https://admin.dicloud.es/index.asp</string>
     <string name="URL_SYNC_MENU">https://app.dicloud.es/getMenu.asp</string>
     <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
+    <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
+
+    <string name="URL_INDEX">https://admin.dicloud.es/index.asp</string>
     <string name="URL_CHAT">https://admin.dicloud.es/news/chat.asp</string>
     <string name="URL_ROOT">https://admin.dicloud.es/</string>
     <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
-    <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
 
 
     <!-- *** TODO PRUEBAS *** -->
@@ -161,6 +165,6 @@
 
     <string name="pref_title_vibrate">Vibración</string>
     <string name="notification_led">notification_led</string>
-    <string name="download_start">Descargando...</string>
+    <string name="download_start">Descargando…</string>
 
 </resources>

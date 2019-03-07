@@ -296,7 +296,6 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void setLogo() {
-        View viewById = findViewById(R.id.nav_view);
         new DownloadImageTask().execute(getString(R.string.URL_LOGO));
     }
 
