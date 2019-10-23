@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -491,10 +492,17 @@ public class WebViewActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
+
+                System.out.println("BARRA PROGRESO");
+                System.out.println("url = " + view.getUrl());
+
                 progressBar.setProgress(newProgress);
-                    progressBar.setVisibility(newProgress == 100
-                            ? View.INVISIBLE
-                            : View.VISIBLE);
+                progressBar.setScaleY(2f); // height
+                progressBar.getProgressDrawable().setColorFilter(
+                        Color.parseColor("#8B0000"), android.graphics.PorterDuff.Mode.SRC_IN); // Progress bar's color
+                progressBar.setVisibility(newProgress == 100
+                        ? View.INVISIBLE
+                        : View.VISIBLE);
             }
 
             @Override
@@ -632,6 +640,7 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
 
                 Log.i("new url", "shouldOverrideUrlLoading: " + url);
+                System.out.println("MI URL ES = " + url);
 
                 if (url.endsWith("/pass_changed")) {
                     Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
@@ -654,7 +663,8 @@ public class WebViewActivity extends AppCompatActivity {
                         closeSession();
                     }
                     return true;
-                } else if (url.contains("/news/resmen.asp")) {
+                } else if ((url.contains("/news/newmen.asp") || url.contains("/news/newmenC.asp"))
+                        && url.contains("from_add=1")) {
 
                     Log.wtf("----> ", "shouldOverrideUrlLoading:");
                     Log.wtf("----> ", "antes:" + sendMessagePageReloads);
@@ -664,6 +674,7 @@ public class WebViewActivity extends AppCompatActivity {
                         webView.goBackOrForward(-2);
                         return true;
                     }
+
                 } else if (url.contains("maps.google.com")) {
                     Uri IntentUri    = Uri.parse(url);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
@@ -672,7 +683,13 @@ public class WebViewActivity extends AppCompatActivity {
                     if (mapIntent.resolveActivity(getPackageManager()) != null)
                         startActivity(mapIntent);
                     return true;
+
+                } else if (url.startsWith("tel:") || url.startsWith("mailto:") ) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                    return true;
                 }
+                System.out.println("acabo");
                 return false;
             }
         });

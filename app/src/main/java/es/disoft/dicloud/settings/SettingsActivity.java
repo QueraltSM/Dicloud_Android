@@ -23,11 +23,11 @@ import java.util.List;
 
 import es.disoft.dicloud.LauncherActivity;
 import es.disoft.dicloud.R;
+import es.disoft.dicloud.user.Dates;
 import es.disoft.dicloud.user.WebViewActivity;
 import es.disoft.dicloud.workers.ChatWorker;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-
     static boolean mainSettingsView = true;
 
     @Override
@@ -94,13 +94,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-                if(preference.getKey().equals("sync_frequency")){
+                if (preference.getKey().equals("sync_frequency")){
                     ChatWorker.runChatWork(
                             LauncherActivity.UID,
                             index >= 0
                                     ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
                                     : index);
+
+                } else if (preference.getKey().equals("date_frequency")) {
+                    // Handle dates events
+                    Dates.setTimeAlert(index >= 0
+                            ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
+                            : index);
                 }
+
 
             } else if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value
@@ -225,6 +232,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+
+            bindPreferenceSummaryToValue(findPreference("date_frequency"));
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_led"));
         }
