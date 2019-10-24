@@ -51,6 +51,10 @@
     <string name="URL_ROOT">https://admin.dicloud.es/</string>
     <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
 
+    <string name="URL_INDEX_D">https://desarrollo.dicloud.es/index.asp</string>
+    <string name="URL_CHAT_D">https://desarrollo.dicloud.es/news/chat.asp</string>
+    <string name="URL_ROOT_D">https://desarrollo.dicloud.es/</string>
+    <string name="URL_LOGOS_ROOT_D">https://desarrollo.dicloud.es/files/logos/</string>
 
     <!-- *** TODO PRUEBAS *** -->
 
@@ -181,6 +185,7 @@
     <string name="pref_ringtone_silent">Silencio</string>
 
     <string name="pref_title_vibrate">Vibración</string>
+    <string name="pref_title_beta_version">Versión Beta</string>
     <string name="notification_led">notification_led</string>
     <string name="download_start">Descargando…</string>
 

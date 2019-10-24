@@ -58,6 +58,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -102,33 +103,36 @@ public class WebViewActivity extends AppCompatActivity {
     static boolean MULFILE   = false;
     private String TYPE      = "*/*";
 
+    private static boolean betaVersionEnabled = false;
+
+    public static void setBetaVersion(boolean betaVersionEnabled) {
+        WebViewActivity.betaVersionEnabled = betaVersionEnabled;
+    }
+
+    public static boolean getBetaVersion() {
+        return betaVersionEnabled;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
         Toolbar toolbar = findViewById(R.id.toolbar);
         progressBar = findViewById(R.id.progressBar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 hideKeyBoard();
                 super.onDrawerOpened(drawerView);
             }
         };
-
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         activity   = this;
         scrollView = findViewById(R.id.scrollview);
-
         setMenu();
         createWebview();
         setTextActionBar();
@@ -203,10 +207,25 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.home_button) webView.loadUrl(getString(R.string.URL_INDEX));
+        if (itemId == R.id.home_button && !betaVersionEnabled) setUrlIndex();
+        if (itemId == R.id.home_button && betaVersionEnabled) setUrlIndexD();
 //        if (itemId == R.id.resfresh_button) webView.reload();  // No funciona con la primera página
-        if (itemId == R.id.resfresh_button) webView.loadUrl( "javascript:window.location.reload( true )");
+        if (itemId == R.id.resfresh_button && webView.getOriginalUrl().equals(getString(R.string.URL_INDEX)) && betaVersionEnabled) {
+            setUrlIndexD();
+        } else if (itemId == R.id.resfresh_button && webView.getOriginalUrl().equals(getString(R.string.URL_INDEX_D)) && !betaVersionEnabled) {
+            setUrlIndex();
+        } else webView.loadUrl("javascript:window.location.reload( true )");
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setUrlIndexD() {
+        setTitle("Desarrollo");
+        webView.loadUrl(getString(R.string.URL_INDEX_D));
+    }
+
+    private void setUrlIndex() {
+        setTitle("Dicloud");
+        webView.loadUrl(getString(R.string.URL_INDEX));
     }
 
     private boolean closeNav() {
@@ -279,7 +298,9 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void openIndex() {
         try {
-            final String url = getString(R.string.URL_INDEX);
+            String url = getString(R.string.URL_INDEX);
+            setTitle("Dicloud");
+            if (betaVersionEnabled) setUrlIndexD();
             String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
@@ -492,10 +513,6 @@ public class WebViewActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-
-                System.out.println("BARRA PROGRESO");
-                System.out.println("url = " + view.getUrl());
-
                 progressBar.setProgress(newProgress);
                 progressBar.setScaleY(2f); // height
                 progressBar.getProgressDrawable().setColorFilter(
@@ -584,16 +601,15 @@ public class WebViewActivity extends AppCompatActivity {
                     case WebViewClient.ERROR_UNKNOWN:
                         if (description.equals(getString(R.string.ERR_CACHE_MISS))) {
                             Log.i("url_", "onReceivedError: " + description);
-                            view.loadUrl(getString(R.string.URL_INDEX));
+                            if (betaVersionEnabled) setUrlIndexD();
+                            else setUrlIndex();
                         }
                 }
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
                 Log.i("start", "onPageStarted: ");
-
                 super.onPageStarted(view, url, favicon);
                 if (!isNetworkAvailable(getApplicationContext()) && !url.equals(getString(R.string.URL_ERROR))) {
                     view.loadUrl(getString(R.string.URL_ERROR));
@@ -606,30 +622,23 @@ public class WebViewActivity extends AppCompatActivity {
             // Avoid an infinite loop
             @Override
             public void onPageFinished(WebView view, String url) {
-
                 Log.i("ended", "onPageFinished: " + url);
                 webView.loadUrl(replaceCloseWindows());
-
 //                webView.loadUrl(renderHTMLinjection());
 //                if (scrollView != null) scrollView.scrollTo(0, 0);
-
                 ObjectAnimator anim = ObjectAnimator.ofInt(scrollView, "scrollY", 0);
                 anim.setDuration(400);
                 anim.start();
 
-
                 if (url.endsWith("/index.asp")) webView.clearHistory();
                 if (loadedFromNotification()) {
                     Log.e("mensajee", "ITS WORKS!!! " + notificationType);
-
                     if (notificationType.equals("notification"))
 //                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                             webView.loadUrl(pushButton(500));
-
                     setIntent(null);
                     notificationType = null;
                 }
-
                 /* esto es para rellenar forumularios a través del webview -> tiene que estar esto activado
                    webView.getSettings().setDomStorageEnabled(true); */
 //                webView.loadUrl("javascript:var x = $('#advanced').text() = 'aaa';");
@@ -638,10 +647,8 @@ public class WebViewActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
-
                 Log.i("new url", "shouldOverrideUrlLoading: " + url);
                 System.out.println("MI URL ES = " + url);
-
                 if (url.endsWith("/pass_changed")) {
                     Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
                     closeSession();
@@ -665,7 +672,6 @@ public class WebViewActivity extends AppCompatActivity {
                     return true;
                 } else if ((url.contains("/news/newmen.asp") || url.contains("/news/newmenC.asp"))
                         && url.contains("from_add=1")) {
-
                     Log.wtf("----> ", "shouldOverrideUrlLoading:");
                     Log.wtf("----> ", "antes:" + sendMessagePageReloads);
                     if (sendMessagePageReloads++ > 0) {
@@ -674,7 +680,6 @@ public class WebViewActivity extends AppCompatActivity {
                         webView.goBackOrForward(-2);
                         return true;
                     }
-
                 } else if (url.contains("maps.google.com")) {
                     Uri IntentUri    = Uri.parse(url);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, IntentUri);
@@ -683,26 +688,21 @@ public class WebViewActivity extends AppCompatActivity {
                     if (mapIntent.resolveActivity(getPackageManager()) != null)
                         startActivity(mapIntent);
                     return true;
-
                 } else if (url.startsWith("tel:") || url.startsWith("mailto:") ) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
                     return true;
                 }
-                System.out.println("acabo");
                 return false;
             }
         });
     }
 
     private void loadURLWhenNetworkAvailable(final WebView view) {
-
         final Handler handler = new Handler();
         final int delay = 1000; //milliseconds
-
         handler.postDelayed(new Runnable(){
             public void run(){
-
                 while (!ConnectionAvailable.isNetworkAvailable(getApplicationContext())) {
                     try {
                         Thread.sleep(500);
@@ -710,7 +710,6 @@ public class WebViewActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
                 try {
                     if ((new ConnectionAvailable(getString(R.string.URL_INDEX)).execute().get())) {
                         view.loadUrl(urlBeforeFail);
@@ -725,7 +724,6 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     public static void closeSession() {
-
         new Thread(new Runnable() {
             @Override
             public void run() {

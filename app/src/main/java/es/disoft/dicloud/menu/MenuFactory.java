@@ -30,6 +30,7 @@ import es.disoft.dicloud.settings.SettingsActivity;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
 import es.disoft.dicloud.model.Menu;
 import es.disoft.dicloud.model.MenuDao;
+import es.disoft.dicloud.user.WebViewActivity;
 
 import static es.disoft.dicloud.user.WebViewActivity.closeSession;
 
@@ -101,6 +102,7 @@ public class MenuFactory {
                 MenuModel childModel;
                 for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
                     String url = context.getString(R.string.URL_ROOT) + submenuItem.url;
+                    if (WebViewActivity.getBetaVersion()) url = context.getString(R.string.URL_ROOT_D) + submenuItem.url;
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
@@ -114,6 +116,7 @@ public class MenuFactory {
         headerList.add(menuModel);
         childList.put(menuModel, null);
         String urlLogoutString = context.getString(R.string.URL_ROOT) + "disconect";
+        if (WebViewActivity.getBetaVersion()) urlLogoutString = context.getString(R.string.URL_ROOT_D) + "disconect";
         menuModel = new MenuModel(context.getString(R.string.menu_disconect), true, false, urlLogoutString, R.drawable.ic_power_settings);
         headerList.add(menuModel);
 

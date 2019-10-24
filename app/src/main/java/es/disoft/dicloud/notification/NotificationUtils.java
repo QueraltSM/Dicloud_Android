@@ -56,14 +56,13 @@ public class NotificationUtils extends ContextWrapper {
 
     public NotificationUtils(Context base) {
         super(base);
-
         if (notificationEnabled()) {
             COLOR = translateColor(Objects.requireNonNull(PreferenceManager.getDefaultSharedPreferences(this).getString("notification_led", "Red")));
-
             setImportance(true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 createNotificationChannel();
         }
+        WebViewActivity.setBetaVersion(betaVersionEnabled());
     }
 
     private void setImportance(boolean notification) {
@@ -134,6 +133,11 @@ public class NotificationUtils extends ContextWrapper {
         return settings.getBoolean("notifications_new_message", true);
     }
 
+    private boolean betaVersionEnabled() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return settings.getBoolean("notifications_beta_version", true);
+    }
+
     private Uri getPreferenceSound() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String tone = settings.getString("notifications_new_message_ringtone", getString(R.string.pref_ringtone));
@@ -197,6 +201,7 @@ public class NotificationUtils extends ContextWrapper {
 
     public void show() {
         if (notificationEnabled()) {
+            System.out.println("JUJUJU");
     //        messages = DisoftRoomDatabase.getDatabase(getApplicationContext()).messageDao().getAllMessagesEssentialInfo();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                 showCuteNotifications();
