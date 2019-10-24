@@ -289,7 +289,7 @@ public class WebViewActivity extends AppCompatActivity {
         if (webView.getUrl() != null && webView.getUrl().endsWith("chat.asp")) {
             if (notificationType.equals("notification"))
 //                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                    webView.loadUrl(pushButton(100));
+                webView.loadUrl(pushButton(100));
         } else {
             webView.loadUrl(getString(R.string.URL_CHAT));
         }
@@ -635,7 +635,7 @@ public class WebViewActivity extends AppCompatActivity {
                     Log.e("mensajee", "ITS WORKS!!! " + notificationType);
                     if (notificationType.equals("notification"))
 //                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                            webView.loadUrl(pushButton(500));
+                        webView.loadUrl(pushButton(500));
                     setIntent(null);
                     notificationType = null;
                 }
