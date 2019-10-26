@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Dicloud</string>
 
     <!-- Strings related to login with password -->
@@ -46,14 +46,11 @@
 
     <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
 
-    <string name="URL_INDEX">https://admin.dicloud.es/index.asp</string>
-    <string name="URL_CHAT">https://admin.dicloud.es/news/chat.asp</string>
-    <string name="URL_ROOT">https://admin.dicloud.es/</string>
-    <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
 
-    <string name="URL_INDEX_D">https://desarrollo.dicloud.es/index.asp</string>
-    <string name="URL_CHAT_D">https://desarrollo.dicloud.es/news/chat.asp</string>
-    <string name="URL_ROOT_D">https://desarrollo.dicloud.es/</string>
+    <string name="URL_INDEX">https://%1$s.dicloud.es/index.asp"</string>
+    <string name="URL_CHAT">https://%1$s.dicloud.es/news/chat.asp</string>
+    <string name="URL_ROOT">https://%1$s.dicloud.es/</string>
+    <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
 
     <!-- *** TODO PRUEBAS *** -->
 
@@ -174,6 +171,8 @@
     </string-array>
 
     <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_header_general">General</string>
 
     <string name="pref_header_notifications">Notificaciones</string>
 

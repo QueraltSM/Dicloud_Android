@@ -101,8 +101,8 @@ public class MenuFactory {
                 List<MenuModel> childModelsList = new ArrayList<>();
                 MenuModel childModel;
                 for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
-                    String url = context.getString(R.string.URL_ROOT) + submenuItem.url;
-                    if (WebViewActivity.getBetaVersion()) url = context.getString(R.string.URL_ROOT_D) + submenuItem.url;
+                    String url = context.getString(R.string.URL_ROOT, "admin") + submenuItem.url;
+                    if (WebViewActivity.getBetaVersion()) url = context.getString(R.string.URL_INDEX, "desarrollo") + submenuItem.url;
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
@@ -115,8 +115,8 @@ public class MenuFactory {
         menuModel = new MenuModel(context.getString(R.string.menu_manage), true, false, "", R.drawable.ic_menu_manage);
         headerList.add(menuModel);
         childList.put(menuModel, null);
-        String urlLogoutString = context.getString(R.string.URL_ROOT) + "disconect";
-        if (WebViewActivity.getBetaVersion()) urlLogoutString = context.getString(R.string.URL_ROOT_D) + "disconect";
+        String urlLogoutString = context.getString(R.string.URL_ROOT, "admin") + "disconect";
+        if (WebViewActivity.getBetaVersion()) urlLogoutString = context.getString(R.string.URL_INDEX, "desarrollo") + "disconect";
         menuModel = new MenuModel(context.getString(R.string.menu_disconect), true, false, urlLogoutString, R.drawable.ic_power_settings);
         headerList.add(menuModel);
 

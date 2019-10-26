@@ -13,12 +13,12 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-
 import java.util.List;
 
 import es.disoft.dicloud.LauncherActivity;
@@ -82,6 +82,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
+
                 String TAG = "kys";
                 Log.i(TAG, "onPreferenceChange: " + preference.getKey());
                 // For list preferences, look up the correct display value in
@@ -211,7 +212,41 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
-                || NotificationPreferenceFragment.class.getName().equals(fragmentName);
+                || NotificationPreferenceFragment.class.getName().equals(fragmentName)
+                || BetaVersionPreferenceFragment.class.getName().equals(fragmentName);
+    }
+
+    /**
+     * This fragment shows general information. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class BetaVersionPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
+            super.onCreate(savedInstanceState);
+            mainSettingsView = false;
+            addPreferencesFromResource(R.xml.pref_beta_version);
+            setHasOptionsMenu(true);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            mainSettingsView = true;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.nothing);
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
