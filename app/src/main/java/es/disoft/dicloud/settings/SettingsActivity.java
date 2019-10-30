@@ -26,6 +26,7 @@ import es.disoft.dicloud.R;
 import es.disoft.dicloud.user.Dates;
 import es.disoft.dicloud.user.WebViewActivity;
 import es.disoft.dicloud.workers.ChatWorker;
+import es.disoft.dicloud.workers.DateWorker;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
     static boolean mainSettingsView = true;
@@ -104,9 +105,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 } else if (preference.getKey().equals("date_frequency")) {
                     // Handle dates events
-                    Dates.setTimeAlert(index >= 0
-                            ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
-                            : index);
+                    /*DateWorker.runDateWork(
+                            LauncherActivity.UID,
+                            index >= 0
+                                    ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
+                                    : index);*/
                 }
 
 

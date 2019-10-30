@@ -30,8 +30,11 @@ import es.disoft.dicloud.settings.SettingsActivity;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
 import es.disoft.dicloud.model.Menu;
 import es.disoft.dicloud.model.MenuDao;
+import es.disoft.dicloud.user.LoginActivity;
 import es.disoft.dicloud.user.WebViewActivity;
 
+import static android.provider.Settings.System.getString;
+import static es.disoft.dicloud.R.string.URL_INDEX;
 import static es.disoft.dicloud.user.WebViewActivity.closeSession;
 
 public class MenuFactory {
@@ -45,6 +48,8 @@ public class MenuFactory {
     private Map<MenuModel, List<MenuModel>> childList;
     private WebView webView;
 
+    private String URL_INDEX;
+
     public MenuFactory(Context context) {
         this.context = context;
     }
@@ -54,9 +59,12 @@ public class MenuFactory {
         this.expandableListView = expandableListView;
         this.webView            = ((Activity) context).findViewById(R.id.webView);
         this.context            = context;
+
+        URL_INDEX = WebViewActivity.URL_INDEX;
     }
 
     public void loadMenu(boolean networkAvailable) {
+
         if (networkAvailable) {
            new JsonTask().execute(context.getString(R.string.URL_SYNC_MENU));
         } else {
@@ -101,8 +109,7 @@ public class MenuFactory {
                 List<MenuModel> childModelsList = new ArrayList<>();
                 MenuModel childModel;
                 for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
-                    String url = context.getString(R.string.URL_ROOT, "admin") + submenuItem.url;
-                    if (WebViewActivity.getBetaVersion()) url = context.getString(R.string.URL_INDEX, "desarrollo") + submenuItem.url;
+                    String url = URL_INDEX + submenuItem.url;
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
@@ -115,8 +122,7 @@ public class MenuFactory {
         menuModel = new MenuModel(context.getString(R.string.menu_manage), true, false, "", R.drawable.ic_menu_manage);
         headerList.add(menuModel);
         childList.put(menuModel, null);
-        String urlLogoutString = context.getString(R.string.URL_ROOT, "admin") + "disconect";
-        if (WebViewActivity.getBetaVersion()) urlLogoutString = context.getString(R.string.URL_INDEX, "desarrollo") + "disconect";
+        String urlLogoutString = URL_INDEX + "disconect";
         menuModel = new MenuModel(context.getString(R.string.menu_disconect), true, false, urlLogoutString, R.drawable.ic_power_settings);
         headerList.add(menuModel);
 

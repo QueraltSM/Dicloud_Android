@@ -62,7 +62,6 @@ public class NotificationUtils extends ContextWrapper {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 createNotificationChannel();
         }
-        WebViewActivity.setBetaVersion(betaVersionEnabled());
     }
 
     private void setImportance(boolean notification) {

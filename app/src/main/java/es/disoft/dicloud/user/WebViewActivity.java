@@ -58,7 +58,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -103,11 +102,8 @@ public class WebViewActivity extends AppCompatActivity {
     static boolean MULFILE   = false;
     private String TYPE      = "*/*";
 
-    private static boolean betaVersionEnabled;
-
-    public static void setBetaVersion(boolean betaVersionEnabled) {
-        WebViewActivity.betaVersionEnabled = betaVersionEnabled;
-    }
+    public static String URL_INDEX;
+    private String CHAT_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +125,18 @@ public class WebViewActivity extends AppCompatActivity {
         toggle.syncState();
         activity   = this;
         scrollView = findViewById(R.id.scrollview);
+
+
+        URL_INDEX = getString(R.string.URL_INDEX, "admin");
+        CHAT_URL = getString(R.string.URL_CHAT, "admin");
+        setTitle("Dicloud");
+
+        if (LoginActivity.getBetaVersion()) {
+            URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
+            CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
+            setTitle("Versión beta");
+        }
+
         setMenu();
         createWebview();
         setTextActionBar();
@@ -204,26 +212,29 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String actualURL = webView.getOriginalUrl();
         int itemId = item.getItemId();
-        if (itemId == R.id.home_button && !betaVersionEnabled) setUrlIndex("Dicloud", "admin");
-        if (itemId == R.id.home_button && betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
-        if (itemId == R.id.resfresh_button && betaVersionEnabled && actualURL.contains("desarrollo")) {
-            setUrlIndex("Dicloud versión beta", "desarrollo");
-        } else if (itemId == R.id.resfresh_button && !betaVersionEnabled && actualURL.contains("admin")) {
-            setUrlIndex("Dicloud", "admin");
+
+        if (itemId == R.id.phone_button) goListing();
+        //if (itemId == R.id.home_button && betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
+        if (itemId == R.id.resfresh_button) {
+            webView.reload();
         } else {
             webView.loadUrl("javascript:window.location.reload( true )");
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public static boolean getBetaVersion() {
-        return betaVersionEnabled;
-    }
 
-    private void setUrlIndex(String title, String url) {
-        setTitle(title);
-        webView.loadUrl(getString(R.string.URL_INDEX, url));
-        webView.reload();
+    public void goListing() {
+        String url = getString(R.string.URL_LISTING);
+        String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
+        try {
+            postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
+                    + "&l=1";
+            webView.postUrl(url, postData.getBytes());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private boolean closeNav() {
@@ -289,22 +300,17 @@ public class WebViewActivity extends AppCompatActivity {
 //                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 webView.loadUrl(pushButton(100));
         } else {
-            if (WebViewActivity.getBetaVersion()) webView.loadUrl(getString(R.string.URL_CHAT, "desarrollo"));
-            else webView.loadUrl(getString(R.string.URL_CHAT, "admin"));
+            webView.loadUrl(CHAT_URL);
         }
         Log.d("mensajeee", "\n\nbundle:\nt: " + notificationType + "\nid: " + notificationId);
     }
 
     private void openIndex() {
+        String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
         try {
-            String url = getString(R.string.URL_INDEX, "admin");
-            setTitle("Dicloud");
-            if (betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
-
-            String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
-            webView.postUrl(url, postData.getBytes());
+            webView.postUrl(URL_INDEX, postData.getBytes());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -595,14 +601,13 @@ public class WebViewActivity extends AppCompatActivity {
                     case WebViewClient.ERROR_HOST_LOOKUP:
                         view.loadUrl(getString(R.string.URL_ERROR));
                         urlBeforeFail = failingUrl == null
-                                ? getString(R.string.URL_INDEX, "admin")
+                                ? URL_INDEX
                                 : failingUrl;
                         break;
                     case WebViewClient.ERROR_UNKNOWN:
                         if (description.equals(getString(R.string.ERR_CACHE_MISS))) {
                             Log.i("url_", "onReceivedError: " + description);
-                            if (betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
-                            else setUrlIndex("Dicloud", "admin");;
+                            webView.loadUrl(URL_INDEX);
                         }
                 }
             }
@@ -711,7 +716,7 @@ public class WebViewActivity extends AppCompatActivity {
                     }
                 }
                 try {
-                    if ((new ConnectionAvailable(getString(R.string.URL_INDEX, "admin")).execute().get())) {
+                    if ((new ConnectionAvailable(URL_INDEX).execute().get())) {
                         view.loadUrl(urlBeforeFail);
                     } else {
                         handler.postDelayed(this, delay);

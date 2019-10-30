@@ -19,7 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -58,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private static boolean betaVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,6 +302,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public static boolean getBetaVersion() {
+        return betaVersion;
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -387,7 +395,11 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("token_", "login: " + loginResponse);
 
             if (loginResponse != null) error = loginResponse.getBoolean("error");
+
+            Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
+            LoginActivity.betaVersion =  betaVersion.isChecked();
         }
+
 
         private void updateDDBB() {
             new Thread(new Runnable() {
