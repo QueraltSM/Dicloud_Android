@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7f778b81c192c1107497b794635ddaf8",
+    "identityHash": "c246cd637eb27ec2cc25bb9065d8127f",
     "entities": [
       {
         "tableName": "users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `user_id` INTEGER NOT NULL, `userAlias` TEXT NOT NULL, `fullName` TEXT NOT NULL, `dbAlias` TEXT NOT NULL, `loggedIn` INTEGER NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `user_id` INTEGER NOT NULL, `userAlias` TEXT NOT NULL, `fullName` TEXT NOT NULL, `dbAlias` TEXT NOT NULL, `loggedIn` INTEGER NOT NULL, `token` TEXT NOT NULL, `companyID` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -47,6 +47,12 @@
           {
             "fieldPath": "token",
             "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "companyID",
+            "columnName": "companyID",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -260,7 +266,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7f778b81c192c1107497b794635ddaf8\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c246cd637eb27ec2cc25bb9065d8127f\")"
     ]
   }
 }

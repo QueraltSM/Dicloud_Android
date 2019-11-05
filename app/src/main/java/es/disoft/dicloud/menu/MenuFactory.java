@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -100,6 +101,8 @@ public class MenuFactory {
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
 
+            System.out.println("Menu header = " + menuHeader);
+
             if (!menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel(menuHeader, true, true, "", null);
                 headerList.add(menuModel);
@@ -113,6 +116,7 @@ public class MenuFactory {
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
+
                 childList.put(menuModel, childModelsList);
             } else {
                 childList.put(menuModel, null);
@@ -192,7 +196,13 @@ public class MenuFactory {
             JSONArray jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
             List<es.disoft.dicloud.model.Menu> menus = new ArrayList<>();
             for (int i = 0; i < jArray.length(); i++) {
+
+
                 JSONObject json_data = jArray.getJSONObject(i);
+
+                System.out.println("JSON RESPONSE = ");
+                System.out.println("MENU = " + json_data.getString("menu"));
+
                 es.disoft.dicloud.model.Menu menu = new es.disoft.dicloud.model.Menu(
                         json_data.getString("menu"),
                         json_data.getString("submenu"),
@@ -217,6 +227,7 @@ public class MenuFactory {
 
             try {
                 String json = jsonRequest(new URL(params[0]));
+                System.out.println("JAJAJAJA = " + params[0] );
                 jsonResponse(json);
             } catch (IOException e) {
                 e.printStackTrace();

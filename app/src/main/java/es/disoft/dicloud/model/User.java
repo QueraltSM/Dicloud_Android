@@ -24,12 +24,15 @@ public class User {
     private int loggedIn;
     @NonNull
     private String token;
+    @NonNull
+    private String companyID;
 
     public User(@NonNull int user_id,
                 @NonNull String userAlias,
                 @NonNull String fullName,
                 @NonNull String dbAlias,
-                @NonNull String token) {
+                @NonNull String token,
+                @NonNull String companyID) {
         id = userAlias + dbAlias;
         this.user_id   = user_id;
         this.userAlias = userAlias;
@@ -37,6 +40,8 @@ public class User {
         this.dbAlias   = dbAlias;
         this.loggedIn  = 1;
         this.token     = token;
+        this.companyID = companyID;
+
     }
 
     @NonNull
@@ -100,6 +105,15 @@ public class User {
 
     public void setToken(@NonNull String token) {
         this.token = token;
+    }
+
+    @NonNull
+    public String getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(@NonNull String companyID) {
+        this.companyID = companyID;
     }
 
     public static class DbAlias {

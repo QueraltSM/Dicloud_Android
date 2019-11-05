@@ -234,7 +234,6 @@ public class WebViewActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
     }
 
     private boolean closeNav() {
@@ -343,9 +342,12 @@ public class WebViewActivity extends AppCompatActivity {
             try {
                 url            = new URL(getString(R.string.URL_LOGO));
                 jsonObject     = new JSONObject(HttpConnections.getData(url, activity));
-                String imgName = jsonObject.getString("img");
+                //String imgName = jsonObject.getString("img");
 
-                url = new URL(getString(R.string.URL_LOGOS_ROOT) + imgName);
+                String companyPhotoURL = getString(R.string.URL_LOGOS_ROOT);
+                String logoPath = companyPhotoURL + "Logo_" + User.currentUser.getCompanyID() + "_1.gif";
+
+                url = new URL(logoPath);
 
                 InputStream in = url.openStream();
                 mIcon11        = BitmapFactory.decodeStream(in);
@@ -653,7 +655,6 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
                 Log.i("new url", "shouldOverrideUrlLoading: " + url);
-                System.out.println("MI URL ES = " + url);
                 if (url.endsWith("/pass_changed")) {
                     Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
                     closeSession();

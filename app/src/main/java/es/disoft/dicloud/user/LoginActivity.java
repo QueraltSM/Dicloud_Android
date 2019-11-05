@@ -408,8 +408,9 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         String mfullName = loginResponse.getString("fullName");
                         String mToken    = loginResponse.getString("token");
+                        String mCompanyID= loginResponse.getString("companyid");
                         int mId          = loginResponse.getInt("id");
-                        User.currentUser = new User(mId, mUser, mfullName, mAlias, mToken);
+                        User.currentUser = new User(mId, mUser, mfullName, mAlias, mToken, mCompanyID);
                         UserDao userDao  = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao();
                         userDao.insert(User.currentUser);
                     } catch (JSONException e) {
