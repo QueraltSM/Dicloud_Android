@@ -28,6 +28,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,8 +44,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -126,22 +129,44 @@ public class WebViewActivity extends AppCompatActivity {
         activity   = this;
         scrollView = findViewById(R.id.scrollview);
 
-
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
-        setTitle("Dicloud");
-
         if (LoginActivity.getBetaVersion()) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
-            setTitle("Versión beta");
         }
-
+        setTitle("");
+        setHomeButton(toolbar);
         setMenu();
         createWebview();
         setTextActionBar();
         setLogo();
     }
+
+    private void setHomeButton(Toolbar toolbar) {
+        Button bt = new Button(this);
+        if (URL_INDEX.contains("admin")) {
+            bt.setText("Dicloud");
+        } else {
+            bt.setText("Versión beta");
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.FILL_PARENT);
+        params.gravity = Gravity.CENTER;
+        bt.setLayoutParams(params);
+        bt.setBackground(null);
+        int textColor = Color.parseColor("#FFFFFF");
+        bt.setTextColor(textColor);
+        bt.setTextSize(20);
+        bt.setAllCaps(false);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openIndex();
+            }
+        });
+        toolbar.addView(bt);
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
