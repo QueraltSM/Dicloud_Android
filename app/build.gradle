@@ -46,4 +46,5 @@ dependencies {
 
     def work_version = "1.0.0-beta01"
     implementation "android.arch.work:work-runtime:$work_version"
+
 }

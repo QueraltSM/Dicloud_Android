@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -50,11 +51,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +62,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import es.disoft.dicloud.ConnectionAvailable;
 import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
@@ -75,6 +73,7 @@ import es.disoft.dicloud.notification.NotificationUtils;
 import es.disoft.dicloud.workers.ChatWorker;
 
 import static es.disoft.dicloud.ConnectionAvailable.isNetworkAvailable;
+import static es.disoft.dicloud.workers.ChatWorker.checkMessagesEvery5sc.context;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -107,6 +106,12 @@ public class WebViewActivity extends AppCompatActivity {
 
     public static String URL_INDEX;
     private String CHAT_URL;
+    private String URL_LISTING;
+
+    private boolean goHomeView = true;
+
+    private ImageView disoftLogo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,11 +136,17 @@ public class WebViewActivity extends AppCompatActivity {
 
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
+        URL_LISTING = getString(R.string.URL_LISTING, "admin");
+
         if (LoginActivity.getBetaVersion()) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
+            URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         }
+
         setTitle("");
+        disoftLogo = new ImageView(this);
+        disoftLogo.setLayoutParams(new LinearLayout.LayoutParams(160, 160)); // value is in pixels
         setHomeButton(toolbar);
         setMenu();
         createWebview();
@@ -235,9 +246,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String actualURL = webView.getOriginalUrl();
         int itemId = item.getItemId();
-
         if (itemId == R.id.phone_button) goListing();
         //if (itemId == R.id.home_button && betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
         if (itemId == R.id.resfresh_button) {
@@ -288,23 +297,17 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
         if (User.currentUser == null)
             User.currentUser = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getUserLoggedIn();
-
         new NotificationUtils(getApplicationContext()).clearAll();
-
         Log.e("URL_", "onResume: " + webView.getUrl());
-
         if (loadedFromNotification())
             openChat();
         else if (state != null)
             webView.saveState(state);
         else if (webView.getUrl() == null || webView.getUrl() != null && !webView.getUrl().contains("chat.asp"))
             openIndex();
-
-        ChatWorker.checkMessagesEvery5sc.context = this;
+        context = this;
         ChatWorker.checkMessagesEvery5sc.start();
     }
 
@@ -359,11 +362,9 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
         protected Bitmap doInBackground(String... urls) {
-
             URL url               = null;
             JSONObject jsonObject = null;
             Bitmap mIcon11        = null;
-
             try {
                 url            = new URL(getString(R.string.URL_LOGO));
                 jsonObject     = new JSONObject(HttpConnections.getData(url, activity));
@@ -377,7 +378,6 @@ public class WebViewActivity extends AppCompatActivity {
                 InputStream in = url.openStream();
                 mIcon11        = BitmapFactory.decodeStream(in);
             } catch (Exception ignored) { }
-
             return mIcon11;
         }
 
@@ -544,15 +544,29 @@ public class WebViewActivity extends AppCompatActivity {
 
         // This is to show alerts
         webView.setWebChromeClient(new WebChromeClient(){
+            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setProgress(newProgress);
                 progressBar.setScaleY(2f); // height
                 progressBar.getProgressDrawable().setColorFilter(
                         Color.parseColor("#8B0000"), android.graphics.PorterDuff.Mode.SRC_IN); // Progress bar's color
-                progressBar.setVisibility(newProgress == 100
-                        ? View.INVISIBLE
-                        : View.VISIBLE);
+                if (goHomeView) {
+
+                    // show gif
+
+
+
+
+                    progressBar.setVisibility(newProgress == 100
+                            ? View.INVISIBLE
+                            : View.INVISIBLE);
+                } else {
+                    progressBar.setVisibility(newProgress == 100
+                            ? View.INVISIBLE
+                            : View.VISIBLE);
+                }
+                if (progressBar.getProgress() == 100) goHomeView = false;
             }
 
             @Override
@@ -562,7 +576,6 @@ public class WebViewActivity extends AppCompatActivity {
              * https://github.com/mgks/Android-SmartWebView
              */
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-
                 if (checkPermission(2) && checkPermission(3)) {
                     if (FUPLOAD) {
                         if (asw_file_path != null)
@@ -602,7 +615,6 @@ public class WebViewActivity extends AppCompatActivity {
                         else
                             intentArray = new Intent[0];
 
-
                         Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
                         chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
                         chooserIntent.putExtra(Intent.EXTRA_TITLE, getString(R.string.fileChooser));
@@ -619,9 +631,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         // This is to handle events
         webView.setWebViewClient(new WebViewClient() {
-
             private int sendMessagePageReloads = 0;
-
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 switch (errorCode) {

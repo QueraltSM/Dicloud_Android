@@ -62,6 +62,8 @@ public class MenuFactory {
         this.context            = context;
 
         URL_INDEX = WebViewActivity.URL_INDEX;
+
+        if (WebViewActivity.URL_INDEX != null) URL_INDEX = WebViewActivity.URL_INDEX.substring(0, URL_INDEX.lastIndexOf("/"));
     }
 
     public void loadMenu(boolean networkAvailable) {
@@ -100,19 +102,15 @@ public class MenuFactory {
 
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
-
-            System.out.println("Menu header = " + menuHeader);
-
             if (!menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel(menuHeader, true, true, "", null);
                 headerList.add(menuModel);
             }
-
             if (menuModel != null && menuModel.hasChildren) {
                 List<MenuModel> childModelsList = new ArrayList<>();
                 MenuModel childModel;
                 for (Menu.SubmenuItem submenuItem : headerEntry.getValue()) {
-                    String url = URL_INDEX + submenuItem.url;
+                    String url = URL_INDEX + "/" + submenuItem.url;
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
