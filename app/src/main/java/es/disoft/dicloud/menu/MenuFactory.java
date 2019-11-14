@@ -93,13 +93,10 @@ public class MenuFactory {
     private void setMenu() {
         headerList = new ArrayList<>();
         childList  = new LinkedHashMap<>();
-
         MenuModel menuModel = null;
-
 //        menuModel = new MenuModel("Página principal", true, false, context.getString(R.string.URL_ROOT), R.drawable.ic_menu_home);
 //        headerList.add(menuModel);
 //        childList.put(menuModel, null);
-
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
             if (!menuHeader.equals("Desconectar")) {
@@ -114,7 +111,6 @@ public class MenuFactory {
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
-
                 childList.put(menuModel, childModelsList);
             } else {
                 childList.put(menuModel, null);
@@ -146,9 +142,7 @@ public class MenuFactory {
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
                 if (headerList.get(groupPosition).isGroup && !headerList.get(groupPosition).hasChildren) {
-
                     switch (headerList.get(groupPosition).menuName) {
                         case "Configuración":
                             context.startActivity(new Intent(context,SettingsActivity.class));
@@ -160,10 +154,8 @@ public class MenuFactory {
                         default:
                             webView.loadUrl(headerList.get(groupPosition).url);
                     }
-
                     ((Activity) context).onBackPressed();
                 }
-
                 return false;
             }
         });
@@ -171,7 +163,6 @@ public class MenuFactory {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
                 if (childList.get(headerList.get(groupPosition)) != null) {
                     MenuModel model = childList.get(headerList.get(groupPosition)).get(childPosition);
                     if (model.url.length() > 0) {
@@ -179,7 +170,6 @@ public class MenuFactory {
                         ((Activity) context).onBackPressed();
                     }
                 }
-
                 return false;
             }
         });
@@ -194,13 +184,7 @@ public class MenuFactory {
             JSONArray jArray = new JSONObject(menuAsJsonString).getJSONArray("usermenu");
             List<es.disoft.dicloud.model.Menu> menus = new ArrayList<>();
             for (int i = 0; i < jArray.length(); i++) {
-
-
                 JSONObject json_data = jArray.getJSONObject(i);
-
-                System.out.println("JSON RESPONSE = ");
-                System.out.println("MENU = " + json_data.getString("menu"));
-
                 es.disoft.dicloud.model.Menu menu = new es.disoft.dicloud.model.Menu(
                         json_data.getString("menu"),
                         json_data.getString("submenu"),

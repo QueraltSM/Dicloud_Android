@@ -51,9 +51,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +64,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import es.disoft.dicloud.ConnectionAvailable;
 import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
@@ -88,30 +91,22 @@ public class WebViewActivity extends AppCompatActivity {
     private NestedScrollView scrollView;
     private ProgressBar progressBar;
     private Bundle state;
-
     private String urlBeforeFail;
-
     private String asw_cam_message;
     private ValueCallback<Uri> asw_file_message;
     private ValueCallback<Uri[]> asw_file_path;
     private final static int asw_file_req = 1;
-
     private final static int file_perm = 2;
-
     static boolean FUPLOAD   = true;
     static boolean CAMUPLOAD = true;
     static boolean ONLYCAM   = false;
     static boolean MULFILE   = false;
     private String TYPE      = "*/*";
-
     public static String URL_INDEX;
     private String CHAT_URL;
     private String URL_LISTING;
-
-    private boolean goHomeView = true;
-
     private ImageView disoftLogo;
-
+    private boolean listin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,17 +128,12 @@ public class WebViewActivity extends AppCompatActivity {
         toggle.syncState();
         activity   = this;
         scrollView = findViewById(R.id.scrollview);
-
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
-        URL_LISTING = getString(R.string.URL_LISTING, "admin");
-
         if (LoginActivity.getBetaVersion()) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
-            URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         }
-
         setTitle("");
         disoftLogo = new ImageView(this);
         disoftLogo.setLayoutParams(new LinearLayout.LayoutParams(160, 160)); // value is in pixels
@@ -214,7 +204,6 @@ public class WebViewActivity extends AppCompatActivity {
                     if (data == null || data.getData() == null) {
                         if (asw_cam_message != null)
                             results = new Uri[]{Uri.parse(asw_cam_message)};
-
                     } else {
                         String dataString = data.getDataString();
                         if (dataString != null) {
@@ -248,7 +237,6 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.phone_button) goListing();
-        //if (itemId == R.id.home_button && betaVersionEnabled) setUrlIndex("Dicloud versión beta", "desarrollo");
         if (itemId == R.id.resfresh_button) {
             webView.reload();
         } else {
@@ -259,12 +247,17 @@ public class WebViewActivity extends AppCompatActivity {
 
 
     public void goListing() {
-        String url = getString(R.string.URL_LISTING);
+        listin = true;
+        URL_LISTING = "https://desarrollo.dicloud.es/conta/listin.asp";
+        System.out.println("Go Listin!!!\n\nURL=:\nt: " + URL_LISTING);
+        //webView.loadUrl(URL_LISTING);
+
+
         String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
         try {
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
-            webView.postUrl(url, postData.getBytes());
+            webView.postUrl(URL_LISTING, postData.getBytes());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -368,13 +361,9 @@ public class WebViewActivity extends AppCompatActivity {
             try {
                 url            = new URL(getString(R.string.URL_LOGO));
                 jsonObject     = new JSONObject(HttpConnections.getData(url, activity));
-                //String imgName = jsonObject.getString("img");
-
                 String companyPhotoURL = getString(R.string.URL_LOGOS_ROOT);
                 String logoPath = companyPhotoURL + "Logo_" + User.currentUser.getCompanyID() + "_1.gif";
-
                 url = new URL(logoPath);
-
                 InputStream in = url.openStream();
                 mIcon11        = BitmapFactory.decodeStream(in);
             } catch (Exception ignored) { }
@@ -409,6 +398,7 @@ public class WebViewActivity extends AppCompatActivity {
 
                         navCompany.setText(WordUtils.capitalizeFully(finalDbAlias));
                         navFullName.setText(WordUtils.capitalizeFully(finalFullName));
+
                     }
                 });
             }
@@ -551,26 +541,12 @@ public class WebViewActivity extends AppCompatActivity {
                 progressBar.setScaleY(2f); // height
                 progressBar.getProgressDrawable().setColorFilter(
                         Color.parseColor("#8B0000"), android.graphics.PorterDuff.Mode.SRC_IN); // Progress bar's color
-                if (goHomeView) {
-
-                    // show gif
-
-
-
-
-                    progressBar.setVisibility(newProgress == 100
-                            ? View.INVISIBLE
-                            : View.INVISIBLE);
-                } else {
-                    progressBar.setVisibility(newProgress == 100
+                progressBar.setVisibility(newProgress == 100
                             ? View.INVISIBLE
                             : View.VISIBLE);
-                }
-                if (progressBar.getProgress() == 100) goHomeView = false;
             }
 
             @Override
-
             /**
              * Thanks to
              * https://github.com/mgks/Android-SmartWebView
@@ -680,10 +656,10 @@ public class WebViewActivity extends AppCompatActivity {
                         webView.loadUrl(pushButton(500));
                     setIntent(null);
                     notificationType = null;
+                } else if (listin && url.endsWith("/listin.asp")) {
+                    webView.loadUrl(URL_LISTING);
+                    listin = false;
                 }
-                /* esto es para rellenar forumularios a través del webview -> tiene que estar esto activado
-                   webView.getSettings().setDomStorageEnabled(true); */
-//                webView.loadUrl("javascript:var x = $('#advanced').text() = 'aaa';");
                 super.onPageFinished(view, url);
             }
 

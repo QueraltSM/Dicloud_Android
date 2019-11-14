@@ -50,7 +50,6 @@ public class Messages {
 
         if (User.currentUser != null) {
             if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
-
             updatedMessages = new ArrayList<>();
             deletedMessages = new ArrayList<>();
             MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
