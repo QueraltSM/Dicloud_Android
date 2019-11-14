@@ -13,7 +13,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
@@ -23,10 +22,8 @@ import java.util.List;
 
 import es.disoft.dicloud.LauncherActivity;
 import es.disoft.dicloud.R;
-import es.disoft.dicloud.user.Dates;
 import es.disoft.dicloud.user.WebViewActivity;
 import es.disoft.dicloud.workers.ChatWorker;
-import es.disoft.dicloud.workers.DateWorker;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
     static boolean mainSettingsView = true;
@@ -102,16 +99,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             index >= 0
                                     ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
                                     : index);
-
-                } else if (preference.getKey().equals("date_frequency")) {
-                    // Handle dates events
-                    /*DateWorker.runDateWork(
-                            LauncherActivity.UID,
-                            index >= 0
-                                    ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
-                                    : index);*/
                 }
-
 
             } else if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value
@@ -119,7 +107,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 if (TextUtils.isEmpty(stringValue)) {
                     // Empty values correspond to 'silent' (no ringtone).
                     preference.setSummary(R.string.pref_ringtone_silent);
-
                 } else {
                     Ringtone ringtone = RingtoneManager.getRingtone(
                             preference.getContext(), Uri.parse(stringValue));
@@ -265,13 +252,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             mainSettingsView = false;
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
-
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-
-            bindPreferenceSummaryToValue(findPreference("date_frequency"));
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_led"));
         }

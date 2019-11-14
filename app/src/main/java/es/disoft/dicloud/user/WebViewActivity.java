@@ -130,9 +130,11 @@ public class WebViewActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollview);
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
+        URL_LISTING = getString(R.string.URL_LISTING, "admin");
         if (LoginActivity.getBetaVersion()) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
+            URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         }
         setTitle("");
         disoftLogo = new ImageView(this);
@@ -248,19 +250,15 @@ public class WebViewActivity extends AppCompatActivity {
 
     public void goListing() {
         listin = true;
-        URL_LISTING = "https://desarrollo.dicloud.es/conta/listin.asp";
-        System.out.println("Go Listin!!!\n\nURL=:\nt: " + URL_LISTING);
-        //webView.loadUrl(URL_LISTING);
-
-
-        String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
+        webView.loadUrl(URL_LISTING);
+        /*String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
         try {
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
             webView.postUrl(URL_LISTING, postData.getBytes());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private boolean closeNav() {

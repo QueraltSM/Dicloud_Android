@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import es.disoft.dicloud.model.DateDao;
-import es.disoft.dicloud.model.DateDao_tmp;
 import es.disoft.dicloud.model.Menu;
 import es.disoft.dicloud.model.MenuDao;
 import es.disoft.dicloud.model.Message;

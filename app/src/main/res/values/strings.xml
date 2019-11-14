@@ -37,26 +37,18 @@
     <!-- URL's -->
     <string name="URL_ERROR">file:///android_asset/error.html</string>
     <string name="ERR_CACHE_MISS">net::ERR_CACHE_MISS</string>
-
     <string name="URL_LOGIN">https://app.dicloud.es/login.asp</string>
     <string name="URL_SYNC_MENU">https://app.dicloud.es/getMenu.asp</string>
     <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
-
-    <string name="URL_GET_DATES">https://app.dicloud.es/getDates.asp</string>
-
     <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
-
-
     <string name="URL_INDEX">https://%1$s.dicloud.es/index.asp"</string>
     <string name="URL_CHAT">https://%1$s.dicloud.es/news/chat.asp</string>
     <string name="URL_ROOT">https://%1$s.dicloud.es/</string>
     <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
-    <string name="URL_LISTING">https://%1$s.dicloud.es/listin.asp"</string>
+    <string name="URL_LISTING">https://%1$s.dicloud.es/conta/listin.asp"</string>
 
     <!-- *** TODO PRUEBAS *** -->
-
     <!-- URL's SERVER ADMIN.LOCAL -->
-
     <!--<string name="URL_LOGIN">http://admin.local/app/login.asp</string>-->
     <!--<string name="URL_INDEX">http://admin.local/index.asp</string>-->
     <!--<string name="URL_SYNC_MENU">http://admin.local/app/getMenu.asp</string>-->

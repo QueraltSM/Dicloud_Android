@@ -7,15 +7,6 @@
         android:key="notifications_new_message"
         android:title="@string/pref_title_new_message_notifications" />
 
-    <ListPreference
-        android:defaultValue="-1"
-        android:entries="@array/pref_date_frequency_titles"
-        android:entryValues="@array/pref_date_frequency_values"
-        android:key="date_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_date_frequency" />
-
     <!-- Allows the user to choose a ringtone in the 'notification' category. -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
