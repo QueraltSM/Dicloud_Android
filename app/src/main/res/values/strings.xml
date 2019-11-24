@@ -45,7 +45,7 @@
     <string name="URL_CHAT">https://%1$s.dicloud.es/news/chat.asp</string>
     <string name="URL_ROOT">https://%1$s.dicloud.es/</string>
     <string name="URL_LOGOS_ROOT">https://admin.dicloud.es/files/logos/</string>
-    <string name="URL_LISTING">https://%1$s.dicloud.es/conta/listin.asp"</string>
+    <string name="URL_LISTING">https://%1$s.dicloud.es/companies/listin.asp"</string>
 
     <!-- *** TODO PRUEBAS *** -->
     <!-- URL's SERVER ADMIN.LOCAL -->

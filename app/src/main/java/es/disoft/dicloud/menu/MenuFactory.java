@@ -99,6 +99,7 @@ public class MenuFactory {
 //        childList.put(menuModel, null);
         for (Map.Entry<String, List<Menu.SubmenuItem>> headerEntry : menu.entrySet()) {
             String menuHeader = headerEntry.getKey();
+
             if (!menuHeader.equals("Desconectar")) {
                 menuModel = new MenuModel(menuHeader, true, true, "", null);
                 headerList.add(menuModel);
@@ -111,7 +112,7 @@ public class MenuFactory {
                     childModel = new MenuModel(submenuItem.submenu, false, false, url, null);
                     childModelsList.add(childModel);
                 }
-                childList.put(menuModel, childModelsList);
+                if (!menuHeader.equals("Desconectar")) childList.put(menuModel, childModelsList);
             } else {
                 childList.put(menuModel, null);
             }
