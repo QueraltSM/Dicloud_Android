@@ -130,44 +130,19 @@ public class WebViewActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollview);
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
-        URL_LISTING = getString(R.string.URL_LISTING, "admin");
+        URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         if (LoginActivity.getBetaVersion()) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
-            URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         }
-        setTitle("");
+        if (URL_INDEX.contains("admin")) setTitle("Dicloud");
+        else setTitle("Desarrollo");
         disoftLogo = new ImageView(this);
         disoftLogo.setLayoutParams(new LinearLayout.LayoutParams(160, 160)); // value is in pixels
-        setHomeButton(toolbar);
         setMenu();
         createWebview();
         setTextActionBar();
         setLogo();
-    }
-
-    private void setHomeButton(Toolbar toolbar) {
-        Button bt = new Button(this);
-        if (URL_INDEX.contains("admin")) {
-            bt.setText("Dicloud");
-        } else {
-            bt.setText("Versión beta");
-        }
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.FILL_PARENT);
-        params.gravity = Gravity.CENTER;
-        bt.setLayoutParams(params);
-        bt.setBackground(null);
-        int textColor = Color.parseColor("#FFFFFF");
-        bt.setTextColor(textColor);
-        bt.setTextSize(20);
-        bt.setAllCaps(false);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openIndex();
-            }
-        });
-        toolbar.addView(bt);
     }
 
 
@@ -238,8 +213,14 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.phone_button) goListing();
-        if (itemId == R.id.resfresh_button) {
+        if (itemId == R.id.home_button && LoginActivity.getBetaVersion()) {
+            URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
+            webView.loadUrl(URL_INDEX);
+        } else if (itemId == R.id.home_button && !LoginActivity.getBetaVersion()) {
+            URL_INDEX = getString(R.string.URL_INDEX, "admin");
+            webView.loadUrl(URL_INDEX);
+        } else if (itemId == R.id.phone_button) goListing();
+        else if (itemId == R.id.resfresh_button) {
             webView.reload();
         } else {
             webView.loadUrl("javascript:window.location.reload( true )");
@@ -247,18 +228,9 @@ public class WebViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public void goListing() {
         listin = true;
         webView.loadUrl(URL_LISTING);
-        /*String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
-        try {
-            postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
-                    + "&l=1";
-            webView.postUrl(URL_LISTING, postData.getBytes());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
     }
 
     private boolean closeNav() {
@@ -324,7 +296,7 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void openIndex() {
-        String postData; //(l)ibreacceso; 0, todos; 1, movil; 2, solo web
+        String postData; // libreacceso; 0, todos; 1, movil; 2, solo web
         try {
             postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8")
                     + "&l=1";
