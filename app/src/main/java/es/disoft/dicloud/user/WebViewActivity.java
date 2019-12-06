@@ -5,7 +5,9 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -108,6 +110,9 @@ public class WebViewActivity extends AppCompatActivity {
     private ImageView disoftLogo;
     private boolean listin;
 
+    private SharedPreferences preferences_BetaVersion;
+    private boolean betaVersion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,10 +133,14 @@ public class WebViewActivity extends AppCompatActivity {
         toggle.syncState();
         activity   = this;
         scrollView = findViewById(R.id.scrollview);
+
+        preferences_BetaVersion = getSharedPreferences("BETA_VERSION", Context.MODE_PRIVATE);
+        betaVersion = preferences_BetaVersion.getBoolean("BETA_VERSION",true);
+
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
         URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
-        if (LoginActivity.getBetaVersion()) {
+        if (betaVersion) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
         }
@@ -213,10 +222,10 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.home_button && LoginActivity.getBetaVersion()) {
+        if (itemId == R.id.home_button && betaVersion) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             webView.loadUrl(URL_INDEX);
-        } else if (itemId == R.id.home_button && !LoginActivity.getBetaVersion()) {
+        } else if (itemId == R.id.home_button && !betaVersion) {
             URL_INDEX = getString(R.string.URL_INDEX, "admin");
             webView.loadUrl(URL_INDEX);
         } else if (itemId == R.id.phone_button) goListing();

@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -61,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-    private static boolean betaVersion;
+    private SharedPreferences preferences_BetaVersion;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setUpLoginForm();
         enableSuggestions();
+        preferences_BetaVersion = getSharedPreferences("BETA_VERSION", Context.MODE_PRIVATE);
+        editor = preferences_BetaVersion.edit();
     }
 
     private void setUpLoginForm() {
@@ -302,10 +307,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public static boolean getBetaVersion() {
-        return betaVersion;
-    }
-
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -397,7 +398,9 @@ public class LoginActivity extends AppCompatActivity {
             if (loginResponse != null) error = loginResponse.getBoolean("error");
 
             Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
-            LoginActivity.betaVersion =  betaVersion.isChecked();
+            editor.putBoolean("BETA_VERSION", betaVersion.isChecked());
+            editor.apply();
+            editor.commit();
         }
 
 
