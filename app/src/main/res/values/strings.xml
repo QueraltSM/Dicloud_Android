@@ -17,6 +17,8 @@
     <string name="error_json_response">Ha habido algún problema en la comunicación</string>
     <string name="error_unknown">Error desconocido</string>
 
+    <string name="beta_password_title">Introduce contraseña para seguir</string>
+
 
     <!-- Strings related to login with token -->
     <string name="error_pass_changed">Se ha cambiado su contraseña, vuelva a iniciar sesión</string>

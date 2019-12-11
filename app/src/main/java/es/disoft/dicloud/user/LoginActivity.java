@@ -4,18 +4,26 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -65,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences preferences_BetaVersion;
     private SharedPreferences.Editor editor;
+    private boolean continue_beta_version = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +169,43 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
+    private String getBetaPasswordFromDB() {
+        return "hola";
+    }
 
+    private boolean checkBetaPassword() {
+        if (continue_beta_version) return true;
+        final EditText password = new EditText(LoginActivity.this);
+        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        password.setGravity(Gravity.CENTER);
+        AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
+                .setTitle("Versión beta")
+                .setMessage("Introduce la contraseña para seguir")
+                .setView(password)
+                .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
+                            continue_beta_version = true;
+                            System.out.println("Correct password");
+                            dialog.dismiss();
+                            attemptLogin();
+                        } else {
+                            System.out.println("Wrong password");
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        continue_beta_version = false;
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
+        return continue_beta_version;
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -307,6 +352,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void showAlertDialogButtonClicked(View view) {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("My title");
+        builder.setMessage("This is my message.");
+        // add a button
+        builder.setPositiveButton("OK", null);
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -361,6 +418,10 @@ public class LoginActivity extends AppCompatActivity {
             if (somethingWrong(exitCode)) {
                 showProgress(false);
             } else {
+                Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
+                if (betaVersion.isChecked()) {
+                    if (!checkBetaPassword()) return; // ask user Beta Version's password
+                }
                 Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
                 startActivity(mainActivity);
                 finish();
@@ -373,8 +434,10 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
         }
 
-        private void login() throws JSONException {
 
+
+
+        private void login() throws JSONException {
             Map<String, String> userData = new HashMap<>();
             userData.put("aliasDb",  mAlias);
             userData.put("user",     mUser);

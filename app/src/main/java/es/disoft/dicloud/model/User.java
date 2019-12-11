@@ -29,6 +29,7 @@ public class User {
     @NonNull
     private Boolean listin;
 
+
     public User(@NonNull int user_id,
                 @NonNull String userAlias,
                 @NonNull String fullName,
