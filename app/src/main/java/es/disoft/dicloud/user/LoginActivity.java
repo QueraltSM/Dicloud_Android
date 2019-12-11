@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -173,8 +174,8 @@ public class LoginActivity extends AppCompatActivity {
         return "hola";
     }
 
-    private boolean checkBetaPassword() {
-        if (continue_beta_version) return true;
+    private void checkBetaPassword() {
+        if (continue_beta_version) return;
         final EditText password = new EditText(LoginActivity.this);
         password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         password.setGravity(Gravity.CENTER);
@@ -185,13 +186,18 @@ public class LoginActivity extends AppCompatActivity {
                 .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
+                        if (TextUtils.isEmpty(password.getText().toString())) {
+                            password.setText(R.string.error_field_required);
+
+                        } else if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
                             continue_beta_version = true;
                             System.out.println("Correct password");
                             dialog.dismiss();
                             attemptLogin();
                         } else {
-                            System.out.println("Wrong password");
+                            password.setBackgroundTintList(ColorStateList.valueOf(0xFF4CAF50));
+                            password.setText(R.string.error_incorrect_password);
+
                         }
                     }
                 })
@@ -204,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .create();
         dialog.show();
-        return continue_beta_version;
+
     }
 
     /**
@@ -414,18 +420,23 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer exitCode) {
             mAuthTask = null;
-
+            Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
             if (somethingWrong(exitCode)) {
                 showProgress(false);
+            } else if (betaVersion.isChecked()) {
+                if (!continue_beta_version) {
+                    checkBetaPassword(); // ask user Beta Version's password
+                    showProgress(false);
+                } else startWebViewActivity();
             } else {
-                Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
-                if (betaVersion.isChecked()) {
-                    if (!checkBetaPassword()) return; // ask user Beta Version's password
-                }
-                Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
-                startActivity(mainActivity);
-                finish();
+                startWebViewActivity();
             }
+        }
+
+        private void startWebViewActivity() {
+            Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
+            startActivity(mainActivity);
+            finish();
         }
 
         @Override
