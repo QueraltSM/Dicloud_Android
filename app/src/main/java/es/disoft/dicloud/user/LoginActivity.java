@@ -14,6 +14,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -174,30 +175,25 @@ public class LoginActivity extends AppCompatActivity {
         return "hola";
     }
 
-    private void checkBetaPassword() {
+
+    private void checkBetaPassword(String message) {
         if (continue_beta_version) return;
         final EditText password = new EditText(LoginActivity.this);
         password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         password.setGravity(Gravity.CENTER);
-        AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
+        final AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
                 .setTitle("Versión beta")
-                .setMessage("Introduce la contraseña para seguir")
+                .setMessage(message)
                 .setView(password)
                 .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (TextUtils.isEmpty(password.getText().toString())) {
-                            password.setText(R.string.error_field_required);
-
-                        } else if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
+                        if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
                             continue_beta_version = true;
-                            System.out.println("Correct password");
                             dialog.dismiss();
                             attemptLogin();
                         } else {
-                            password.setBackgroundTintList(ColorStateList.valueOf(0xFF4CAF50));
-                            password.setText(R.string.error_incorrect_password);
-
+                            checkBetaPassword("Contraseña incorrecta.\nVuelve a intentarlo");
                         }
                     }
                 })
@@ -210,7 +206,6 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .create();
         dialog.show();
-
     }
 
     /**
@@ -425,7 +420,7 @@ public class LoginActivity extends AppCompatActivity {
                 showProgress(false);
             } else if (betaVersion.isChecked()) {
                 if (!continue_beta_version) {
-                    checkBetaPassword(); // ask user Beta Version's password
+                    checkBetaPassword("Introduce la contraseña para seguir"); // ask user Beta Version's password
                     showProgress(false);
                 } else startWebViewActivity();
             } else {
