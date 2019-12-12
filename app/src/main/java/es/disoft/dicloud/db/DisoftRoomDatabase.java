@@ -25,8 +25,6 @@ public abstract class DisoftRoomDatabase extends RoomDatabase {
     public abstract MenuDao        menuDao();
     public abstract MessageDao     messageDao();
     public abstract MessageDao_tmp messageDao_tmp();
-    //public abstract DateDao dateDao();
-    //public abstract DateDao_tmp dateDao_tmp();
 
     public static DisoftRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

@@ -87,12 +87,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Switch
-                android:id="@+id/betaVersion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Versión Beta" />
-
             <Button
                 android:id="@+id/sign_in_button"
                 style="?android:textAppearanceSmall"

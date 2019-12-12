@@ -39,6 +39,8 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
 import es.disoft.dicloud.Toast;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
+import es.disoft.dicloud.menu.MenuFactory;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.model.UserDao;
 
@@ -75,7 +78,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences preferences_BetaVersion;
     private SharedPreferences.Editor editor;
-    private boolean continue_beta_version = false;
+    private boolean beta_version = false;
+    private boolean mDesarrollo = false;
+    private boolean optionSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,41 +176,30 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
-    private String getBetaPasswordFromDB() {
-        return "hola";
-    }
 
-
-    private void checkBetaPassword(String message) {
-        if (continue_beta_version) return;
-        final EditText password = new EditText(LoginActivity.this);
-        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setGravity(Gravity.CENTER);
-        final AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
-                .setTitle("Versión beta")
-                .setMessage(message)
-                .setView(password)
-                .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (String.valueOf(password.getText()).equals(getBetaPasswordFromDB())) {
-                            continue_beta_version = true;
-                            dialog.dismiss();
-                            attemptLogin();
-                        } else {
-                            checkBetaPassword("Contraseña incorrecta.\nVuelve a intentarlo");
+    private void checkBetaVersion() {
+            final AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
+                    .setMessage("Selecciona a qué aplicación quieres acceder:")
+                    .setPositiveButton("Dicloud", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            beta_version = false;
+                            optionSelected = true;
+                            if (optionSelected) startWebViewActivity();
                         }
-                    }
-                })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        continue_beta_version = false;
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
+                    })
+                    .setNeutralButton("Desarrollo", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            beta_version = true;
+                            optionSelected = true;
+                            if (optionSelected) startWebViewActivity();
+                        }
+                    })
+                    .create();
+            dialog.show();
+
+
     }
 
     /**
@@ -365,6 +359,15 @@ public class LoginActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void startWebViewActivity() {
+        editor.putBoolean("BETA_VERSION", beta_version);
+        editor.apply();
+        editor.commit();
+        Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
+        startActivity(mainActivity);
+        finish();
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -415,23 +418,14 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Integer exitCode) {
             mAuthTask = null;
-            Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
             if (somethingWrong(exitCode)) {
                 showProgress(false);
-            } else if (betaVersion.isChecked()) {
-                if (!continue_beta_version) {
-                    checkBetaPassword("Introduce la contraseña para seguir"); // ask user Beta Version's password
-                    showProgress(false);
-                } else startWebViewActivity();
+            } else if (mDesarrollo) {
+                checkBetaVersion();
             } else {
+                showProgress(true);
                 startWebViewActivity();
             }
-        }
-
-        private void startWebViewActivity() {
-            Intent mainActivity = new Intent(LoginActivity.this, WebViewActivity.class);
-            startActivity(mainActivity);
-            finish();
         }
 
         @Override
@@ -465,11 +459,6 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("token_", "login: " + loginResponse);
 
             if (loginResponse != null) error = loginResponse.getBoolean("error");
-
-            Switch betaVersion = (Switch) findViewById(R.id.betaVersion);
-            editor.putBoolean("BETA_VERSION", betaVersion.isChecked());
-            editor.apply();
-            editor.commit();
         }
 
 
@@ -482,8 +471,9 @@ public class LoginActivity extends AppCompatActivity {
                         String mToken    = loginResponse.getString("token");
                         String mCompanyID= loginResponse.getString("companyid");
                         Boolean mListin= loginResponse.getBoolean("listin");
+                        mDesarrollo = loginResponse.getBoolean("desarrollo");
                         int mId          = loginResponse.getInt("id");
-                        User.currentUser = new User(mId, mUser, mfullName, mAlias, mToken, mCompanyID, mListin);
+                        User.currentUser = new User(mId, mUser, mfullName, mAlias, mToken, mCompanyID, mListin, mDesarrollo);
                         UserDao userDao  = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao();
                         userDao.insert(User.currentUser);
                     } catch (JSONException e) {

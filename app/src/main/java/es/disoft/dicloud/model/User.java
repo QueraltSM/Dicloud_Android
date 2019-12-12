@@ -28,6 +28,8 @@ public class User {
     private String companyID;
     @NonNull
     private Boolean listin;
+    @NonNull
+    private Boolean desarrollo;
 
 
     public User(@NonNull int user_id,
@@ -36,7 +38,8 @@ public class User {
                 @NonNull String dbAlias,
                 @NonNull String token,
                 @NonNull String companyID,
-                @NonNull Boolean listin) {
+                @NonNull Boolean listin,
+                @NonNull Boolean desarrollo) {
         id = userAlias + dbAlias;
         this.user_id   = user_id;
         this.userAlias = userAlias;
@@ -46,7 +49,7 @@ public class User {
         this.token     = token;
         this.companyID = companyID;
         this.listin = listin;
-
+        this.desarrollo = desarrollo;
     }
 
     @NonNull
@@ -121,7 +124,6 @@ public class User {
         this.companyID = companyID;
     }
 
-
     @NonNull
     public Boolean getListin() {
         return listin;
@@ -131,6 +133,14 @@ public class User {
         this.listin = listin;
     }
 
+    @NonNull
+    public Boolean getDesarrollo() {
+        return desarrollo;
+    }
+
+    public void setDesarrollo(@NonNull Boolean desarrollo) {
+        this.desarrollo = desarrollo;
+    }
 
     public static class DbAlias {
         public String dbAlias;
