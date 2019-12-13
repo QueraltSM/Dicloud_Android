@@ -198,8 +198,6 @@ public class LoginActivity extends AppCompatActivity {
                     })
                     .create();
             dialog.show();
-
-
     }
 
     /**
@@ -433,8 +431,6 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
         }
-
-
 
 
         private void login() throws JSONException {

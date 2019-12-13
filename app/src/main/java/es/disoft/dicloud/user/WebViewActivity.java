@@ -632,10 +632,11 @@ public class WebViewActivity extends AppCompatActivity {
                 anim.setDuration(400);
                 anim.start();
                 
-                if (url.endsWith("/googlecalendaraccess.asp")) {
+                if (url.contains("/googleCalendarAccess.asp")) {
                     Uri uriUrl = Uri.parse("googlechrome://navigate?url=" +url);
                     Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
                     startActivity(launchBrowser);
+                    finish();
                 }
                 if (url.endsWith("/index.asp")) webView.clearHistory();
                 if (loadedFromNotification()) {
