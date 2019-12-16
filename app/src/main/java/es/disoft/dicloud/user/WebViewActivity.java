@@ -19,6 +19,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -489,7 +492,6 @@ public class WebViewActivity extends AppCompatActivity {
 
         webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
 
-
         if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode( WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
         }
@@ -612,7 +614,6 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 Log.i("start", "onPageStarted: ");
-                super.onPageStarted(view, url, favicon);
                 if (!isNetworkAvailable(getApplicationContext()) && !url.equals(getString(R.string.URL_ERROR))) {
                     view.loadUrl(getString(R.string.URL_ERROR));
                     urlBeforeFail = url;
@@ -631,7 +632,9 @@ public class WebViewActivity extends AppCompatActivity {
                 ObjectAnimator anim = ObjectAnimator.ofInt(scrollView, "scrollY", 0);
                 anim.setDuration(400);
                 anim.start();
-                
+                if (url.contains("/inc.asp") && url.contains("action=print")) {
+                    printWebView(webView);
+                }
                 if (url.contains("/googleCalendarAccess.asp")) {
                     Uri uriUrl = Uri.parse("googlechrome://navigate?url=" +url);
                     Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
@@ -652,6 +655,7 @@ public class WebViewActivity extends AppCompatActivity {
                 }
                 super.onPageFinished(view, url);
             }
+
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
@@ -749,6 +753,16 @@ public class WebViewActivity extends AppCompatActivity {
         activity.finish();
 
         clearWebViewData();
+    }
+
+    private void printWebView(WebView webView) {
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+        PrintDocumentAdapter printAdapter =
+                webView.createPrintDocumentAdapter("Factura-Disoft");
+        String jobName = getString(R.string.app_name) + " factura";
+        printManager.print(jobName, printAdapter,
+                new PrintAttributes.Builder().build());
     }
 
     private static void clearWebViewData() {
