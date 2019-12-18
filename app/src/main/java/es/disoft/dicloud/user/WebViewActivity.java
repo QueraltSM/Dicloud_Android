@@ -91,7 +91,7 @@ public class WebViewActivity extends AppCompatActivity {
     private int notificationId;
     private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
     private final String NOTIFICATION_ID   = "NOTIFICATION_ID";
-
+    private boolean signPdf = false;
     @SuppressLint("StaticFieldLeak")
     private static Activity activity;
     private NestedWebView webView;
@@ -634,6 +634,11 @@ public class WebViewActivity extends AppCompatActivity {
                 anim.start();
                 if (url.contains("/inc.asp") && url.contains("action=print")) {
                     printWebView(webView);
+                } else if (url.contains("/inc.asp") && url.contains("action=")) {
+                    Uri uriUrl = Uri.parse("googlechrome://navigate?url=" +url);
+                    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                    startActivity(launchBrowser);
+                    finish();
                 }
                 if (url.contains("/googleCalendarAccess.asp")) {
                     Uri uriUrl = Uri.parse("googlechrome://navigate?url=" +url);

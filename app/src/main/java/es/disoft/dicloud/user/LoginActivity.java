@@ -5,42 +5,30 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +41,6 @@ import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
 import es.disoft.dicloud.Toast;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
-import es.disoft.dicloud.menu.MenuFactory;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.model.UserDao;
 
@@ -151,7 +138,6 @@ public class LoginActivity extends AppCompatActivity {
                 for (User.DbAlias alias: aliases) suggestionsAL.add(alias.dbAlias.toLowerCase());
                 String[] suggestions = suggestionsAL.toArray(new String[0]);
                 enableSuggestions(mAliasView,  new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, suggestions));
-
 
                 List<User.UserAlias> users = DisoftRoomDatabase.getDatabase(getApplicationContext()).userDao().getAllUserAlias();
                 suggestionsAL = new ArrayList<>();
@@ -343,18 +329,6 @@ public class LoginActivity extends AppCompatActivity {
                 mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
-    }
-
-    public void showAlertDialogButtonClicked(View view) {
-        // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("My title");
-        builder.setMessage("This is my message.");
-        // add a button
-        builder.setPositiveButton("OK", null);
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     private void startWebViewActivity() {
