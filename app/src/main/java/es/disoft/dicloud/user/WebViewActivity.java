@@ -77,7 +77,7 @@ import es.disoft.dicloud.menu.MenuFactory;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.notification.NotificationUtils;
 import es.disoft.dicloud.workers.ChatWorker;
-import es.disoft.dicloud.workers.MessagesWorker;
+import es.disoft.dicloud.workers.NewsWorker;
 
 import static es.disoft.dicloud.ConnectionAvailable.isNetworkAvailable;
 import static es.disoft.dicloud.workers.ChatWorker.checkMessagesEvery5sc.context;
@@ -266,7 +266,7 @@ public class WebViewActivity extends AppCompatActivity {
         super.onPause();
         try { ChatWorker.checkMessagesEvery5sc.stop(); }
         catch (NullPointerException ignored) {}
-        try { MessagesWorker.checkMessagesEvery5sc.stop(); }
+        try { NewsWorker.checkMessagesEvery5sc.stop(); }
         catch (NullPointerException ignored) {}
     }
 
@@ -285,7 +285,7 @@ public class WebViewActivity extends AppCompatActivity {
             openIndex();
         context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        MessagesWorker.checkMessagesEvery5sc.start();
+        NewsWorker.checkMessagesEvery5sc.start();
     }
 
 
@@ -758,7 +758,7 @@ public class WebViewActivity extends AppCompatActivity {
         }).start();
 
         ChatWorker.cancelWork(activity.getString(R.string.app_name));
-        MessagesWorker.cancelWork(activity.getString(R.string.app_name));
+        NewsWorker.cancelWork(activity.getString(R.string.app_name));
 
         activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
         activity.finish();

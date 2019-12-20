@@ -14,7 +14,7 @@ import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.user.LoginActivity;
 import es.disoft.dicloud.user.WebViewActivity;
 import es.disoft.dicloud.workers.ChatWorker;
-import es.disoft.dicloud.workers.MessagesWorker;
+import es.disoft.dicloud.workers.NewsWorker;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -37,7 +37,7 @@ public class LauncherActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getDefaultSharedPreferences(getApplicationContext());
         int repeatInterval = Integer.parseInt(Objects.requireNonNull(sharedPref.getString("sync_frequency", "15")));
         ChatWorker.runChatWork(UID, repeatInterval);
-        MessagesWorker.runMessagesWork(UID, repeatInterval);
+        NewsWorker.runMessagesWork(UID, repeatInterval);
         login();
     }
 

@@ -12,7 +12,7 @@ import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.user.NewsMessages;
 import es.disoft.dicloud.user.ChatMessages;
 import es.disoft.dicloud.workers.ChatWorker;
-import es.disoft.dicloud.workers.MessagesWorker;
+import es.disoft.dicloud.workers.NewsWorker;
 
 public class BootReceiver extends BroadcastReceiver {
     @Override
@@ -26,7 +26,7 @@ public class BootReceiver extends BroadcastReceiver {
                     ChatMessages.update(context);
                     List<Message.EssentialInfo> messages = DisoftRoomDatabase.getDatabase(context).messageDao().getAllMessagesEssentialInfo();
                     ChatWorker.notificateMessages(context, messages);
-                    MessagesWorker.notificateMessages(context, messages);
+                    NewsWorker.notificateMessages(context, messages);
                 }
             }
         }.start();

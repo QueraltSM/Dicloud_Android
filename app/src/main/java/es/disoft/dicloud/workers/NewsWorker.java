@@ -21,9 +21,9 @@ import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.notification.NotificationUtils;
 import es.disoft.dicloud.user.NewsMessages;
 
-public class MessagesWorker extends Worker {
+public class NewsWorker extends Worker {
 
-    public MessagesWorker(
+    public NewsWorker(
             @NonNull Context context,
             @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -48,7 +48,7 @@ public class MessagesWorker extends Worker {
         if (repeatInterval != -1) {
             PeriodicWorkRequest.Builder logCheckBuilder =
                     new PeriodicWorkRequest.Builder(
-                            MessagesWorker.class,
+                            NewsWorker.class,
                             repeatInterval,
                             TimeUnit.MINUTES);
             PeriodicWorkRequest messagesWork = logCheckBuilder.build();
@@ -102,7 +102,7 @@ public class MessagesWorker extends Worker {
     }
 
     private static void checkMessages(Context context) {
-        Log.i("vivo - MessagesWorker", "checkMessages: ");
+        Log.i("vivo - NewsWorker", "checkMessages: ");
         if (User.currentUser != null)
             if (NewsMessages.update(context)) notificateMessages(context, NewsMessages.getUpdated());
     }

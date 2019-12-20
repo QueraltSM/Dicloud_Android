@@ -24,7 +24,7 @@ import es.disoft.dicloud.LauncherActivity;
 import es.disoft.dicloud.R;
 import es.disoft.dicloud.user.WebViewActivity;
 import es.disoft.dicloud.workers.ChatWorker;
-import es.disoft.dicloud.workers.MessagesWorker;
+import es.disoft.dicloud.workers.NewsWorker;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
     static boolean mainSettingsView = true;
@@ -62,15 +62,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onResume();
         ChatWorker.checkMessagesEvery5sc.context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        MessagesWorker.checkMessagesEvery5sc.context = this;
-        MessagesWorker.checkMessagesEvery5sc.start();
+        NewsWorker.checkMessagesEvery5sc.context = this;
+        NewsWorker.checkMessagesEvery5sc.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         ChatWorker.checkMessagesEvery5sc.stop();
-        MessagesWorker.checkMessagesEvery5sc.stop();
+        NewsWorker.checkMessagesEvery5sc.stop();
     }
 
     /**
@@ -103,7 +103,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             index >= 0
                                     ? Integer.parseInt(listPreference.getEntryValues()[index].toString())
                                     : index);
-                    MessagesWorker.runMessagesWork(
+                    NewsWorker.runMessagesWork(
                             LauncherActivity.UID,
                             index >= 0
                                     ? Integer.parseInt(listPreference.getEntryValues()[index].toString())

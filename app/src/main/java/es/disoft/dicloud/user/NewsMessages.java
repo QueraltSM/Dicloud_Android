@@ -20,7 +20,6 @@ import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.MessageDao;
 import es.disoft.dicloud.model.Message_tmp;
 import es.disoft.dicloud.model.User;
-import es.disoft.dicloud.workers.MessagesWorker;
 
 public class NewsMessages {
 
@@ -116,7 +115,7 @@ public class NewsMessages {
                     ms.add(new Message(m.getFrom_id(),m.getFrom(),m.getLast_message_timestamp(), m.getMessages_count()));
                 }
                 messageFromNews = true;
-                //MessagesWorker.notificateMessages(mContext,ms);
+                //NewsWorker.notificateMessages(mContext,ms);
             }
         }
 
