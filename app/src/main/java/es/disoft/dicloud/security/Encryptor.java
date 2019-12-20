@@ -5,6 +5,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -43,7 +44,7 @@ public class Encryptor {
 
         iv = cipher.getIV();
 
-        return (encryption = cipher.doFinal(textToEncrypt.getBytes("UTF-8")));
+        return (encryption = cipher.doFinal(textToEncrypt.getBytes(StandardCharsets.UTF_8)));
     }
 
     public byte[] getEncryption() {

@@ -9,8 +9,10 @@ import java.util.List;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
 import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.User;
-import es.disoft.dicloud.user.Messages;
+import es.disoft.dicloud.user.NewsMessages;
+import es.disoft.dicloud.user.ChatMessages;
 import es.disoft.dicloud.workers.ChatWorker;
+import es.disoft.dicloud.workers.MessagesWorker;
 
 public class BootReceiver extends BroadcastReceiver {
     @Override
@@ -19,11 +21,12 @@ public class BootReceiver extends BroadcastReceiver {
         new Thread() {
             public void run() {
                 User.currentUser = DisoftRoomDatabase.getDatabase(context).userDao().getUserLoggedIn();
-
                 if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && User.currentUser != null) {
-                    Messages.update(context);
+                    NewsMessages.update(context);
+                    ChatMessages.update(context);
                     List<Message.EssentialInfo> messages = DisoftRoomDatabase.getDatabase(context).messageDao().getAllMessagesEssentialInfo();
                     ChatWorker.notificateMessages(context, messages);
+                    MessagesWorker.notificateMessages(context, messages);
                 }
             }
         }.start();

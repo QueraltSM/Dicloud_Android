@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,13 +44,11 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
-import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -81,6 +77,7 @@ import es.disoft.dicloud.menu.MenuFactory;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.notification.NotificationUtils;
 import es.disoft.dicloud.workers.ChatWorker;
+import es.disoft.dicloud.workers.MessagesWorker;
 
 import static es.disoft.dicloud.ConnectionAvailable.isNetworkAvailable;
 import static es.disoft.dicloud.workers.ChatWorker.checkMessagesEvery5sc.context;
@@ -91,7 +88,7 @@ public class WebViewActivity extends AppCompatActivity {
     private int notificationId;
     private final String NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
     private final String NOTIFICATION_ID   = "NOTIFICATION_ID";
-    private boolean signPdf = false;
+
     @SuppressLint("StaticFieldLeak")
     private static Activity activity;
     private NestedWebView webView;
@@ -269,6 +266,8 @@ public class WebViewActivity extends AppCompatActivity {
         super.onPause();
         try { ChatWorker.checkMessagesEvery5sc.stop(); }
         catch (NullPointerException ignored) {}
+        try { MessagesWorker.checkMessagesEvery5sc.stop(); }
+        catch (NullPointerException ignored) {}
     }
 
     @Override
@@ -286,6 +285,7 @@ public class WebViewActivity extends AppCompatActivity {
             openIndex();
         context = this;
         ChatWorker.checkMessagesEvery5sc.start();
+        MessagesWorker.checkMessagesEvery5sc.start();
     }
 
 
@@ -299,10 +299,15 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void openChat() {
         closeNav();
+        System.out.println("Estado = " + NewsMessages.getMessageFromNews());
         if (webView.getUrl() != null && webView.getUrl().endsWith("chat.asp")) {
             if (notificationType.equals("notification"))
 //                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 webView.loadUrl(pushButton(100));
+        } else if (NewsMessages.getMessageFromNews()) {
+            if (betaVersion) URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
+            else   URL_INDEX = getString(R.string.URL_INDEX, "admin");
+            webView.loadUrl(URL_INDEX);
         } else {
             webView.loadUrl(CHAT_URL);
         }
@@ -753,6 +758,7 @@ public class WebViewActivity extends AppCompatActivity {
         }).start();
 
         ChatWorker.cancelWork(activity.getString(R.string.app_name));
+        MessagesWorker.cancelWork(activity.getString(R.string.app_name));
 
         activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
         activity.finish();

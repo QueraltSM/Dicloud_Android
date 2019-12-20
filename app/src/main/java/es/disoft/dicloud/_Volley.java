@@ -13,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class _Volley {
@@ -46,8 +47,7 @@ public class _Volley {
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 String strUTF8 = null;
-                try { strUTF8 = new String(response.data, "UTF-8"); }
-                catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+                strUTF8 = new String(response.data, StandardCharsets.UTF_8);
                 return Response.success(strUTF8, HttpHeaderParser.parseCacheHeaders(response));
             }
         };

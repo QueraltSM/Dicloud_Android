@@ -42,6 +42,7 @@
     <string name="URL_LOGIN">https://app.dicloud.es/login.asp</string>
     <string name="URL_SYNC_MENU">https://app.dicloud.es/getMenu.asp</string>
     <string name="URL_SYNC_MESSAGES">https://app.dicloud.es/getPendingMessages.asp</string>
+    <string name="URL_SYNC_MESSAGES_NEWS">https://app.dicloud.es/getPendingNews.asp</string>
     <string name="URL_LOGO">https://app.dicloud.es/getLogo.asp</string>
     <string name="URL_INDEX">https://%1$s.dicloud.es/index.asp"</string>
     <string name="URL_CHAT">https://%1$s.dicloud.es/news/chat.asp</string>

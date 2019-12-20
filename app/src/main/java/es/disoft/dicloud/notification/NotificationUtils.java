@@ -223,7 +223,6 @@ public class NotificationUtils extends ContextWrapper {
             getManager().cancel(TAG, id);
         else
             getManager().cancelAll();
-
     }
 
     private void clearOldNotifications() {

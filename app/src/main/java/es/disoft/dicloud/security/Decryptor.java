@@ -1,6 +1,7 @@
 package es.disoft.dicloud.security;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -37,7 +38,7 @@ public class Decryptor {
         final GCMParameterSpec spec = new GCMParameterSpec(128, encryptionIv);
         cipher.init(Cipher.DECRYPT_MODE, getSecretKey(alias), spec);
 
-        return new String(cipher.doFinal(encryptedData), "UTF-8");
+        return new String(cipher.doFinal(encryptedData), StandardCharsets.UTF_8);
     }
 
     private void initKeyStore() throws KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {

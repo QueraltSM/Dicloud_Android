@@ -19,7 +19,7 @@ import es.disoft.dicloud.db.DisoftRoomDatabase;
 import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.notification.NotificationUtils;
-import es.disoft.dicloud.user.Messages;
+import es.disoft.dicloud.user.ChatMessages;
 
 public class ChatWorker extends Worker {
 
@@ -45,8 +45,6 @@ public class ChatWorker extends Worker {
     }
 
     public static void runChatWork(String UID, int repeatInterval) {
-
-//        int syncFrequency = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("sync_frequency", "15"));
         if (repeatInterval != -1) {
             PeriodicWorkRequest.Builder logCheckBuilder =
                     new PeriodicWorkRequest.Builder(
@@ -59,7 +57,6 @@ public class ChatWorker extends Worker {
                     UID,
                     ExistingPeriodicWorkPolicy.REPLACE,
                     chatWork);
-//            WorkManager.getInstance().enqueue(chatWork);
         }else{
             cancelWork(UID);
         }
@@ -94,10 +91,8 @@ public class ChatWorker extends Worker {
                 public void run() {
                     while (!thread.isInterrupted()) {
                         try {
-                            // TODO cambiar tiempo a 15 segundos?
                             Thread.sleep(5 * 1000);
                             checkMessages(context);
-//                            test();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -110,16 +105,14 @@ public class ChatWorker extends Worker {
     private static void checkMessages(Context context) {
         Log.i("vivo", "checkMessages: ");
         if (User.currentUser != null)
-            if (Messages.update(context)) notificateMessages(context, Messages.getUpdated());
+            if (ChatMessages.update(context)) notificateMessages(context, ChatMessages.getUpdated());
     }
 
     public static void notificateMessages(Context context, List<?> messages) {
         NotificationUtils mNotififacionUtils = new NotificationUtils(context);
-
         for (Object message : messages) {
             int messagesCount, id;
             String from;
-
             if (message instanceof Message) {
                 messagesCount = ((Message) message).getMessages_count();
                 from          = ((Message) message).getFrom();
@@ -129,16 +122,13 @@ public class ChatWorker extends Worker {
                 from          = ((Message.EssentialInfo) message).getFrom();
                 id            = ((Message.EssentialInfo) message).getFrom_id();
             }
-
             String text = messagesCount > 1 ? context.getString(R.string.new_messages_from) : context.getString(R.string.new_message_from);
             String title = User.currentUser.getDbAlias();
-            text = messagesCount + " " + text + " " + from;
-
+            text = messagesCount + " " + text + " chat de " + from;
             mNotififacionUtils.createNotification(id, title, text);
             mNotififacionUtils.show();
         }
-
-        ArrayList<Message> deletedMessages = Messages.getDeleted();
+        ArrayList<Message> deletedMessages = ChatMessages.getDeleted();
         if (deletedMessages != null) {
             for (Message message : deletedMessages)
                 mNotififacionUtils.clear(message.getFrom_id());
