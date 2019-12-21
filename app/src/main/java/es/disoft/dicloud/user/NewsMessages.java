@@ -20,6 +20,7 @@ import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.MessageDao;
 import es.disoft.dicloud.model.Message_tmp;
 import es.disoft.dicloud.model.User;
+import es.disoft.dicloud.workers.NewsWorker;
 
 public class NewsMessages {
 
@@ -27,8 +28,9 @@ public class NewsMessages {
     private static Context mContext;
     private static ArrayList<Message> updatedMessages;
     private static ArrayList<Message> deletedMessages;
-    private static boolean messageFromNews = false;
+    private static boolean messageFromNews;
     private static ArrayList<Integer> lastCount = new ArrayList<>();
+    private static boolean showUpdate = true;
 
     public static synchronized boolean update(Context context) {
         mContext = context;
@@ -38,14 +40,11 @@ public class NewsMessages {
             String url = mContext.getString(R.string.URL_SYNC_MESSAGES_NEWS);
             String jsonResponse = jsonRequest(new URL(url));
             updateMessages(jsonResponse);
-           // url = mContext.getString(R.string.URL_SYNC_MESSAGES);
-           // jsonResponse = jsonRequest(new URL(url));
-           // updateMessages(jsonResponse);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-
         }
-        return updatedMessages != null && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
+        System.out.println("show update = " + showUpdate);
+        return updatedMessages != null && showUpdate && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
     }
 
     private static String jsonRequest(URL url) {
@@ -53,7 +52,6 @@ public class NewsMessages {
     }
 
     private static void updateMessages(String messagesAsJsonString) throws JSONException {
-
         if (User.currentUser != null) {
             if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
             updatedMessages = new ArrayList<>();
@@ -69,19 +67,21 @@ public class NewsMessages {
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
                         messageFromNews = false;
+                        System.out.println("deleted size = " + deletedMessages.size());
+                        lastCount = new ArrayList<>();
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
                         messageDao.insert(message);
                         updatedMessages.add(message);
-                        messageFromNews= true;
+                        messageFromNews = true;
+                        System.out.println("update size = " + updatedMessages.size());
                         break;
                     default:
                 }
             }
             DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().deleteAll();
         }
-
     }
 
     public static boolean getMessageFromNews() {
@@ -90,22 +90,19 @@ public class NewsMessages {
 
     private static void storeNewMessages(String messagesAsJsonString) throws JSONException {
         JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
-
         List<Message_tmp> newMessages = new ArrayList<>();
-
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject json_data = jArray.getJSONObject(i);
-
             int from_id                   = json_data.getInt("from_id");
             String from                   = json_data.getString("from");
             String last_message_timestamp = json_data.getString("last_message_timestamp");
             int messages_count            = json_data.getInt("messages_count");
-
             newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
 
-            System.out.println("i size = " + i);
-            System.out.println("last count size = " + lastCount.size());
-            if (i<lastCount.size() && messages_count != lastCount.get(i)) {
+            System.out.println("MESSAGES COUNT -> " + messages_count);
+            System.out.println("LAST COUNT --> " + lastCount.get(i));
+
+            if (i<lastCount.size() && messages_count > lastCount.get(i)) {
                 System.out.println("DISTINTO = " +
                         messages_count + " : - :" + lastCount.get(i));
                 lastCount.set(i, messages_count);
@@ -115,14 +112,16 @@ public class NewsMessages {
                     ms.add(new Message(m.getFrom_id(),m.getFrom(),m.getLast_message_timestamp(), m.getMessages_count()));
                 }
                 messageFromNews = true;
-                //NewsWorker.notificateMessages(mContext,ms);
+                showUpdate = true;
+                NewsWorker.notificateMessages(mContext,ms);
+            } else {
+                lastCount.set(i, messages_count);
+                showUpdate = false;
             }
         }
-
         System.out.println("CUENTA = " + newMessages.size());
         Log.w("mensajes", newMessages.toString());
         DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().insert(newMessages);
-
         Log.i("mensaje", "updateMessages: " + messagesAsJsonString);
     }
 

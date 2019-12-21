@@ -44,7 +44,7 @@ public class ChatMessages {
         return HttpConnections.getData(url,mContext);
     }
 
-    private static void updateMessages(String messagesAsJsonString) throws JSONException {
+    public static void updateMessages(String messagesAsJsonString) throws JSONException {
         if (User.currentUser != null) {
             if (messagesAsJsonString != null) storeNewMessages(messagesAsJsonString);
             updatedMessages = new ArrayList<>();

@@ -108,6 +108,7 @@ public class NewsWorker extends Worker {
     }
 
     public static void notificateMessages(Context context, List<?> messages) {
+        System.out.println("entro en notificar mensaje");
         NotificationUtils mNotififacionUtils = new NotificationUtils(context);
         for (Object message : messages) {
             int messagesCount, id;
@@ -121,9 +122,10 @@ public class NewsWorker extends Worker {
                 from          = ((Message.EssentialInfo) message).getFrom();
                 id            = ((Message.EssentialInfo) message).getFrom_id();
             }
+
             String text = messagesCount > 1 ? context.getString(R.string.new_messages_from) : context.getString(R.string.new_message_from);
-            String title = User.currentUser.getDbAlias();
             text = messagesCount + " " + text + " " + from;
+            String title = User.currentUser.getDbAlias();
             mNotififacionUtils.createNotification(id, title, text);
             mNotififacionUtils.show();
         }

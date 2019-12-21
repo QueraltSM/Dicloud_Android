@@ -306,7 +306,7 @@ public class WebViewActivity extends AppCompatActivity {
                 webView.loadUrl(pushButton(100));
         } else if (NewsMessages.getMessageFromNews()) {
             if (betaVersion) URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
-            else   URL_INDEX = getString(R.string.URL_INDEX, "admin");
+            else URL_INDEX = getString(R.string.URL_INDEX, "admin");
             webView.loadUrl(URL_INDEX);
         } else {
             webView.loadUrl(CHAT_URL);
