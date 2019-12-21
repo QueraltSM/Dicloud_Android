@@ -31,6 +31,7 @@ public class NewsMessages {
     private static boolean messageFromNews;
     private static ArrayList<Integer> lastCount = new ArrayList<>();
     private static boolean showUpdate = true;
+    private static boolean deleted = false;
 
     public static synchronized boolean update(Context context) {
         mContext = context;
@@ -44,6 +45,7 @@ public class NewsMessages {
             e.printStackTrace();
         }
         System.out.println("show update = " + showUpdate);
+
         return updatedMessages != null && showUpdate && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
     }
 
@@ -66,9 +68,8 @@ public class NewsMessages {
                         Log.e("mensajeee", "deleted: " + message.toString());
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
-                        messageFromNews = false;
+                        deleted = true;
                         System.out.println("deleted size = " + deletedMessages.size());
-                        lastCount = new ArrayList<>();
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
@@ -88,7 +89,14 @@ public class NewsMessages {
         return messageFromNews;
     }
 
+    public static void setMessageFromNews(boolean messageFromNews) {
+        NewsMessages.messageFromNews = messageFromNews;
+    }
+
     private static void storeNewMessages(String messagesAsJsonString) throws JSONException {
+
+        System.out.println("DELETED = " + deleted);
+
         JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
         List<Message_tmp> newMessages = new ArrayList<>();
         for (int i = 0; i < jArray.length(); i++) {
@@ -114,6 +122,9 @@ public class NewsMessages {
                 messageFromNews = true;
                 showUpdate = true;
                 NewsWorker.notificateMessages(mContext,ms);
+            } else if (deleted && messages_count==1 && lastCount.get(i)==1) {
+                showUpdate = true;
+                deleted = false;
             } else {
                 lastCount.set(i, messages_count);
                 showUpdate = false;

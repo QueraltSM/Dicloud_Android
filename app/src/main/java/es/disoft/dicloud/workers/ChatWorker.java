@@ -19,6 +19,7 @@ import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.User;
 import es.disoft.dicloud.notification.NotificationUtils;
 import es.disoft.dicloud.user.ChatMessages;
+import es.disoft.dicloud.user.NewsMessages;
 
 public class ChatWorker extends Worker {
 
@@ -122,7 +123,9 @@ public class ChatWorker extends Worker {
             String text = "Tienes un chat pendiente con " + from;
             mNotififacionUtils.createNotification(id, title, text);
             mNotififacionUtils.show();
+            NewsMessages.setMessageFromNews(false);
         }
+
         ArrayList<Message> deletedMessages = ChatMessages.getDeleted();
         if (deletedMessages != null) {
             for (Message message : deletedMessages)

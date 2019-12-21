@@ -27,6 +27,7 @@ public class ChatMessages {
     private static Context mContext;
     private static ArrayList<Message> updatedMessages;
     private static ArrayList<Message> deletedMessages;
+    private static boolean showUpdate = true;
 
     public static synchronized boolean update(Context context) {
         mContext = context;
@@ -37,7 +38,7 @@ public class ChatMessages {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        return updatedMessages != null && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
+        return updatedMessages != null && showUpdate && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
     }
 
     private static String jsonRequest(URL url) {
@@ -59,11 +60,13 @@ public class ChatMessages {
                         Log.e("mensajeee", "deleted: " + message.toString());
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
+                        showUpdate = false;
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
                         messageDao.insert(message);
                         updatedMessages.add(message);
+                        showUpdate = true;
                         break;
                     default:
                 }
