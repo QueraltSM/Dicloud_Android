@@ -20,6 +20,7 @@ import es.disoft.dicloud.model.Message;
 import es.disoft.dicloud.model.MessageDao;
 import es.disoft.dicloud.model.Message_tmp;
 import es.disoft.dicloud.model.User;
+import es.disoft.dicloud.workers.ChatWorker;
 
 public class ChatMessages {
 
@@ -27,11 +28,14 @@ public class ChatMessages {
     private static Context mContext;
     private static ArrayList<Message> updatedMessages;
     private static ArrayList<Message> deletedMessages;
-    private static boolean showUpdate = true;
+    private static boolean showUpdate = false;
+    private static ArrayList<Integer> lastId = new ArrayList<>();
 
     public static synchronized boolean update(Context context) {
         mContext = context;
         try {
+            lastId.add(-1);
+            lastId.add(-1);
             String url = mContext.getString(R.string.URL_SYNC_MESSAGES);
             String jsonResponse = jsonRequest(new URL(url));
             updateMessages(jsonResponse);
@@ -61,6 +65,8 @@ public class ChatMessages {
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
                         showUpdate = false;
+                        System.out.println("REMOVE ID = " + message.getFrom_id());
+                        lastId.remove(Integer.valueOf(message.getFrom_id()));
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
@@ -84,7 +90,20 @@ public class ChatMessages {
             String from                   = json_data.getString("from");
             String last_message_timestamp = json_data.getString("last_message_timestamp");
             int messages_count            = json_data.getInt("messages_count");
-            newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
+            if (!lastId.contains(from_id)) { // If chat went from different person
+                newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
+                lastId.add(from_id);
+                System.out.println("Add ID = "+ from_id);
+                List<Message> ms = new ArrayList<>();
+                for (Message_tmp m : newMessages) {
+                    ms.add(new Message(m.getFrom_id(),m.getFrom(),m.getLast_message_timestamp(), m.getMessages_count()));
+                }
+                NewsMessages.setMessageFromNews(false);
+                ChatWorker.notificateMessages(mContext,ms);
+                showUpdate = true;
+            } else {
+                showUpdate = false;
+            }
         }
         Log.w("mensajes", newMessages.toString());
         DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().insert(newMessages);

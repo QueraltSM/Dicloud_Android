@@ -44,8 +44,6 @@ public class NewsMessages {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        System.out.println("show update = " + showUpdate);
-
         return updatedMessages != null && showUpdate && (!updatedMessages.isEmpty() || !deletedMessages.isEmpty());
     }
 
@@ -62,7 +60,6 @@ public class NewsMessages {
             List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
             Log.i("mensaje en NewsMessages", "fetched: " + fetch.toString());
             for (Message.Fetch message : fetch) {
-                System.out.println("antes del switch = " + message.getStatus());
                 switch (message.getStatus()) {
                     case "deleted":
                         Log.e("mensajeee", "deleted: " + message.toString());
@@ -94,9 +91,6 @@ public class NewsMessages {
     }
 
     private static void storeNewMessages(String messagesAsJsonString) throws JSONException {
-
-        System.out.println("DELETED = " + deleted);
-
         JSONArray jArray = new JSONObject(messagesAsJsonString).getJSONArray("messages");
         List<Message_tmp> newMessages = new ArrayList<>();
         for (int i = 0; i < jArray.length(); i++) {
@@ -106,13 +100,7 @@ public class NewsMessages {
             String last_message_timestamp = json_data.getString("last_message_timestamp");
             int messages_count            = json_data.getInt("messages_count");
             newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
-
-            System.out.println("MESSAGES COUNT -> " + messages_count);
-            System.out.println("LAST COUNT --> " + lastCount.get(i));
-
             if (i<lastCount.size() && messages_count > lastCount.get(i)) {
-                System.out.println("DISTINTO = " +
-                        messages_count + " : - :" + lastCount.get(i));
                 lastCount.set(i, messages_count);
                 newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, lastCount.get(i)));
                 List<Message> ms = new ArrayList<>();
@@ -130,7 +118,6 @@ public class NewsMessages {
                 showUpdate = false;
             }
         }
-        System.out.println("CUENTA = " + newMessages.size());
         Log.w("mensajes", newMessages.toString());
         DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().insert(newMessages);
         Log.i("mensaje", "updateMessages: " + messagesAsJsonString);
