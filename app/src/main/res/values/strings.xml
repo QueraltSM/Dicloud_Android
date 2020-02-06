@@ -185,5 +185,6 @@
     <string name="pref_title_beta_version">Versión Beta</string>
     <string name="notification_led">notification_led</string>
     <string name="download_start">Descargando…</string>
+    <string name="bussiness_management">Tu app de gestión empresarial</string>
 
 </resources>

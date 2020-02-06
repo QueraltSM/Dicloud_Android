@@ -35,6 +35,9 @@ public class NewsMessages {
 
     public static synchronized boolean update(Context context) {
         mContext = context;
+
+        System.out.println(context);
+
         try {
             lastCount.add(0);
             lastCount.add(0);

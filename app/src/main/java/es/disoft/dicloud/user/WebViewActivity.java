@@ -285,7 +285,7 @@ public class WebViewActivity extends AppCompatActivity {
             openIndex();
         context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        NewsWorker.checkMessagesEvery5sc.start();
+        //NewsWorker.checkMessagesEvery5sc.start();
     }
 
 

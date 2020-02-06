@@ -7,9 +7,10 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="100dp"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#52944D"
     tools:context=".user.LoginActivity">
 
     <!-- Login progress -->
@@ -24,44 +25,43 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="center"
             android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageLabel"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/icon"
+                android:paddingBottom="25dp" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true">
+                app:errorEnabled="true"
+                app:hintEnabled="false">
 
                 <AutoCompleteTextView
                     android:id="@+id/alias"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:hint="@string/prompt_alias"
+                    android:textColorHint="#fff"
+                    android:textColor="#fff"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:errorEnabled="true">
-
-                <AutoCompleteTextView
-                    android:id="@+id/user"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="@string/prompt_user"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"
+                    android:layout_below="@id/imageLabel"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -69,21 +69,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
-                app:passwordToggleEnabled="true">
+                app:hintEnabled="false">
+
+                <AutoCompleteTextView
+                    android:id="@+id/user"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:textColor="#fff"
+                    android:hint="@string/prompt_user"
+                    android:textColorHint="#fff"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:passwordToggleEnabled="false"
+                app:hintEnabled="false">
 
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:hint="@string/prompt_password"
+                    android:textColorHint="#fff"
                     android:imeActionId="6"
+                    android:textColor="#fff"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:importantForAutofill="no"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    tools:targetApi="o" />
+                    tools:targetApi="o"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -93,10 +119,13 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="#ffffff"
                 android:text="@string/action_sign_in"
-                android:textColor="@android:color/background_light"
-                android:textStyle="bold" />
+                android:textColor="#52944D"
+                android:textStyle="bold"
+                android:background="@drawable/button_bg"
+
+                />
 
         </LinearLayout>
     </ScrollView>

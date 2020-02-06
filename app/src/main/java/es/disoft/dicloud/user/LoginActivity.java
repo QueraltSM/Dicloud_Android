@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -454,28 +457,55 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void showAlertDialogError(String message) {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                .setTitle("Error al iniciar sesión")
+                .setMessage(message);
+        final AlertDialog alert = dialog.create();
+        alert.show();
+        final Handler handler  = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (alert.isShowing()) {
+                    alert.dismiss();
+                }
+            }
+        };
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                handler.removeCallbacks(runnable);
+            }
+        });
+        handler.postDelayed(runnable, 3000);
+    }
+
     private boolean somethingWrong(int exitCode) {
         switch (exitCode) {
             case 0: //success
                 break;
             case 1: // company error
-                ((TextInputLayout) mAliasView.getParent().getParent()).setError(getString(R.string.error_invalid_alias));
+                showAlertDialogError(getString(R.string.error_invalid_alias));
+                ((TextInputLayout) mAliasView.getParent().getParent()).setError(" ");
                 mAliasView.requestFocus();
                 break;
             case 2: // user or password error
-                Toast.setText(getApplicationContext(), R.string.error_user_or_password).show();
+                showAlertDialogError(getString(R.string.error_user_or_password));
+                ((TextInputLayout) mUserView.getParent().getParent()).setError(" ");
+                ((TextInputLayout) mPasswordView.getParent().getParent()).setError(" ");
                 break;
             case 3: // inactive user error
-                ((TextInputLayout) mUserView.getParent().getParent()).setError(getString(R.string.error_inactive_user));
+                showAlertDialogError(getString(R.string.error_inactive_user));
                 break;
             case 4: // json error
-                Toast.setText(getApplicationContext(), R.string.error_json_response).show();
+                showAlertDialogError(getString(R.string.error_json_response));
                 break;
             case 5: // internet error
-                Toast.setText(getApplicationContext(), R.string.error_internet_connection).show();
+                showAlertDialogError(getString(R.string.error_internet_connection));
                 break;
             default: // unknown error
-                Toast.setText(getApplicationContext(), R.string.error_unknown).show();
+                showAlertDialogError(getString(R.string.error_unknown));
         }
 
         Log.i("LOGIN", "somethingWrong: " + exitCode);
