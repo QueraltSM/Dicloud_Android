@@ -65,9 +65,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ChatWorker.checkMessagesEvery5sc.context = this;
+        ChatWorker.checkMessagesEvery5sc.chat_context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        NewsWorker.checkMessagesEvery5sc.context = this;
+        NewsWorker.checkMessagesEvery5sc.news_context = this;
         NewsWorker.checkMessagesEvery5sc.start();
     }
 

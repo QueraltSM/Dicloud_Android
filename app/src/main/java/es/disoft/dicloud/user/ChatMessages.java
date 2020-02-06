@@ -33,10 +33,12 @@ public class ChatMessages {
 
     public static synchronized boolean update(Context context) {
         mContext = context;
+        System.out.println("chat c = " + mContext);
         try {
             lastId.add(-1);
             lastId.add(-1);
             String url = mContext.getString(R.string.URL_SYNC_MESSAGES);
+            System.out.println("chat url = " + url);
             String jsonResponse = jsonRequest(new URL(url));
             updateMessages(jsonResponse);
         } catch (IOException | JSONException e) {

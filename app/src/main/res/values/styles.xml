@@ -5,13 +5,13 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#52944D</item>
         <item name="colorPrimaryDark">#52944D</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">#52944D</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#fff</item>
         <item name="colorPrimaryDark">#52944D</item>
-        <item name="colorAccent">#000</item>
+        <item name="colorAccent">#00560F</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

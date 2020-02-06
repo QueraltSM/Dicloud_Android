@@ -24,10 +24,10 @@ import es.disoft.dicloud.user.NewsMessages;
 public class NewsWorker extends Worker {
 
     public NewsWorker(
-            @NonNull Context context,
+            @NonNull Context news_context,
             @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
-        checkMessagesEvery5sc.context = context;
+        super(news_context, workerParams);
+        checkMessagesEvery5sc.news_context = news_context;
     }
 
     @NonNull
@@ -68,11 +68,11 @@ public class NewsWorker extends Worker {
     public static class checkMessagesEvery5sc {
 
         @SuppressLint("StaticFieldLeak")
-        public static Context context;
+        public static Context news_context;
         private static Thread thread;
 
         public void setContext(Context cnt) {
-            context = cnt;
+            news_context = cnt;
         }
 
         public static void start() {
@@ -91,7 +91,7 @@ public class NewsWorker extends Worker {
                     while (!thread.isInterrupted()) {
                         try {
                             Thread.sleep(5 * 1000);
-                            checkMessages(context);
+                            checkMessages(news_context);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -101,15 +101,15 @@ public class NewsWorker extends Worker {
         }
     }
 
-    private static void checkMessages(Context context) {
+    private static void checkMessages(Context news_context) {
         Log.i("vivo - NewsWorker", "checkMessages: ");
         if (User.currentUser != null)
-            if (NewsMessages.update(context)) notificateMessages(context, NewsMessages.getUpdated());
+            if (NewsMessages.update(news_context)) notificateMessages(news_context, NewsMessages.getUpdated());
     }
 
-    public static void notificateMessages(Context context, List<?> messages) {
+    public static void notificateMessages(Context news_context, List<?> messages) {
         System.out.println("entro en notificar mensaje");
-        NotificationUtils mNotififacionUtils = new NotificationUtils(context);
+        NotificationUtils mNotififacionUtils = new NotificationUtils(news_context);
         for (Object message : messages) {
             int messagesCount, id;
             String from;
@@ -123,7 +123,7 @@ public class NewsWorker extends Worker {
                 id            = ((Message.EssentialInfo) message).getFrom_id();
             }
 
-            String text = messagesCount > 1 ? context.getString(R.string.new_messages_from) : context.getString(R.string.new_message_from);
+            String text = messagesCount > 1 ? news_context.getString(R.string.new_messages_from) : news_context.getString(R.string.new_message_from);
             text = messagesCount + " " + text + " " + from;
             String title = User.currentUser.getDbAlias();
             mNotififacionUtils.createNotification(id, title, text);

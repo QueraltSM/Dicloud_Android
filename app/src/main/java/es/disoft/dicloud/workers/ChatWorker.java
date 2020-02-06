@@ -24,10 +24,10 @@ import es.disoft.dicloud.user.NewsMessages;
 public class ChatWorker extends Worker {
 
     public ChatWorker(
-            @NonNull Context context,
+            @NonNull Context chat_context,
             @NonNull WorkerParameters workerParams) {
-        super(context, workerParams);
-        checkMessagesEvery5sc.context = context;
+        super(chat_context, workerParams);
+        checkMessagesEvery5sc.chat_context = chat_context;
     }
 
     @NonNull
@@ -68,11 +68,11 @@ public class ChatWorker extends Worker {
     public static class checkMessagesEvery5sc {
 
         @SuppressLint("StaticFieldLeak")
-        public static Context context;
+        public static Context chat_context;
         private static Thread thread;
 
         public void setContext(Context cnt) {
-            context = cnt;
+            chat_context = cnt;
         }
 
         public static void start() {
@@ -91,7 +91,7 @@ public class ChatWorker extends Worker {
                     while (!thread.isInterrupted()) {
                         try {
                             Thread.sleep(5 * 1000);
-                            checkMessages(context);
+                            checkMessages(chat_context);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -101,14 +101,14 @@ public class ChatWorker extends Worker {
         }
     }
 
-    private static void checkMessages(Context context) {
+    private static void checkMessages(Context chat_context) {
         Log.i("vivo", "checkMessages: ");
         if (User.currentUser != null)
-            if (ChatMessages.update(context)) notificateMessages(context, ChatMessages.getUpdated());
+            if (ChatMessages.update(chat_context)) notificateMessages(chat_context, ChatMessages.getUpdated());
     }
 
-    public static void notificateMessages(Context context, List<?> messages) {
-        NotificationUtils mNotififacionUtils = new NotificationUtils(context);
+    public static void notificateMessages(Context chat_context, List<?> messages) {
+        NotificationUtils mNotififacionUtils = new NotificationUtils(chat_context);
         for (Object message : messages) {
             int id;
             String from;

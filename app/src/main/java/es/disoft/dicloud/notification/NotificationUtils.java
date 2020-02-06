@@ -132,11 +132,6 @@ public class NotificationUtils extends ContextWrapper {
         return settings.getBoolean("notifications_new_message", true);
     }
 
-    private boolean betaVersionEnabled() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        return settings.getBoolean("notifications_beta_version", true);
-    }
-
     private Uri getPreferenceSound() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String tone = settings.getString("notifications_new_message_ringtone", getString(R.string.pref_ringtone));

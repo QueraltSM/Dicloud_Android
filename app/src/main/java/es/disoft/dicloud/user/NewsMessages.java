@@ -35,13 +35,13 @@ public class NewsMessages {
 
     public static synchronized boolean update(Context context) {
         mContext = context;
-
-        System.out.println(context);
+        System.out.println("news c = " + mContext);
 
         try {
             lastCount.add(0);
             lastCount.add(0);
             String url = mContext.getString(R.string.URL_SYNC_MESSAGES_NEWS);
+            System.out.println("chat messages = " + url);
             String jsonResponse = jsonRequest(new URL(url));
             updateMessages(jsonResponse);
         } catch (IOException | JSONException e) {

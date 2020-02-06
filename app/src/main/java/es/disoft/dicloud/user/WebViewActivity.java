@@ -80,7 +80,10 @@ import es.disoft.dicloud.workers.ChatWorker;
 import es.disoft.dicloud.workers.NewsWorker;
 
 import static es.disoft.dicloud.ConnectionAvailable.isNetworkAvailable;
-import static es.disoft.dicloud.workers.ChatWorker.checkMessagesEvery5sc.context;
+import static es.disoft.dicloud.workers.NewsWorker.checkMessagesEvery5sc.news_context;
+import static es.disoft.dicloud.workers.ChatWorker.checkMessagesEvery5sc.chat_context;
+
+
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -283,9 +286,10 @@ public class WebViewActivity extends AppCompatActivity {
             webView.saveState(state);
         else if (webView.getUrl() == null || webView.getUrl() != null && !webView.getUrl().contains("chat.asp"))
             openIndex();
-        context = this;
+        news_context = this;
+        chat_context = this;
         ChatWorker.checkMessagesEvery5sc.start();
-        //NewsWorker.checkMessagesEvery5sc.start();
+        NewsWorker.checkMessagesEvery5sc.start();
     }
 
 
