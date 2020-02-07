@@ -144,13 +144,17 @@ public class WebViewActivity extends AppCompatActivity {
 
         URL_INDEX = getString(R.string.URL_INDEX, "admin");
         CHAT_URL = getString(R.string.URL_CHAT, "admin");
-        URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
         if (betaVersion) {
             URL_INDEX = getString(R.string.URL_INDEX, "desarrollo");
             CHAT_URL = getString(R.string.URL_CHAT, "desarrollo");
         }
-        if (URL_INDEX.contains("admin")) setTitle("Dicloud");
-        else setTitle("Desarrollo");
+        if (URL_INDEX.contains("admin")) {
+            setTitle("Dicloud");
+            URL_LISTING = getString(R.string.URL_LISTING, "admin");
+        } else {
+            setTitle("Desarrollo");
+            URL_LISTING = getString(R.string.URL_LISTING, "desarrollo");
+        }
         disoftLogo = new ImageView(this);
         disoftLogo.setLayoutParams(new LinearLayout.LayoutParams(160, 160)); // value is in pixels
         setMenu();
