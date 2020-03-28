@@ -398,6 +398,10 @@ public class LoginActivity extends AppCompatActivity {
             } else if (mDesarrollo) {
                 checkBetaVersion();
             } else {
+                SharedPreferences pref = getSharedPreferences("UserLoggedIn", Context.MODE_PRIVATE);
+                SharedPreferences.Editor edt = pref.edit();
+                edt.putBoolean("UserLoggedIn", true);
+                edt.apply();
                 showProgress(true);
                 startWebViewActivity();
             }

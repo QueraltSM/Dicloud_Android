@@ -2,6 +2,7 @@ package es.disoft.dicloud.user;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,7 +12,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
@@ -35,8 +38,6 @@ public class NewsMessages {
 
     public static synchronized boolean update(Context context) {
         mContext = context;
-        System.out.println("news c = " + mContext);
-
         try {
             lastCount.add(0);
             lastCount.add(0);
@@ -61,27 +62,23 @@ public class NewsMessages {
             deletedMessages = new ArrayList<>();
             MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
             List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
-            Log.i("mensaje en NewsMessages", "fetched: " + fetch.toString());
+            Log.i("mensajeee", "fetched: " + fetch.toString());
             for (Message.Fetch message : fetch) {
                 switch (message.getStatus()) {
                     case "deleted":
                         Log.e("mensajeee", "deleted: " + message.toString());
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
-                        deleted = true;
-                        System.out.println("deleted size = " + deletedMessages.size());
+                        showUpdate = false;
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
                         messageDao.insert(message);
                         updatedMessages.add(message);
-                        messageFromNews = true;
-                        System.out.println("update size = " + updatedMessages.size());
                         break;
                     default:
                 }
             }
-            DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().deleteAll();
         }
     }
 
@@ -102,7 +99,7 @@ public class NewsMessages {
             String from                   = json_data.getString("from");
             String last_message_timestamp = json_data.getString("last_message_timestamp");
             int messages_count            = json_data.getInt("messages_count");
-            newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
+
             if (i<lastCount.size() && messages_count > lastCount.get(i)) {
                 lastCount.set(i, messages_count);
                 newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, lastCount.get(i)));
@@ -110,9 +107,9 @@ public class NewsMessages {
                 for (Message_tmp m : newMessages) {
                     ms.add(new Message(m.getFrom_id(),m.getFrom(),m.getLast_message_timestamp(), m.getMessages_count()));
                 }
+                NewsWorker.notificateMessages(mContext,ms);
                 messageFromNews = true;
                 showUpdate = true;
-                NewsWorker.notificateMessages(mContext,ms);
             } else if (deleted && messages_count==1 && lastCount.get(i)==1) {
                 showUpdate = true;
                 deleted = false;

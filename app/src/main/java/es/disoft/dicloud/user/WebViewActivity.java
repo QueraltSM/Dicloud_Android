@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,6 +55,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -71,7 +73,7 @@ import java.util.Date;
 import es.disoft.dicloud.ConnectionAvailable;
 import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
-import es.disoft.dicloud.Toast;
+//import es.disoft.dicloud.Toast;
 import es.disoft.dicloud.db.DisoftRoomDatabase;
 import es.disoft.dicloud.menu.MenuFactory;
 import es.disoft.dicloud.model.User;
@@ -161,8 +163,45 @@ public class WebViewActivity extends AppCompatActivity {
         createWebview();
         setTextActionBar();
         setLogo();
+        news_context = this;
+        chat_context = this;
+        //ChatWorker.checkMessagesEvery5sc.start();
+        NewsWorker.checkMessagesEvery5sc.start();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        System.out.println("App In Foreground");
+        //ChatWorker.checkMessagesEvery5sc.start();
+        NewsWorker.checkMessagesEvery5sc.start();
+    }
+
+    @Override
+    public void onStop()
+    {
+        NewsWorker.checkMessagesEvery5sc.start();
+        super.onStop();
+        //Do whatever you want to do when the application stops.
+    }
+    @Override
+    public void onDestroy()
+    {
+        NewsWorker.checkMessagesEvery5sc.start();
+        super.onDestroy();
+        //Do whatever you want to do when the application is destroyed.
+
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            System.out.println("App In Background");
+            //ChatWorker.checkMessagesEvery5sc.start();
+            NewsWorker.checkMessagesEvery5sc.start();
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -290,10 +329,6 @@ public class WebViewActivity extends AppCompatActivity {
             webView.saveState(state);
         else if (webView.getUrl() == null || webView.getUrl() != null && !webView.getUrl().contains("chat.asp"))
             openIndex();
-        news_context = this;
-        chat_context = this;
-        ChatWorker.checkMessagesEvery5sc.start();
-        NewsWorker.checkMessagesEvery5sc.start();
     }
 
 
@@ -441,13 +476,10 @@ public class WebViewActivity extends AppCompatActivity {
         switch(permission){
             case 1:
                 return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
             case 2:
                 return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-
             case 3:
                 return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-
         }
         return false;
     }
@@ -520,7 +552,7 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
 
-                Toast.setText(getApplicationContext(), R.string.download_start).show();
+                //Toast.setText(getApplicationContext(), R.string.download_start).show();
 
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                 request.allowScanningByMediaScanner();
@@ -630,7 +662,7 @@ public class WebViewActivity extends AppCompatActivity {
                 if (!isNetworkAvailable(getApplicationContext()) && !url.equals(getString(R.string.URL_ERROR))) {
                     view.loadUrl(getString(R.string.URL_ERROR));
                     urlBeforeFail = url;
-                    Toast.setText(getApplicationContext(), "No hay internet").show();
+                    //Toast.setText(getApplicationContext(), "No hay internet").show();
                     loadURLWhenNetworkAvailable(view);
                 }
             }
@@ -679,18 +711,18 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, final String url) {
                 Log.i("new url", "shouldOverrideUrlLoading: " + url);
                 if (url.endsWith("/pass_changed")) {
-                    Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
+                    //Toast.setText(getApplicationContext(), R.string.error_pass_changed).show();
                     closeSession();
                     return true;
                 } else if (url.endsWith("/disabled")) {
-                    Toast.setText(getApplicationContext(), R.string.error_user_disabled).show();
+                    //Toast.setText(getApplicationContext(), R.string.error_user_disabled).show();
                     closeSession();
                     return true;
                 } else if (url.contains("hibernar.asp")) {
                     return true;
                 } else if (url.contains("agententer.asp")) {
                     // Creo que cuando llevas mucho sin usar la app redirige, sin haber cerrado sesion, al login
-                    Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
+                    //Toast.setText(getApplicationContext(), R.string.error_unexpected).show();
                     try {
                         String postData = "token=" + URLEncoder.encode(User.currentUser.getToken(), "UTF-8");
                         view.postUrl(url, postData.getBytes());
@@ -771,9 +803,17 @@ public class WebViewActivity extends AppCompatActivity {
         activity.startActivity(new Intent(activity.getApplicationContext(), LoginActivity.class));
         activity.finish();
 
+        setUserLoggedOut();
+
         clearWebViewData();
     }
 
+    private static void setUserLoggedOut(){
+        SharedPreferences pref = news_context.getSharedPreferences("UserLoggedIn", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edt = pref.edit();
+        edt.putBoolean("UserLoggedIn", false);
+        edt.apply();
+    }
     private void printWebView(WebView webView) {
         PrintManager printManager = (PrintManager) this
                 .getSystemService(Context.PRINT_SERVICE);

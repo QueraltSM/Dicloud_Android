@@ -95,7 +95,6 @@ public class ChatMessages {
             if (!lastId.contains(from_id)) { // If chat went from different person
                 newMessages.add(new Message_tmp(from_id, from, last_message_timestamp, messages_count));
                 lastId.add(from_id);
-                System.out.println("Add ID = "+ from_id);
                 List<Message> ms = new ArrayList<>();
                 for (Message_tmp m : newMessages) {
                     ms.add(new Message(m.getFrom_id(),m.getFrom(),m.getLast_message_timestamp(), m.getMessages_count()));

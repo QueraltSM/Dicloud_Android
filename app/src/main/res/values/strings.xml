@@ -186,5 +186,6 @@
     <string name="notification_led">notification_led</string>
     <string name="download_start">Descargando…</string>
     <string name="bussiness_management">Tu app de gestión empresarial</string>
+    <string name="dicloud_logo">dicloud_logo</string>
 
 </resources>
