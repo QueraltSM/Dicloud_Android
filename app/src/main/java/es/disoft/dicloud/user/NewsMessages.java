@@ -2,7 +2,6 @@ package es.disoft.dicloud.user;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,9 +11,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import es.disoft.dicloud.HttpConnections;
 import es.disoft.dicloud.R;
@@ -38,6 +35,8 @@ public class NewsMessages {
 
     public static synchronized boolean update(Context context) {
         mContext = context;
+        System.out.println("news c = " + mContext);
+
         try {
             lastCount.add(0);
             lastCount.add(0);
@@ -62,23 +61,27 @@ public class NewsMessages {
             deletedMessages = new ArrayList<>();
             MessageDao messageDao = DisoftRoomDatabase.getDatabase(mContext).messageDao();
             List<Message.Fetch> fetch = messageDao.fetch(User.currentUser.getId());
-            Log.i("mensajeee", "fetched: " + fetch.toString());
+            Log.i("mensaje en NewsMessages", "fetched: " + fetch.toString());
             for (Message.Fetch message : fetch) {
                 switch (message.getStatus()) {
                     case "deleted":
                         Log.e("mensajeee", "deleted: " + message.toString());
                         messageDao.delete(message.getFrom_id());
                         deletedMessages.add(message);
-                        showUpdate = false;
+                        deleted = true;
+                        System.out.println("deleted size = " + deletedMessages.size());
                         break;
                     case "updated":
                         Log.e("mensajeee", "updated: " + message.toString());
                         messageDao.insert(message);
                         updatedMessages.add(message);
+                        messageFromNews = true;
+                        System.out.println("update size = " + updatedMessages.size());
                         break;
                     default:
                 }
             }
+            DisoftRoomDatabase.getDatabase(mContext).messageDao_tmp().deleteAll();
         }
     }
 
